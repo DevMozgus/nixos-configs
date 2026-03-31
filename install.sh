@@ -55,13 +55,7 @@ while true; do
   echo ""
 
   if [[ "$PASS1" == "$PASS2" ]]; then
-    SALT=$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n' | head -c 16)
-    HASH_FILE_CONTENT=$(perl -e '
-      my $pass = $ARGV[0];
-      my $salt = $ARGV[1];
-      print crypt($pass, "\$6\$" . $salt . "\$") . "\n";
-    ' "$PASS1" "$SALT")
-    echo "$HASH_FILE_CONTENT" > "$HASH_FILE"
+    echo "$PASS1" | mkpasswd -m sha-512 -s > "$HASH_FILE"
     echo "Password hashed successfully."
     break
   else
