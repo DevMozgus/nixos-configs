@@ -1,5 +1,5 @@
 # VSCodium + nix-vscode-extensions overlay + Stylix colorCustomizations
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 {
   programs.vscode = {
     enable = true;
@@ -16,8 +16,7 @@
     ];
 
     userSettings = {
-      "editor.fontFamily" = "'JetBrainsMono Nerd Font', 'monospace', monospace";
-      "editor.fontSize" = 14;
+      "editor.fontSize" = lib.mkForce 14;
       "editor.formatOnSave" = true;
       "editor.lineHeight" = 1.6;
       "editor.minimap.enabled" = false;
