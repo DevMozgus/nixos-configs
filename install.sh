@@ -68,25 +68,25 @@ echo ""
 echo "Staging all files for flake evaluation..."
 git -C "$FLAKE_DIR" add -A
 
-# --- Step 1: Partition, format, and mount with disko ---
+# --- Step 1: Expand tmpfs so nix store has room ---
+echo ""
+echo "Expanding /nix/.rw-store tmpfs to 75% of RAM..."
+sudo mount -o remount,size=75% /nix/.rw-store
+
+# --- Step 2: Partition, format, and mount with disko ---
 echo ""
 echo "Running disko to partition and encrypt $DISK..."
 echo "You will be prompted to set a LUKS passphrase."
 echo ""
 
-sudo nix \
-  --extra-experimental-features "nix-command flakes" \
-  run github:nix-community/disko/latest -- \
-  --mode disko \
-  --flake "${FLAKE_DIR}#${HOSTNAME}" \
-  --disk main "$DISK"
+nix-shell -p disko --run "sudo disko --mode disko --flake '${FLAKE_DIR}#${HOSTNAME}' --disk main '$DISK'"
 
-# --- Step 2: Place the hashed password file ---
+# --- Step 3: Place the hashed password file ---
 echo ""
 echo "Copying password hash to /mnt/persist/passwords/nicola..."
 sudo install -Dm400 "$HASH_FILE" /mnt/persist/passwords/nicola
 
-# --- Step 3: Install NixOS ---
+# --- Step 4: Install NixOS ---
 echo ""
 echo "Running nixos-install..."
 echo ""
