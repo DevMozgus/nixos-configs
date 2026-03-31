@@ -1,9 +1,9 @@
 # Kitty terminal: font, padding, scrollback — colors handled by Stylix
-{ ... }:
+{ lib, ... }:
 {
   programs.kitty = {
     enable = true;
-    font.size = 13;
+    font.size = lib.mkForce 13;
     settings = {
       window_padding_width = 12;
       scrollback_lines = 10000;
