@@ -15,7 +15,7 @@
     polarity = "dark";
     base16Scheme = ./../../../themes/material-deep-ocean.yaml;
     image = ./../../../assets/wallpaper.png;
-    imageScaleMode = "fill";
+    imageScalingMode = "fill";
 
     fonts = {
       monospace = {
