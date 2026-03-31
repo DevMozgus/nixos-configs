@@ -136,6 +136,6 @@
     cliphist
     hypridle
     hyprlock
-    swaync
+    swaynotificationcenter
   ];
 }
