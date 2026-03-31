@@ -1,5 +1,5 @@
 # systemd-boot, Plymouth, silent boot kernel params
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   boot.loader = {
     systemd-boot = {
@@ -12,7 +12,7 @@
 
   boot.plymouth = {
     enable = true;
-    theme = "material-deep-ocean";
+    theme = lib.mkForce "material-deep-ocean";
     themePackages = [ pkgs.materialDeepOceanPlymouth ];
   };
 
