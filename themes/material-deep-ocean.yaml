@@ -1,0 +1,18 @@
+scheme: 'Material Deep Ocean'
+author: 'Nicola (Material Theme)'
+base00: '0F111A' # Background
+base01: '181A29' # Alt bg
+base02: '1F2233' # Selection
+base03: '464B5D' # Comments
+base04: '676E95' # Dark fg
+base05: '8F93A2' # Foreground
+base06: 'EEFFFF' # Light fg
+base07: 'FFFFFF' # White
+base08: 'FF5370' # Red
+base09: 'F78C6C' # Orange
+base0A: 'FFCB6B' # Yellow
+base0B: 'C3E88D' # Green
+base0C: '89DDFF' # Cyan
+base0D: '82AAFF' # Blue
+base0E: 'C792EA' # Purple
+base0F: 'F07178' # Coral
