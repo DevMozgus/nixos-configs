@@ -80,7 +80,7 @@ sudo nix \
   --write-efi-boot-entries \
   --flake "${FLAKE_DIR}#${HOSTNAME}" \
   --disk main "$DISK" \
-  --extra-files "$HASH_FILE":/persist/passwords/nicola
+  --extra-files "$HASH_FILE" /persist/passwords/nicola
 
 echo ""
 echo "======================================"
