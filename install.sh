@@ -63,17 +63,6 @@ while true; do
   fi
 done
 
-# --- Configure binary caches for the install environment ---
-echo ""
-echo "Configuring binary caches..."
-sudo mkdir -p /etc/nix
-sudo tee /etc/nix/nix.conf > /dev/null <<EOF
-substituters = https://cache.nixos.org https://hyprland.cachix.org https://nix-community.cachix.org
-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCUSeBc=
-experimental-features = nix-command flakes
-trusted-users = root nixos
-EOF
-
 # --- Ensure all files are tracked by git (flakes requirement) ---
 echo ""
 echo "Staging all files for flake evaluation..."
@@ -87,6 +76,8 @@ echo ""
 
 sudo nix \
   --extra-experimental-features "nix-command flakes" \
+  --option substituters "https://cache.nixos.org https://hyprland.cachix.org https://nix-community.cachix.org" \
+  --option trusted-public-keys "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCUSeBc=" \
   run github:nix-community/disko/latest#disko-install -- \
   --write-efi-boot-entries \
   --flake "${FLAKE_DIR}#${HOSTNAME}" \
