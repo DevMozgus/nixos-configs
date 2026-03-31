@@ -74,7 +74,9 @@ echo "Running disko-install..."
 echo "This will partition $DISK, encrypt with LUKS, and install NixOS."
 echo ""
 
-sudo nix run github:nix-community/disko/latest#disko-install -- \
+sudo nix \
+  --extra-experimental-features "nix-command flakes" \
+  run github:nix-community/disko/latest#disko-install -- \
   --write-efi-boot-entries \
   --flake "${FLAKE_DIR}#${HOSTNAME}" \
   --disk main "$DISK" \
