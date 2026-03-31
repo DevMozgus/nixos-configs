@@ -55,7 +55,7 @@ while true; do
   echo ""
 
   if [[ "$PASS1" == "$PASS2" ]]; then
-    echo "$PASS1" | mkpasswd -m sha-512 -s > "$HASH_FILE"
+    echo "$PASS1" | openssl passwd -6 -stdin > "$HASH_FILE"
     echo "Password hashed successfully."
     break
   else
@@ -68,27 +68,34 @@ echo ""
 echo "Staging all files for flake evaluation..."
 git -C "$FLAKE_DIR" add -A
 
-# --- Run disko-install ---
+# --- Step 1: Partition, format, and mount with disko ---
 echo ""
-echo "Running disko-install..."
-echo "This will partition $DISK, encrypt with LUKS, and install NixOS."
+echo "Running disko to partition and encrypt $DISK..."
+echo "You will be prompted to set a LUKS passphrase."
 echo ""
 
-# NIX_CONFIG is inherited by all child processes (disko-install → nixos-install → nix build)
-# This ensures pre-built binaries are used from the cache instead of compiling from source.
-export NIX_CONFIG="
-substituters = https://cache.nixos.org https://hyprland.cachix.org https://nix-community.cachix.org
-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCUSeBc=
-experimental-features = nix-command flakes
-"
-
-sudo --preserve-env=NIX_CONFIG nix \
+sudo nix \
   --extra-experimental-features "nix-command flakes" \
-  run github:nix-community/disko/latest#disko-install -- \
-  --write-efi-boot-entries \
+  run github:nix-community/disko/latest -- \
+  --mode disko \
   --flake "${FLAKE_DIR}#${HOSTNAME}" \
-  --disk main "$DISK" \
-  --extra-files "$HASH_FILE" /persist/passwords/nicola
+  --disk main "$DISK"
+
+# --- Step 2: Place the hashed password file ---
+echo ""
+echo "Copying password hash to /mnt/persist/passwords/nicola..."
+sudo install -Dm400 "$HASH_FILE" /mnt/persist/passwords/nicola
+
+# --- Step 3: Install NixOS ---
+echo ""
+echo "Running nixos-install..."
+echo ""
+
+sudo nixos-install \
+  --no-root-password \
+  --flake "${FLAKE_DIR}#${HOSTNAME}" \
+  --option extra-substituters "https://hyprland.cachix.org https://nix-community.cachix.org" \
+  --option extra-trusted-public-keys "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCUSeBc="
 
 echo ""
 echo "======================================"
