@@ -4,6 +4,8 @@ let
   c = config.lib.stylix.colors.withHashtag;
 in
 {
+  stylix.targets.firefox.profileNames = [ "default" ];
+
   programs.firefox = {
     enable = true;
     profiles.default = {

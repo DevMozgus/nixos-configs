@@ -17,6 +17,7 @@
     };
 
     plugins = {
+      web-devicons.enable = true;
       lualine.enable = true;
       neo-tree.enable = true;
       telescope.enable = true;

@@ -2,7 +2,7 @@
 { inputs, isLaptop, ... }:
 {
   imports = [
-    inputs.nixvim.homeManagerModules.nixvim
+    inputs.nixvim.homeModules.nixvim
     ./shell.nix
     ./git.nix
     ./terminal.nix
@@ -19,6 +19,8 @@
     homeDirectory = "/home/nicola";
     stateVersion = "25.05";
   };
+
+  gtk.gtk4.theme = null;
 
   programs.home-manager.enable = true;
 }
