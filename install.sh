@@ -55,7 +55,7 @@ while true; do
   echo ""
 
   if [[ "$PASS1" == "$PASS2" ]]; then
-    echo "$PASS1" | openssl passwd -6 -stdin > "$HASH_FILE"
+    echo "$PASS1" | nix-shell -p whois --run 'mkpasswd -m sha-512 -s' > "$HASH_FILE"
     echo "Password hashed successfully."
     break
   else
