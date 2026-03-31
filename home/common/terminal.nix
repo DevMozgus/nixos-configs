@@ -3,10 +3,7 @@
 {
   programs.kitty = {
     enable = true;
-    font = {
-      name = "JetBrainsMono Nerd Font Mono";
-      size = 13;
-    };
+    font.size = 13;
     settings = {
       window_padding_width = 12;
       scrollback_lines = 10000;
