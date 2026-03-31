@@ -63,6 +63,11 @@ while true; do
   fi
 done
 
+# --- Patch disko config with the chosen disk device ---
+echo ""
+echo "Setting disk device to $DISK in disko-config.nix..."
+sed -i "s|device = \"/dev/sda\"|device = \"$DISK\"|" "${FLAKE_DIR}/hosts/${HOSTNAME}/disko-config.nix"
+
 # --- Ensure all files are tracked by git (flakes requirement) ---
 echo ""
 echo "Staging all files for flake evaluation..."
@@ -79,7 +84,7 @@ echo "Running disko to partition and encrypt $DISK..."
 echo "You will be prompted to set a LUKS passphrase."
 echo ""
 
-nix-shell -p disko --run "sudo disko --mode disko --flake '${FLAKE_DIR}#${HOSTNAME}' --disk main '$DISK'"
+nix-shell -p disko --run "sudo disko --mode disko --flake '${FLAKE_DIR}#${HOSTNAME}'"
 
 # --- Step 3: Place the hashed password file ---
 echo ""
