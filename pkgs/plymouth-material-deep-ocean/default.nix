@@ -24,17 +24,9 @@ let
     Window.SetBackgroundTopColor(0.059, 0.067, 0.102);
     Window.SetBackgroundBottomColor(0.059, 0.067, 0.102);
 
-    logo.image = Image("logo.png");
-    logo.sprite = Sprite(logo.image);
-    logo.sprite.SetX(Window.GetWidth() / 2 - logo.image.GetWidth() / 2);
-    logo.sprite.SetY(Window.GetHeight() / 2 - logo.image.GetHeight() / 2);
-    logo.sprite.SetOpacity(1);
-
-    # Use these to adjust the progress bar timing
+    # Progress bar timing
     global.fake_progress_limit = 0.7;
     global.fake_progress_duration = 15.0;
-
-    # Progress bar animation variables
     global.fake_progress = 0.0;
     global.real_progress = 0.0;
     global.fake_progress_active = 0;
@@ -42,25 +34,73 @@ let
     global.password_shown = 0;
     global.max_progress = 0.0;
 
-    fun refresh_callback ()
+    # Track screen dimensions so we can detect resolution changes
+    global.screen_width = 0;
+    global.screen_height = 0;
+
+    #--- Load images and create sprites (images are screen-size-independent) ---
+
+    logo.image = Image("logo.png");
+    logo.sprite = Sprite(logo.image);
+    logo.sprite.SetOpacity(1);
+
+    entry.image = Image("entry.png");
+    entry.sprite = Sprite(entry.image);
+    entry.sprite.SetOpacity(0);
+
+    lock.image = Image("lock.png");
+    lock.height_val = entry.image.GetHeight() * 0.8;
+    lock.width_val = 84 * (lock.height_val / 96);
+    scaled_lock = lock.image.Scale(lock.width_val, lock.height_val);
+    lock.sprite = Sprite(scaled_lock);
+    lock.sprite.SetOpacity(0);
+
+    bullet.image = Image("bullet.png");
+    bullet.sprites = [];
+
+    progress_box.image = Image("progress_box.png");
+    progress_box.sprite = Sprite(progress_box.image);
+    progress_box.sprite.SetOpacity(0);
+
+    progress_bar.original_image = Image("progress_bar.png");
+    progress_bar.sprite = Sprite();
+    progress_bar.image = progress_bar.original_image.Scale(1, progress_bar.original_image.GetHeight());
+    progress_bar.sprite.SetOpacity(0);
+
+    #--- Repositioning (called at init and whenever the screen resolution changes) ---
+
+    fun reposition_sprites ()
       {
-        global.animation_frame++;
+        sw = Window.GetWidth();
+        sh = Window.GetHeight();
 
-        if (global.fake_progress_active == 1)
+        logo.sprite.SetX(sw / 2 - logo.image.GetWidth() / 2);
+        logo.sprite.SetY(sh / 2 - logo.image.GetHeight() / 2);
+
+        entry.y = logo.sprite.GetY() + logo.image.GetHeight() + 40;
+        group_width = lock.width_val + 15 + entry.image.GetWidth();
+        lock.x = sw / 2 - group_width / 2;
+        entry.x = lock.x + lock.width_val + 15;
+        lock.y = entry.y + entry.image.GetHeight() / 2 - lock.height_val / 2;
+
+        entry.sprite.SetPosition(entry.x, entry.y, 10001);
+        lock.sprite.SetPosition(lock.x, lock.y, 10001);
+
+        pb_y = entry.y + entry.image.GetHeight() / 2 - progress_box.image.GetHeight() / 2;
+        progress_box.sprite.SetPosition(sw / 2 - progress_box.image.GetWidth() / 2, pb_y, 0);
+
+        bar_y = pb_y + (progress_box.image.GetHeight() - progress_bar.original_image.GetHeight()) / 2;
+        progress_bar.sprite.SetPosition(sw / 2 - progress_bar.original_image.GetWidth() / 2, bar_y, 1);
+
+        for (index = 0; bullet.sprites[index]; index++)
           {
-            elapsed_time = global.animation_frame / 50.0;
-            time_ratio = elapsed_time / global.fake_progress_duration;
-            if (time_ratio > 1.0)
-              time_ratio = 1.0;
-
-            # Apply easing curve: ease-out quadratic
-            eased_ratio = 1 - ((1 - time_ratio) * (1 - time_ratio));
-            global.fake_progress = eased_ratio * global.fake_progress_limit;
-            update_progress_bar(global.fake_progress);
+            bx = entry.x + 20 + index * 12;
+            by = entry.y + entry.image.GetHeight() / 2 - 3.5;
+            bullet.sprites[index].SetPosition(bx, by, 10002);
           }
       }
 
-    Plymouth.SetRefreshFunction (refresh_callback);
+    reposition_sprites();
 
     #--- Helper Functions ---
 
@@ -119,33 +159,35 @@ let
         global.fake_progress_active = 0;
       }
 
+    fun refresh_callback ()
+      {
+        global.animation_frame++;
+
+        # Reposition everything if the display resolution changed
+        if (global.screen_width != Window.GetWidth() || global.screen_height != Window.GetHeight())
+          {
+            global.screen_width = Window.GetWidth();
+            global.screen_height = Window.GetHeight();
+            reposition_sprites();
+          }
+
+        if (global.fake_progress_active == 1)
+          {
+            elapsed_time = global.animation_frame / 50.0;
+            time_ratio = elapsed_time / global.fake_progress_duration;
+            if (time_ratio > 1.0)
+              time_ratio = 1.0;
+
+            # Apply easing curve: ease-out quadratic
+            eased_ratio = 1 - ((1 - time_ratio) * (1 - time_ratio));
+            global.fake_progress = eased_ratio * global.fake_progress_limit;
+            update_progress_bar(global.fake_progress);
+          }
+      }
+
+    Plymouth.SetRefreshFunction (refresh_callback);
+
     #--- Dialogue ---
-
-    lock.image = Image("lock.png");
-    entry.image = Image("entry.png");
-    bullet.image = Image("bullet.png");
-
-    entry.sprite = Sprite(entry.image);
-    entry.y = logo.sprite.GetY() + logo.image.GetHeight() + 40;
-    entry.sprite.SetOpacity(0);
-
-    lock_height = entry.image.GetHeight() * 0.8;
-    lock_scale = lock_height / 96;
-    lock_width = 84 * lock_scale;
-    scaled_lock = lock.image.Scale(lock_width, lock_height);
-    lock.sprite = Sprite(scaled_lock);
-
-    # Center the lock+entry group as a unit so the logo stays visually centred
-    group_width = lock_width + 15 + entry.image.GetWidth();
-    lock.x = Window.GetWidth() / 2 - group_width / 2;
-    entry.x = lock.x + lock_width + 15;
-    lock.y = entry.y + entry.image.GetHeight() / 2 - lock_height / 2;
-
-    entry.sprite.SetPosition(entry.x, entry.y, 10001);
-    lock.sprite.SetPosition(lock.x, lock.y, 10001);
-    lock.sprite.SetOpacity(0);
-
-    bullet.sprites = [];
 
     fun display_normal_callback ()
       {
@@ -182,9 +224,10 @@ let
               {
                 scaled_bullet = bullet.image.Scale(7, 7);
                 bullet.sprites[index] = Sprite(scaled_bullet);
-                bullet.x = entry.x + 20 + index * (7 + 5);
-                bullet.y = entry.y + entry.image.GetHeight() / 2 - 3.5;
-                bullet.sprites[index].SetPosition(bullet.x, bullet.y, 10002);
+                bullet.sprites[index].SetPosition(
+                  entry.x + 20 + index * 12,
+                  entry.y + entry.image.GetHeight() / 2 - 3.5,
+                  10002);
               }
             bullet.sprites[index].SetOpacity(1);
           }
@@ -194,21 +237,6 @@ let
     Plymouth.SetDisplayPasswordFunction (display_password_callback);
 
     #--- Progress Bar ---
-
-    progress_box.image = Image("progress_box.png");
-    progress_box.sprite = Sprite(progress_box.image);
-    progress_box.x = Window.GetWidth() / 2 - progress_box.image.GetWidth() / 2;
-    progress_box.y = entry.y + entry.image.GetHeight() / 2 - progress_box.image.GetHeight() / 2;
-    progress_box.sprite.SetPosition(progress_box.x, progress_box.y, 0);
-    progress_box.sprite.SetOpacity(0);
-
-    progress_bar.original_image = Image("progress_bar.png");
-    progress_bar.sprite = Sprite();
-    progress_bar.image = progress_bar.original_image.Scale(1, progress_bar.original_image.GetHeight());
-    progress_bar.x = Window.GetWidth() / 2 - progress_bar.original_image.GetWidth() / 2;
-    progress_bar.y = progress_box.y + (progress_box.image.GetHeight() - progress_bar.original_image.GetHeight()) / 2;
-    progress_bar.sprite.SetPosition(progress_bar.x, progress_bar.y, 1);
-    progress_bar.sprite.SetOpacity(0);
 
     fun progress_callback (duration, progress)
       {
