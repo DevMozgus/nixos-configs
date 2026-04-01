@@ -1,73 +1,301 @@
-# Custom Plymouth script-theme: Material Deep Ocean
-{ stdenv, lib, writeText, imagemagick }:
+# Custom Plymouth script-theme: Material Deep Ocean (omarchy-style)
+# Centered NixOS snowflake on flat dark background with animated progress bar
+# and full password dialog (lock, entry field, bullet dots).
+{ stdenv, lib, writeText, imagemagick, librsvg, nixosIcons }:
 
 let
   plymouthConfig = writeText "material-deep-ocean.plymouth" ''
     [Plymouth Theme]
     Name=Material Deep Ocean
-    Description=Material Deep Ocean boot splash with wallpaper and progress bar
+    Description=Material Deep Ocean boot splash.
     ModuleName=script
 
     [script]
     ImageDir=/share/plymouth/themes/material-deep-ocean
     ScriptFile=/share/plymouth/themes/material-deep-ocean/material-deep-ocean.script
+    ConsoleLogBackgroundColor=0x0F111A
+    MonospaceFont=JetBrainsMono Nerd Font 11
+    Font=JetBrainsMono Nerd Font 11
   '';
 
   plymouthScript = writeText "material-deep-ocean.script" ''
-    # Material Deep Ocean Plymouth Script Theme
+    # Material Deep Ocean Plymouth Theme Script
 
-    # Load and scale wallpaper to fill screen
-    wallpaper = Image("wallpaper.png");
-    screen_width = Window.GetWidth();
-    screen_height = Window.GetHeight();
+    Window.SetBackgroundTopColor(0.059, 0.067, 0.102);
+    Window.SetBackgroundBottomColor(0.059, 0.067, 0.102);
 
-    wallpaper_scaled = wallpaper.Scale(screen_width, screen_height);
-    wallpaper_sprite = Sprite(wallpaper_scaled);
-    wallpaper_sprite.SetPosition(0, 0, -100);
+    logo.image = Image("logo.png");
+    logo.sprite = Sprite(logo.image);
+    logo.sprite.SetX(Window.GetWidth() / 2 - logo.image.GetWidth() / 2);
+    logo.sprite.SetY(Window.GetHeight() / 2 - logo.image.GetHeight() / 2);
+    logo.sprite.SetOpacity(1);
 
-    # Load the progress bar image (1px colored, scaled per progress)
-    progress_image = Image("progress-bar.png");
-    progress_sprite = Sprite();
+    # Use these to adjust the progress bar timing
+    global.fake_progress_limit = 0.7;
+    global.fake_progress_duration = 15.0;
 
-    bar_height = 4;
-    bar_y = screen_height - 40;
+    # Progress bar animation variables
+    global.fake_progress = 0.0;
+    global.real_progress = 0.0;
+    global.fake_progress_active = 0;
+    global.animation_frame = 0;
+    global.password_shown = 0;
+    global.max_progress = 0.0;
 
-    # Boot progress callback
-    fun boot_progress_cb(duration, progress) {
-      bar_width = Math.Int(screen_width * progress);
-      if (bar_width > 0) {
-        scaled = progress_image.Scale(bar_width, bar_height);
-        progress_sprite.SetImage(scaled);
-        progress_sprite.SetPosition(0, bar_y, 10);
+    fun refresh_callback ()
+      {
+        global.animation_frame++;
+
+        if (global.fake_progress_active == 1)
+          {
+            elapsed_time = global.animation_frame / 50.0;
+            time_ratio = elapsed_time / global.fake_progress_duration;
+            if (time_ratio > 1.0)
+              time_ratio = 1.0;
+
+            # Apply easing curve: ease-out quadratic
+            eased_ratio = 1 - ((1 - time_ratio) * (1 - time_ratio));
+            global.fake_progress = eased_ratio * global.fake_progress_limit;
+            update_progress_bar(global.fake_progress);
+          }
       }
-    }
 
-    Plymouth.SetBootProgressFunction(boot_progress_cb);
+    Plymouth.SetRefreshFunction (refresh_callback);
+
+    #--- Helper Functions ---
+
+    fun update_progress_bar (progress)
+      {
+        if (progress > global.max_progress)
+          {
+            global.max_progress = progress;
+            width = Math.Int(progress_bar.original_image.GetWidth() * progress);
+            if (width < 1) width = 1;
+            progress_bar.image = progress_bar.original_image.Scale(width, progress_bar.original_image.GetHeight());
+            progress_bar.sprite.SetImage(progress_bar.image);
+          }
+      }
+
+    fun show_progress_bar ()
+      {
+        progress_box.sprite.SetOpacity(1);
+        progress_bar.sprite.SetOpacity(1);
+      }
+
+    fun hide_progress_bar ()
+      {
+        progress_box.sprite.SetOpacity(0);
+        progress_bar.sprite.SetOpacity(0);
+      }
+
+    fun show_password_dialog ()
+      {
+        lock.sprite.SetOpacity(1);
+        entry.sprite.SetOpacity(1);
+      }
+
+    fun hide_password_dialog ()
+      {
+        lock.sprite.SetOpacity(0);
+        entry.sprite.SetOpacity(0);
+        for (index = 0; bullet.sprites[index]; index++)
+          bullet.sprites[index].SetOpacity(0);
+      }
+
+    fun start_fake_progress ()
+      {
+        if (global.max_progress == 0.0)
+          {
+            global.fake_progress = 0.0;
+            global.real_progress = 0.0;
+            update_progress_bar(0.0);
+          }
+        global.fake_progress_active = 1;
+        global.animation_frame = 0;
+      }
+
+    fun stop_fake_progress ()
+      {
+        global.fake_progress_active = 0;
+      }
+
+    #--- Dialogue ---
+
+    lock.image = Image("lock.png");
+    entry.image = Image("entry.png");
+    bullet.image = Image("bullet.png");
+
+    entry.sprite = Sprite(entry.image);
+    entry.x = Window.GetWidth() / 2 - entry.image.GetWidth() / 2;
+    entry.y = logo.sprite.GetY() + logo.image.GetHeight() + 40;
+    entry.sprite.SetPosition(entry.x, entry.y, 10001);
+    entry.sprite.SetOpacity(0);
+
+    lock_height = entry.image.GetHeight() * 0.8;
+    lock_scale = lock_height / 96;
+    lock_width = 84 * lock_scale;
+    scaled_lock = lock.image.Scale(lock_width, lock_height);
+    lock.sprite = Sprite(scaled_lock);
+    lock.x = entry.x - lock_width - 15;
+    lock.y = entry.y + entry.image.GetHeight() / 2 - lock_height / 2;
+    lock.sprite.SetPosition(lock.x, lock.y, 10001);
+    lock.sprite.SetOpacity(0);
+
+    bullet.sprites = [];
+
+    fun display_normal_callback ()
+      {
+        hide_password_dialog();
+        mode = Plymouth.GetMode();
+        if ((mode == "boot" || mode == "resume") && global.password_shown == 1)
+          {
+            show_progress_bar();
+            start_fake_progress();
+          }
+      }
+
+    fun display_password_callback (prompt, bullets)
+      {
+        global.password_shown = 1;
+        stop_fake_progress();
+        hide_progress_bar();
+        global.max_progress = 0.0;
+        global.fake_progress = 0.0;
+        global.real_progress = 0.0;
+        show_password_dialog();
+
+        for (index = 0; bullet.sprites[index]; index++)
+          bullet.sprites[index].SetOpacity(0);
+
+        max_bullets = 21;
+        bullets_to_show = bullets;
+        if (bullets_to_show > max_bullets)
+          bullets_to_show = max_bullets;
+
+        for (index = 0; index < bullets_to_show; index++)
+          {
+            if (!bullet.sprites[index])
+              {
+                scaled_bullet = bullet.image.Scale(7, 7);
+                bullet.sprites[index] = Sprite(scaled_bullet);
+                bullet.x = entry.x + 20 + index * (7 + 5);
+                bullet.y = entry.y + entry.image.GetHeight() / 2 - 3.5;
+                bullet.sprites[index].SetPosition(bullet.x, bullet.y, 10002);
+              }
+            bullet.sprites[index].SetOpacity(1);
+          }
+      }
+
+    Plymouth.SetDisplayNormalFunction (display_normal_callback);
+    Plymouth.SetDisplayPasswordFunction (display_password_callback);
+
+    #--- Progress Bar ---
+
+    progress_box.image = Image("progress_box.png");
+    progress_box.sprite = Sprite(progress_box.image);
+    progress_box.x = Window.GetWidth() / 2 - progress_box.image.GetWidth() / 2;
+    progress_box.y = entry.y + entry.image.GetHeight() / 2 - progress_box.image.GetHeight() / 2;
+    progress_box.sprite.SetPosition(progress_box.x, progress_box.y, 0);
+    progress_box.sprite.SetOpacity(0);
+
+    progress_bar.original_image = Image("progress_bar.png");
+    progress_bar.sprite = Sprite();
+    progress_bar.image = progress_bar.original_image.Scale(1, progress_bar.original_image.GetHeight());
+    progress_bar.x = Window.GetWidth() / 2 - progress_bar.original_image.GetWidth() / 2;
+    progress_bar.y = progress_box.y + (progress_box.image.GetHeight() - progress_bar.original_image.GetHeight()) / 2;
+    progress_bar.sprite.SetPosition(progress_bar.x, progress_bar.y, 1);
+    progress_bar.sprite.SetOpacity(0);
+
+    fun progress_callback (duration, progress)
+      {
+        global.real_progress = progress;
+        if (progress > global.fake_progress_limit)
+          {
+            stop_fake_progress();
+            update_progress_bar(progress);
+          }
+      }
+
+    Plymouth.SetBootProgressFunction (progress_callback);
+
+    #--- Quit ---
+
+    fun quit_callback ()
+      {
+        logo.sprite.SetOpacity(1);
+      }
+
+    Plymouth.SetQuitFunction (quit_callback);
+
+    #--- Message ---
+
+    message_sprite = Sprite();
+    message_sprite.SetPosition(10, 10, 10000);
+
+    fun display_message_callback (text)
+      {
+        my_image = Image.Text(text, 1, 1, 1);
+        message_sprite.SetImage(my_image);
+      }
+
+    fun hide_message_callback (text)
+      {
+        message_sprite.SetOpacity(0);
+      }
+
+    Plymouth.SetDisplayMessageFunction (display_message_callback);
+    Plymouth.SetHideMessageFunction (hide_message_callback);
   '';
 in
 stdenv.mkDerivation {
   pname = "plymouth-material-deep-ocean";
-  version = "1.0.0";
+  version = "2.0.0";
 
-  src = ../../assets;
+  phases = [ "buildPhase" "installPhase" ];
 
-  nativeBuildInputs = [ imagemagick ];
-
-  dontBuild = false;
+  nativeBuildInputs = [ imagemagick librsvg ];
 
   buildPhase = ''
-    # Generate a 1x1 pixel #82AAFF (base0D blue) image for the progress bar
-    magick -size 1x1 xc:'#82AAFF' progress-bar.png
+    # NixOS snowflake → 256×256 PNG logo
+    rsvg-convert -w 256 -h 256 \
+      ${nixosIcons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg \
+      -o logo.png
+
+    # Progress bar: 300×8px solid #82AAFF (base0D blue)
+    magick -size 300x8 xc:'#82AAFF' progress_bar.png
+
+    # Progress box: 300×8px transparent with 1px #EEFFFF border
+    magick -size 300x8 xc:transparent \
+      -fill none -stroke '#EEFFFF' -strokewidth 1 \
+      -draw "rectangle 0,0 299,7" \
+      progress_box.png
+
+    # Entry field: 280×36px dark bg (#0F111A) with 1px #EEFFFF border
+    magick -size 280x36 xc:'#0F111A' \
+      -fill none -stroke '#EEFFFF' -strokewidth 1 \
+      -draw "rectangle 0,0 279,35" \
+      entry.png
+
+    # Lock icon: padlock body (roundrectangle) + shackle (arc 180→360 = top arc)
+    magick -size 84x96 xc:transparent \
+      -fill white -stroke none -draw "roundrectangle 8,44 76,90 6,6" \
+      -fill none -stroke white -strokewidth 10 \
+      -draw "arc 18,6 66,82 180,360" \
+      lock.png
+
+    # Bullet: 8×8px white filled circle
+    magick -size 8x8 xc:transparent \
+      -fill white -draw "circle 4,4 4,1" \
+      bullet.png
   '';
 
   installPhase = ''
     mkdir -p $out/share/plymouth/themes/material-deep-ocean
     cp ${plymouthConfig} $out/share/plymouth/themes/material-deep-ocean/material-deep-ocean.plymouth
     cp ${plymouthScript} $out/share/plymouth/themes/material-deep-ocean/material-deep-ocean.script
-    cp $src/wallpaper.png $out/share/plymouth/themes/material-deep-ocean/wallpaper.png
-    cp progress-bar.png $out/share/plymouth/themes/material-deep-ocean/progress-bar.png
+    cp logo.png progress_bar.png progress_box.png entry.png lock.png bullet.png \
+      $out/share/plymouth/themes/material-deep-ocean/
 
-    # Fix the config file paths to point to the installed location
     substituteInPlace $out/share/plymouth/themes/material-deep-ocean/material-deep-ocean.plymouth \
       --replace-warn "/share/plymouth" "$out/share/plymouth"
   '';
