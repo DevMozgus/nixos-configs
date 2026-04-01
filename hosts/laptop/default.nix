@@ -4,6 +4,7 @@
   imports = [
     ../common/global
     ../common/optional/hyprland.nix
+    ../common/optional/sddm.nix
     ../common/optional/audio.nix
     ../common/optional/bluetooth.nix
     ../common/optional/docker.nix
