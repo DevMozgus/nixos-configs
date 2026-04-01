@@ -126,9 +126,7 @@ let
     bullet.image = Image("bullet.png");
 
     entry.sprite = Sprite(entry.image);
-    entry.x = Window.GetWidth() / 2 - entry.image.GetWidth() / 2;
     entry.y = logo.sprite.GetY() + logo.image.GetHeight() + 40;
-    entry.sprite.SetPosition(entry.x, entry.y, 10001);
     entry.sprite.SetOpacity(0);
 
     lock_height = entry.image.GetHeight() * 0.8;
@@ -136,8 +134,14 @@ let
     lock_width = 84 * lock_scale;
     scaled_lock = lock.image.Scale(lock_width, lock_height);
     lock.sprite = Sprite(scaled_lock);
-    lock.x = entry.x - lock_width - 15;
+
+    # Center the lock+entry group as a unit so the logo stays visually centred
+    group_width = lock_width + 15 + entry.image.GetWidth();
+    lock.x = Window.GetWidth() / 2 - group_width / 2;
+    entry.x = lock.x + lock_width + 15;
     lock.y = entry.y + entry.image.GetHeight() / 2 - lock_height / 2;
+
+    entry.sprite.SetPosition(entry.x, entry.y, 10001);
     lock.sprite.SetPosition(lock.x, lock.y, 10001);
     lock.sprite.SetOpacity(0);
 
