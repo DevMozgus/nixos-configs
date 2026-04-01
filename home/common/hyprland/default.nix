@@ -17,7 +17,7 @@
 
       monitor = if isLaptop
         then [ ", preferred, auto, 1" ]
-        else [ "DP-1, 2560x1440@144, 0x0, 1" ];
+        else [ "DP-1, 2560x1440@144, 0x0, 1" ", preferred, auto, 1" ];
 
       general = {
         gaps_in = 5;
