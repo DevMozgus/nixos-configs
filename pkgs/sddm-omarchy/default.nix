@@ -4,7 +4,7 @@
 
 let
   mainQml = writeText "Main.qml" ''
-    import QtQuick 2.0
+    import QtQuick
 
     Rectangle {
         id: root
@@ -109,8 +109,10 @@ let
     Name=omarchy
     Description=Material Deep Ocean minimal login theme
     Author=nixos-configs
-    Type=sddm-theme
-    Version=1.0
+    MainScript=Main.qml
+    ConfigFile=theme.conf
+    QtVersion=6
+    Theme-API=2.0
   '';
 
   themeConf = writeText "theme.conf" ''
