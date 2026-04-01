@@ -8,8 +8,8 @@ let
 
     Rectangle {
         id: root
-        width: screenWidth
-        height: screenHeight
+        width: 640
+        height: 480
         color: "#0F111A"
 
         property string currentUser: userModel.lastUser
