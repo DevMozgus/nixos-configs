@@ -5,12 +5,11 @@
 let
   mainQml = writeText "Main.qml" ''
     import QtQuick 2.0
-    import SddmComponents 2.0
 
     Rectangle {
         id: root
-        width: 640
-        height: 480
+        width: screenWidth
+        height: screenHeight
         color: "#0F111A"
 
         property string currentUser: userModel.lastUser
