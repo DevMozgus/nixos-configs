@@ -4,7 +4,8 @@
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
-    theme = "${pkgs.sddmOmarchy}/share/sddm/themes/omarchy";
+    theme = "omarchy";
+    settings.Theme.ThemeDir = "${pkgs.sddmOmarchy}/share/sddm/themes";
   };
 
   services.displayManager.defaultSession = "hyprland-uwsm";
