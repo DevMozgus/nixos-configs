@@ -3,7 +3,7 @@
 let
   showHyprKeybindings = pkgs.writeShellApplication {
     name = "show-hypr-keybindings";
-    runtimeInputs = [ pkgs.jq pkgs.rofi-wayland ];
+    runtimeInputs = [ pkgs.jq pkgs.rofi ];
     text = ''
       hyprctl binds -j | jq -r '
         def mods:
