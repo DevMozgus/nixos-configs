@@ -1,5 +1,27 @@
 # Hyprland shared config: keybindings, animations, rules, exec-once
 { pkgs, isLaptop, ... }:
+let
+  showHyprKeybindings = pkgs.writeShellApplication {
+    name = "show-hypr-keybindings";
+    runtimeInputs = [ pkgs.jq pkgs.rofi-wayland ];
+    text = ''
+      hyprctl binds -j | jq -r '
+        def mods:
+          . as $m |
+          [ if (($m / 64 | floor) % 2) == 1 then "SUPER" else empty end,
+            if (($m / 8  | floor) % 2) == 1 then "ALT"   else empty end,
+            if (($m / 4  | floor) % 2) == 1 then "CTRL"  else empty end,
+            if (($m / 1  | floor) % 2) == 1 then "SHIFT" else empty end
+          ];
+        .[] | select(.mouse == false) |
+        ((.modmask | mods) + [.key] | join("+")) +
+        "  \u2192  " +
+        .dispatcher +
+        (if .arg != "" then " " + .arg else "" end)
+      ' | sort | rofi -dmenu -i -p "Keybindings"
+    '';
+  };
+in
 {
   imports = [ ]
     ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
@@ -76,6 +98,7 @@
       bind = [
         "$mod, Return, exec, $terminal"
         "$mod, D, exec, $menu"
+        "$mod, H, exec, show-hypr-keybindings"
         "$mod, Q, killactive,"
         "$mod, M, exit,"
         "$mod, V, togglefloating,"
@@ -84,10 +107,10 @@
         "$mod, S, togglesplit,"
 
         # Move focus
-        "$mod, H, movefocus, l"
-        "$mod, L, movefocus, r"
-        "$mod, K, movefocus, u"
-        "$mod, J, movefocus, d"
+        "$mod, left, movefocus, l"
+        "$mod, right, movefocus, r"
+        "$mod, up, movefocus, u"
+        "$mod, down, movefocus, d"
 
         # Workspaces
         "$mod, 1, workspace, 1"
@@ -137,5 +160,6 @@
     hypridle
     hyprlock
     swaynotificationcenter
+    showHyprKeybindings
   ];
 }
