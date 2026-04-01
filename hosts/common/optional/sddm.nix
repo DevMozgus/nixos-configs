@@ -10,7 +10,4 @@
   services.displayManager.defaultSession = "hyprland-uwsm";
 
   environment.systemPackages = [ pkgs.sddmOmarchy ];
-
-  # Prevent Stylix from overriding the custom SDDM theme
-  stylix.targets.sddm.enable = false;
 }
