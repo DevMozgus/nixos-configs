@@ -12,11 +12,13 @@
     };
 
     gestures = {
-      workspace_swipe = true;
-      workspace_swipe_fingers = 3;
       workspace_swipe_distance = 300;
       workspace_swipe_cancel_ratio = 0.5;
     };
+
+    "gesture" = [
+      "3, horizontal, workspace"
+    ];
 
     bindl = [
       # Lid switch — disable laptop monitor when closed
