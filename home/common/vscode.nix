@@ -6,6 +6,10 @@
     package = pkgs.vscode;
     mutableExtensionsDir = false;
 
+    userArgv = {
+      "password-store" = "gnome-libsecret";
+    };
+
     profiles.default = {
       extensions = with pkgs.vscode-marketplace; [
         jnoortheen.nix-ide

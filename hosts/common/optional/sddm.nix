@@ -11,4 +11,7 @@
   environment.systemPackages = [ pkgs.sddmOmarchy ];
 
   services.displayManager.defaultSession = "hyprland-uwsm";
+
+  # Unlock GNOME Keyring on login so VS Code can access the secret service
+  security.pam.services.sddm.enableGnomeKeyring = true;
 }
