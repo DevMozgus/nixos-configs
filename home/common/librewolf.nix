@@ -4,8 +4,6 @@ let
   c = config.lib.stylix.colors.withHashtag;
 in
 {
-  stylix.targets.librewolf.profileNames = [ "default" ];
-
   programs.librewolf = {
     enable = true;
     profiles.default = {

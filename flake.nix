@@ -31,41 +31,58 @@
     };
 
     nur.url = "github:nix-community/NUR";
+
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };
 
-  outputs = { self, nixpkgs, home-manager, disko, stylix, nixvim, nix-vscode-extensions, nur, ... }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      disko,
+      stylix,
+      nixvim,
+      nix-vscode-extensions,
+      nur,
+      ...
+    }@inputs:
     let
       system = "x86_64-linux";
 
-      mkHost = hostname: extraModules: nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs self; };
-        modules = [
-          disko.nixosModules.disko
-          stylix.nixosModules.stylix
-          home-manager.nixosModules.home-manager
-          ./hosts/${hostname}
-          ./hosts/${hostname}/disko-config.nix
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "hm-backup";
-              extraSpecialArgs = {
-                inherit inputs;
-                isLaptop = (hostname == "laptop");
+      mkHost =
+        hostname: extraModules:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs self; };
+          modules = [
+            disko.nixosModules.disko
+            stylix.nixosModules.stylix
+            home-manager.nixosModules.home-manager
+            ./hosts/${hostname}
+            ./hosts/${hostname}/disko-config.nix
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "hm-backup";
+                sharedModules = [ inputs.zen-browser.homeModules.default ];
+                extraSpecialArgs = {
+                  inherit inputs;
+                  isLaptop = (hostname == "laptop");
+                };
+                users.nicola = import ./home/${hostname}.nix;
               };
-              users.nicola = import ./home/${hostname}.nix;
-            };
-          }
-          { nixpkgs.overlays = import ./overlays { inherit inputs; }; }
-        ] ++ extraModules;
-      };
+            }
+            { nixpkgs.overlays = import ./overlays { inherit inputs; }; }
+          ]
+          ++ extraModules;
+        };
     in
     {
       nixosConfigurations = {
-        desktop = mkHost "desktop" [];
-        laptop = mkHost "laptop" [];
+        desktop = mkHost "desktop" [ ];
+        laptop = mkHost "laptop" [ ];
         vm = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs self; };
@@ -78,6 +95,7 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "hm-backup";
+                sharedModules = [ inputs.zen-browser.homeModules.default ];
                 extraSpecialArgs = {
                   inherit inputs;
                   isLaptop = false;

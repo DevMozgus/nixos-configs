@@ -9,6 +9,7 @@
     ./vscode.nix
     ./firefox.nix
     ./librewolf.nix
+    ./zen-browser.nix
     ./neovim.nix
     ./rofi.nix
     ./hyprland
@@ -22,7 +23,6 @@
 
     packages = with pkgs; [
       # Browsers
-      zen-browser
       google-chrome
 
       # Media players
