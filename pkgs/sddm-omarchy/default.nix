@@ -14,15 +14,14 @@ let
 
         property string currentUser: {
             if (userModel.lastUser !== "") return userModel.lastUser
-            for (var i = 0; i < userModel.rowCount(); i++) {
-                var n = userModel.data(userModel.index(i, 0), Qt.DisplayRole)
-                if (n) return n.toString()
-            }
-            return ""
+            // SDDM UserModel.NameRole = Qt::UserRole + 1; Qt.DisplayRole is not handled
+            var n = userModel.data(userModel.index(0, 0), Qt.UserRole + 1)
+            return n ? n.toString() : ""
         }
         property int sessionIndex: {
+            // SDDM SessionModel.NameRole = Qt::UserRole + 3
             for (var i = 0; i < sessionModel.rowCount(); i++) {
-                var name = (sessionModel.data(sessionModel.index(i, 0), Qt.DisplayRole) || "").toString()
+                var name = (sessionModel.data(sessionModel.index(i, 0), Qt.UserRole + 3) || "").toString()
                 if (name.indexOf("uwsm") !== -1)
                     return i
             }
