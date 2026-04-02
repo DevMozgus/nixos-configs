@@ -2,10 +2,6 @@
 { pkgs, lib, ... }:
 {
   stylix.targets.vscode.enable = false;
-  # Tell VS Code to use the libsecret/GNOME Keyring backend for credential storage
-  home.file.".vscode/argv.json".text = builtins.toJSON {
-    "password-store" = "gnome-libsecret";
-  };
 
   # LSP and formatter for the nix-ide extension
   home.packages = with pkgs; [

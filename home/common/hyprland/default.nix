@@ -1,12 +1,21 @@
 # Hyprland shared config: keybindings, animations, rules, exec-once
-{ pkgs, config, lib, isLaptop, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  isLaptop,
+  ...
+}:
 let
   c = config.lib.stylix.colors;
   wallpaper = config.stylix.image;
 
   showHyprKeybindings = pkgs.writeShellApplication {
     name = "show-hypr-keybindings";
-    runtimeInputs = [ pkgs.jq pkgs.rofi ];
+    runtimeInputs = [
+      pkgs.jq
+      pkgs.rofi
+    ];
     text = ''
       hyprctl binds -j | jq -r '
         def mods:
@@ -27,7 +36,10 @@ let
 
   toggleRecording = pkgs.writeShellApplication {
     name = "toggle-recording";
-    runtimeInputs = [ pkgs.wf-recorder pkgs.libnotify ];
+    runtimeInputs = [
+      pkgs.wf-recorder
+      pkgs.libnotify
+    ];
     text = ''
       if pgrep -x wf-recorder > /dev/null; then
         pkill -INT wf-recorder
@@ -42,8 +54,7 @@ let
   };
 in
 {
-  imports = [ ]
-    ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
+  imports = [ ] ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
 
   services.hyprpaper.enable = lib.mkForce false;
 
@@ -64,16 +75,21 @@ in
       "$terminal" = "kitty";
       "$menu" = "rofi -show drun";
 
-      monitor = if isLaptop
-        then [ ", preferred, auto, 1" ]
-        else [ "DP-1, 2560x1440@144, 0x0, 1" ", preferred, auto, 1" ];
+      monitor =
+        if isLaptop then
+          [ ", preferred, auto, 1" ]
+        else
+          [
+            "DP-1, 2560x1440@144, 0x0, 1"
+            ", preferred, auto, 1"
+          ];
 
       general = {
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
-        "col.active_border" = lib.mkForce "rgba(${c.base0D}ee) rgba(${c.base0E}ee) 45deg";
-        "col.inactive_border" = lib.mkForce "rgba(${c.base03}aa)";
+        "col.active_border" = lib.mkForce "rgba(${c.base04}77)";
+        "col.inactive_border" = lib.mkForce "rgba(${c.base03}44)";
         resize_on_border = false;
         allow_tearing = false;
         layout = "dwindle";
@@ -107,23 +123,28 @@ in
           "quick,0.15,0,0.1,1"
         ];
         animation = [
-          "global, 1, 10, default"
-          "border, 1, 5.39, easeOutQuint"
-          "windows, 1, 4.79, easeOutQuint"
-          "windowsIn, 1, 4.1, easeOutQuint, popin 87%"
-          "windowsOut, 1, 1.49, linear, popin 87%"
-          "fadeIn, 1, 1.73, almostLinear"
-          "fadeOut, 1, 1.46, almostLinear"
-          "fade, 1, 3.03, quick"
-          "layers, 1, 3.81, easeOutQuint"
-          "layersIn, 1, 4, easeOutQuint, fade"
-          "layersOut, 1, 1.5, linear, fade"
-          "fadeLayersIn, 1, 1.79, almostLinear"
-          "fadeLayersOut, 1, 1.39, almostLinear"
+          "global, 1, 6, default"
+          "border, 1, 3.5, easeOutQuint"
+          "windows, 1, 3.0, easeOutQuint"
+          "windowsIn, 1, 2.5, easeOutQuint, popin 87%"
+          "windowsOut, 1, 1.0, linear, popin 87%"
+          "fadeIn, 1, 1.2, almostLinear"
+          "fadeOut, 1, 1.0, almostLinear"
+          "fade, 1, 2.0, quick"
+          "layers, 1, 2.5, easeOutQuint"
+          "layersIn, 1, 2.5, easeOutQuint, fade"
+          "layersOut, 1, 1.0, linear, fade"
+          "fadeLayersIn, 1, 1.2, almostLinear"
+          "fadeLayersOut, 1, 0.9, almostLinear"
           "workspaces, 0, 0, ease"
-          "specialWorkspace, 1, 4, easeOutQuint, slidevert"
+          "specialWorkspace, 1, 2.5, easeOutQuint, slidevert"
         ];
       };
+
+      # No border when workspace has only one window
+      workspace = [
+        "w[1], border:0"
+      ];
 
       dwindle = {
         pseudotile = true;
@@ -150,6 +171,7 @@ in
 
       input = {
         kb_layout = "us";
+        kb_options = "caps:escape";
         follow_mouse = 1;
       };
 

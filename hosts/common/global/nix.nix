@@ -1,10 +1,17 @@
 # Flake settings, garbage collection, substituters, trusted users
 { ... }:
 {
+  nixpkgs.config.allowUnfree = true;
   nix = {
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-      trusted-users = [ "root" "nicola" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      trusted-users = [
+        "root"
+        "nicola"
+      ];
       auto-optimise-store = true;
       substituters = [
         "https://cache.nixos.org"

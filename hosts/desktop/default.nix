@@ -13,5 +13,13 @@
 
   networking.hostName = "desktop";
 
+  programs.steam.enable = true;
+
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    polkitPolicyOwners = [ "nicola" ];
+  };
+
   system.stateVersion = "25.05";
 }

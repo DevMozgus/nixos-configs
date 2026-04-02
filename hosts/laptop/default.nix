@@ -16,6 +16,14 @@
 
   services.tlp.enable = true;
 
+  programs.steam.enable = true;
+
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    polkitPolicyOwners = [ "nicola" ];
+  };
+
   services.logind.settings.Login = {
     HandleLidSwitch = "suspend";
     HandleLidSwitchExternalPower = "ignore";
