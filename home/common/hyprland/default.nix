@@ -45,7 +45,7 @@ in
   imports = [ ]
     ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
 
-  services.hyprpaper.enable = false;
+  services.hyprpaper.enable = lib.mkForce false;
 
   xdg.configFile."hypr/hyprpaper.conf".text = ''
     preload = ${wallpaper}
