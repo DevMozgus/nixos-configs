@@ -1,6 +1,8 @@
 # Hyprland shared config: keybindings, animations, rules, exec-once
-{ pkgs, isLaptop, ... }:
+{ pkgs, config, isLaptop, ... }:
 let
+  c = config.lib.stylix.colors;
+
   showHyprKeybindings = pkgs.writeShellApplication {
     name = "show-hypr-keybindings";
     runtimeInputs = [ pkgs.jq pkgs.rofi ];
@@ -19,6 +21,22 @@ let
         .dispatcher +
         (if .arg != "" then " " + .arg else "" end)
       ' | sort | rofi -dmenu -i -p "Keybindings"
+    '';
+  };
+
+  toggleRecording = pkgs.writeShellApplication {
+    name = "toggle-recording";
+    runtimeInputs = [ pkgs.wf-recorder pkgs.libnotify ];
+    text = ''
+      if pgrep -x wf-recorder > /dev/null; then
+        pkill -INT wf-recorder
+        notify-send "Screen Recording" "Recording stopped"
+      else
+        mkdir -p "$HOME/Videos"
+        FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+        notify-send "Screen Recording" "Recording started — $FILE"
+        wf-recorder -f "$FILE"
+      fi
     '';
   };
 in
@@ -45,41 +63,80 @@ in
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
+        "col.active_border" = "rgba(${c.base0D}ee) rgba(${c.base0E}ee) 45deg";
+        "col.inactive_border" = "rgba(${c.base03}aa)";
+        resize_on_border = false;
+        allow_tearing = false;
         layout = "dwindle";
       };
 
       decoration = {
-        rounding = 10;
+        rounding = 0;
         blur = {
           enabled = true;
-          size = 5;
-          passes = 3;
-          new_optimizations = true;
+          size = 2;
+          passes = 2;
+          special = true;
+          brightness = 0.60;
+          contrast = 0.75;
         };
         shadow = {
           enabled = true;
-          range = 8;
-          render_power = 2;
+          range = 2;
+          render_power = 3;
+          color = "rgba(1a1a1aee)";
         };
       };
 
       animations = {
         enabled = true;
         bezier = [
-          "easeOutQuint, 0.23, 1, 0.32, 1"
-          "easeInOutCubic, 0.65, 0, 0.35, 1"
+          "easeOutQuint,0.23,1,0.32,1"
+          "easeInOutCubic,0.65,0.05,0.36,1"
+          "linear,0,0,1,1"
+          "almostLinear,0.5,0.5,0.75,1.0"
+          "quick,0.15,0,0.1,1"
         ];
         animation = [
-          "windows, 1, 5, easeOutQuint"
-          "windowsOut, 1, 5, easeOutQuint, popin 80%"
-          "fade, 1, 4, easeOutQuint"
-          "workspaces, 1, 4, easeInOutCubic, slide"
+          "global, 1, 10, default"
+          "border, 1, 5.39, easeOutQuint"
+          "windows, 1, 4.79, easeOutQuint"
+          "windowsIn, 1, 4.1, easeOutQuint, popin 87%"
+          "windowsOut, 1, 1.49, linear, popin 87%"
+          "fadeIn, 1, 1.73, almostLinear"
+          "fadeOut, 1, 1.46, almostLinear"
+          "fade, 1, 3.03, quick"
+          "layers, 1, 3.81, easeOutQuint"
+          "layersIn, 1, 4, easeOutQuint, fade"
+          "layersOut, 1, 1.5, linear, fade"
+          "fadeLayersIn, 1, 1.79, almostLinear"
+          "fadeLayersOut, 1, 1.39, almostLinear"
+          "workspaces, 0, 0, ease"
+          "specialWorkspace, 1, 4, easeOutQuint, slidevert"
         ];
       };
 
       dwindle = {
         pseudotile = true;
         preserve_split = true;
+        force_split = 2;
+      };
+
+      misc = {
+        disable_hyprland_logo = true;
+        disable_splash_rendering = true;
+        focus_on_activate = true;
+        anr_missed_pings = 3;
+        on_focus_under_fullscreen = 1;
+      };
+
+      cursor = {
+        hide_on_key_press = true;
+        warp_on_change_workspace = 1;
+      };
+
+      binds = {
+        hide_special_on_workspace_change = true;
       };
 
       input = {
@@ -136,11 +193,16 @@ in
         "$mod SHIFT, 9, movetoworkspace, 9"
         "$mod SHIFT, 0, movetoworkspace, 10"
 
-        # Screenshot
-        "$mod SHIFT, S, exec, grimblast copy area"
+        # Screenshot — area with editor
+        "$mod SHIFT, S, exec, grimblast save area - | satty --filename -"
+        # Screenshot — full screen to clipboard
+        ", Print, exec, grimblast copy screen"
 
         # Clipboard history
         "$mod SHIFT, V, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy"
+
+        # Screen recording toggle
+        "$mod SHIFT, R, exec, toggle-recording"
 
         # Lock
         "$mod SHIFT, L, exec, hyprlock"
@@ -155,11 +217,15 @@ in
 
   home.packages = with pkgs; [
     grimblast
+    satty
+    wf-recorder
+    libnotify
     wl-clipboard
     cliphist
     hypridle
     hyprlock
     swaynotificationcenter
     showHyprKeybindings
+    toggleRecording
   ];
 }
