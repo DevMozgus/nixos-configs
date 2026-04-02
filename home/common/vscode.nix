@@ -15,10 +15,10 @@
       extensions = with pkgs.vscode-marketplace; [
         jnoortheen.nix-ide
         vscodevim.vim
-        ms-python.python
         eamodio.gitlens
         esbenp.prettier-vscode
         dbaeumer.vscode-eslint
+        github.copilot-chat
       ];
 
       userSettings = {
