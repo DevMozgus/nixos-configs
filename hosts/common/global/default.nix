@@ -1,6 +1,8 @@
 # hosts/common/global/default.nix — Aggregates all global NixOS modules
 { pkgs, ... }:
 {
+  nixpkgs.config.allowUnfree = true;
+
   imports = [
     ./nix.nix
     ./locale.nix
