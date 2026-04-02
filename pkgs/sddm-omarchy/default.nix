@@ -12,7 +12,14 @@ let
         height: 480
         color: "#0F111A"
 
-        property string currentUser: userModel.lastUser
+        property string currentUser: {
+            if (userModel.lastUser !== "") return userModel.lastUser
+            for (var i = 0; i < userModel.rowCount(); i++) {
+                var n = userModel.data(userModel.index(i, 0), Qt.DisplayRole)
+                if (n) return n.toString()
+            }
+            return ""
+        }
         property int sessionIndex: {
             for (var i = 0; i < sessionModel.rowCount(); i++) {
                 var name = (sessionModel.data(sessionModel.index(i, 0), Qt.DisplayRole) || "").toString()
