@@ -45,13 +45,13 @@ in
   imports = [ ]
     ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
 
-  services.hyprpaper = {
-    enable = true;
-    settings = {
-      preload = [ "${wallpaper}" ];
-      wallpaper = [ ", ${wallpaper}" ];
-    };
-  };
+  services.hyprpaper.enable = false;
+
+  xdg.configFile."hypr/hyprpaper.conf".text = ''
+    preload = ${wallpaper}
+    wallpaper = ,${wallpaper}
+    splash = false
+  '';
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -154,6 +154,7 @@ in
       };
 
       exec-once = [
+        "hyprpaper"
         "waybar"
         "swaync"
         "wl-paste --type text --watch cliphist store"
@@ -225,6 +226,7 @@ in
   };
 
   home.packages = with pkgs; [
+    hyprpaper
     grimblast
     satty
     wf-recorder
