@@ -72,8 +72,8 @@ in
         gaps_in = 5;
         gaps_out = 10;
         border_size = 2;
-        "col.active_border" = "rgba(${c.base0D}ee) rgba(${c.base0E}ee) 45deg";
-        "col.inactive_border" = "rgba(${c.base03}aa)";
+        "col.active_border" = lib.mkForce "rgba(${c.base0D}ee) rgba(${c.base0E}ee) 45deg";
+        "col.inactive_border" = lib.mkForce "rgba(${c.base03}aa)";
         resize_on_border = false;
         allow_tearing = false;
         layout = "dwindle";
