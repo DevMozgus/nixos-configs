@@ -17,4 +17,7 @@
   security.pam.services.hyprlock = {};
 
   programs.dconf.enable = true;
+
+  # Enable native Wayland rendering for Electron apps including VS Code
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 }

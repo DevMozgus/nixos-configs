@@ -3,6 +3,9 @@
 {
   nixpkgs.config.allowUnfree = true;
 
+  # needed to store VS Code auth token
+  services.gnome.gnome-keyring.enable = true;
+
   imports = [
     ./nix.nix
     ./locale.nix
