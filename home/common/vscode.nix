@@ -57,7 +57,7 @@
       userSettings = {
         # Editor
         "editor.fontSize" = lib.mkForce 16;
-        "editor.fontFamily" = "FiraCode Nerd Font, Menlo, Monaco, 'Courier New', monospace";
+        "editor.fontFamily" = lib.mkForce "FiraCode Nerd Font, Menlo, Monaco, 'Courier New', monospace";
         "editor.fontLigatures" = true;
         "editor.fontWeight" = 500;
         "editor.formatOnSave" = true;
