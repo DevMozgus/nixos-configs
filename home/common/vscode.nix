@@ -1,13 +1,17 @@
 # VSCodium + nix-vscode-extensions overlay + Stylix colorCustomizations
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, ... }:
 {
+  stylix.targets.vscode.enable = false;
   # Tell VS Code to use the libsecret/GNOME Keyring backend for credential storage
   home.file.".vscode/argv.json".text = builtins.toJSON {
     "password-store" = "gnome-libsecret";
   };
 
   # LSP and formatter for the nix-ide extension
-  home.packages = with pkgs; [ nil nixfmt-rfc-style ];
+  home.packages = with pkgs; [
+    nil
+    nixfmt-rfc-style
+  ];
 
   programs.vscode = {
     enable = true;
@@ -18,7 +22,8 @@
       extensions =
         let
           marketplace = pkgs.nix-vscode-extensions.vscode-marketplace-release;
-        in [
+        in
+        [
           marketplace.astro-build.astro-vscode
           marketplace.bbenoist.nix
           marketplace.bradlc.vscode-tailwindcss
@@ -83,16 +88,14 @@
         };
 
         # Workbench
-        "workbench.colorTheme" = "Stylix";
+        "workbench.colorTheme" = "Material Theme Ocean High Contrast";
         "workbench.iconTheme" = "material-icon-theme";
         "workbench.editor.pinnedTabsOnSeparateRow" = true;
         "workbench.secondarySideBar.defaultVisibility" = "hidden";
         "workbench.colorCustomizations" = {
-          "[Stylix]" = let
-            c = config.lib.stylix.colors.withHashtag;
-          in {
-            "editorLineNumber.activeForeground" = c.base0D;
-            "editorCursor.foreground" = c.base0E;
+          "[Material Theme Ocean High Contrast]" = {
+            "editorLineNumber.activeForeground" = "#babed8";
+            "editorCursor.foreground" = "#FFCC00";
           };
         };
 
@@ -101,8 +104,12 @@
         "javascript.inlayHints.parameterNames.enabled" = "all";
         "typescript.updateImportsOnFileMove.enabled" = "always";
         "javascript.updateImportsOnFileMove.enabled" = "always";
-        "[javascript]" = { "editor.defaultFormatter" = "vscode.typescript-language-features"; };
-        "[typescriptreact]" = { "editor.defaultFormatter" = "vscode.typescript-language-features"; };
+        "[javascript]" = {
+          "editor.defaultFormatter" = "vscode.typescript-language-features";
+        };
+        "[typescriptreact]" = {
+          "editor.defaultFormatter" = "vscode.typescript-language-features";
+        };
 
         # Prettier
         "prettier.bracketSameLine" = true;
@@ -110,16 +117,37 @@
         "prettier.printWidth" = 120;
         "prettier.trailingComma" = "all";
         "prettier.singleQuote" = true;
-        "prettier.documentSelectors" = [ "*.{ts,tsx,js,jsx}" "*.astro" "**/*.astro" "*.svelte" "**/*.svelte" ];
+        "prettier.documentSelectors" = [
+          "*.{ts,tsx,js,jsx}"
+          "*.astro"
+          "**/*.astro"
+          "*.svelte"
+          "**/*.svelte"
+        ];
 
         # Language-specific formatters
-        "[astro]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-        "[json]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-        "[vue]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-        "[graphql]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
+        "[astro]" = {
+          "editor.defaultFormatter" = "esbenp.prettier-vscode";
+        };
+        "[json]" = {
+          "editor.defaultFormatter" = "esbenp.prettier-vscode";
+        };
+        "[vue]" = {
+          "editor.defaultFormatter" = "esbenp.prettier-vscode";
+        };
+        "[graphql]" = {
+          "editor.defaultFormatter" = "esbenp.prettier-vscode";
+        };
 
         # ESLint
-        "eslint.validate" = [ "typescript" "javascript" "typescriptreact" "javascriptreact" "html" "astro" ];
+        "eslint.validate" = [
+          "typescript"
+          "javascript"
+          "typescriptreact"
+          "javascriptreact"
+          "html"
+          "astro"
+        ];
         "eslint.format.enable" = true;
 
         # Nix (jnoortheen.nix-ide)
@@ -132,7 +160,9 @@
             };
           };
         };
-        "[nix]" = { "editor.defaultFormatter" = "jnoortheen.nix-ide"; };
+        "[nix]" = {
+          "editor.defaultFormatter" = "jnoortheen.nix-ide";
+        };
 
         # GitLens
         "gitlens.hovers.currentLine.over" = "line";
@@ -155,18 +185,38 @@
 
         # cSpell
         "cSpell.language" = "en,en-GB,en-US,de-AT";
-        "cSpell.userWords" = [ "astro" "checkmark" "Dropwdown" "graphqlrc" "Mantine" "ressort" "serien" "tailwindcss" "uknown" "urql" "youtube" ];
+        "cSpell.userWords" = [
+          "astro"
+          "checkmark"
+          "Dropwdown"
+          "graphqlrc"
+          "Mantine"
+          "ressort"
+          "serien"
+          "tailwindcss"
+          "uknown"
+          "urql"
+          "youtube"
+        ];
 
         # Misc
         "chat.viewSessions.orientation" = "stacked";
         "npm.exclude" = "**/.**/**";
-        "tailwindCSS.classAttributes" = [ "class" "className" "ngClass" "classProps" "defaultStyle" ];
+        "tailwindCSS.classAttributes" = [
+          "class"
+          "className"
+          "ngClass"
+          "classProps"
+          "defaultStyle"
+        ];
         "security.workspace.trust.untrustedFiles" = "open";
         "diffEditor.ignoreTrimWhitespace" = false;
-        "files.associations" = { "*.html" = "html"; };
+        "files.associations" = {
+          "*.html" = "html";
+        };
         "explorer.confirmDragAndDrop" = false;
         "explorer.confirmDelete" = false;
-        "window.title" = ''''${activeEditorShort} </>< ''${rootName}'';
+        "window.title" = "\${activeEditorShort} </>< \${rootName}";
         "window.newWindowDimensions" = "offset";
         "svelte.enable-ts-plugin" = true;
         "dart.debugExternalPackageLibraries" = true;
@@ -174,7 +224,9 @@
         "redhat.telemetry.enabled" = false;
         "git.openRepositoryInParentFolders" = "never";
         "svg.preview.mode" = "svg";
-        "material-icon-theme.files.associations" = { "*.translation.ts" = "I18n"; };
+        "material-icon-theme.files.associations" = {
+          "*.translation.ts" = "I18n";
+        };
       };
     };
   };
