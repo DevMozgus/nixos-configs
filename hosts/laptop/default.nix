@@ -16,9 +16,9 @@
 
   services.tlp.enable = true;
 
-  services.logind = {
-    lidSwitch = "suspend";
-    lidSwitchExternalPower = "ignore";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "ignore";
   };
 
   environment.systemPackages = with pkgs; [
