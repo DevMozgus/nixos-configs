@@ -12,47 +12,50 @@
     mutableExtensionsDir = false;
 
     profiles.default = {
-      extensions = with pkgs.vscode-marketplace; [
-        astro-build.astro-vscode
-        bbenoist.nix
-        bradlc.vscode-tailwindcss
-        cardinal90.multi-cursor-case-preserve
-        christian-kohler.npm-intellisense
-        dbaeumer.vscode-eslint
-        dsznajder.es7-react-js-snippets
-        eamodio.gitlens
-        ecmel.vscode-html-css
-        esbenp.prettier-vscode
-        formulahendry.auto-rename-tag
-        github.copilot-chat
-        github.vscode-github-actions
-        golang.go
-        graphql.vscode-graphql
-        graphql.vscode-graphql-syntax
-        jnoortheen.nix-ide
-        jock.svg
-        mechatroner.rainbow-csv
-        mikestead.dotenv
-        mquandalle.graphql
-        mrmlnc.vscode-scss
-        ms-azuretools.vscode-containers
-        ms-azuretools.vscode-docker
-        ms-dotnettools.csharp
-        ms-dotnettools.vscode-dotnet-runtime
-        mxsdev.typescript-explorer
-        parthr2031.colorful-comments
-        pkief.material-icon-theme
-        sst-dev.opencode
-        streetsidesoftware.code-spell-checker
-        streetsidesoftware.code-spell-checker-austrian-german
-        streetsidesoftware.code-spell-checker-british-english
-        svelte.svelte-vscode
-        t3dotgg.vsc-material-theme-but-i-wont-sue-you
-        vscodevim.vim
-        xabikos.javascriptsnippets
-        yinfei.luahelper
-        yoavbls.pretty-ts-errors
-      ];
+      extensions =
+        let
+          marketplace = pkgs.nix-vscode-extensions.vscode-marketplace-release;
+        in [
+          marketplace.astro-build.astro-vscode
+          marketplace.bbenoist.nix
+          marketplace.bradlc.vscode-tailwindcss
+          marketplace.cardinal90.multi-cursor-case-preserve
+          marketplace.christian-kohler.npm-intellisense
+          marketplace.dbaeumer.vscode-eslint
+          marketplace.dsznajder.es7-react-js-snippets
+          marketplace.eamodio.gitlens
+          marketplace.ecmel.vscode-html-css
+          marketplace.esbenp.prettier-vscode
+          marketplace.formulahendry.auto-rename-tag
+          marketplace.github.copilot-chat
+          marketplace.github.vscode-github-actions
+          marketplace.golang.go
+          marketplace.graphql.vscode-graphql
+          marketplace.graphql.vscode-graphql-syntax
+          marketplace.jnoortheen.nix-ide
+          marketplace.jock.svg
+          marketplace.mechatroner.rainbow-csv
+          marketplace.mikestead.dotenv
+          marketplace.mquandalle.graphql
+          marketplace.mrmlnc.vscode-scss
+          marketplace.ms-azuretools.vscode-containers
+          marketplace.ms-azuretools.vscode-docker
+          marketplace.ms-dotnettools.csharp
+          marketplace.ms-dotnettools.vscode-dotnet-runtime
+          marketplace.mxsdev.typescript-explorer
+          marketplace.parthr2031.colorful-comments
+          marketplace.pkief.material-icon-theme
+          marketplace.sst-dev.opencode
+          marketplace.streetsidesoftware.code-spell-checker
+          marketplace.streetsidesoftware.code-spell-checker-austrian-german
+          marketplace.streetsidesoftware.code-spell-checker-british-english
+          marketplace.svelte.svelte-vscode
+          marketplace.t3dotgg.vsc-material-theme-but-i-wont-sue-you
+          marketplace.vscodevim.vim
+          marketplace.xabikos.javascriptsnippets
+          marketplace.yinfei.luahelper
+          marketplace.yoavbls.pretty-ts-errors
+        ];
 
       userSettings = {
         # Editor
