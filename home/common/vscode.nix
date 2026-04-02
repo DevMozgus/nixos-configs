@@ -1,14 +1,15 @@
 # VSCodium + nix-vscode-extensions overlay + Stylix colorCustomizations
 { pkgs, config, lib, ... }:
 {
+  # Tell VS Code to use the libsecret/GNOME Keyring backend for credential storage
+  home.file.".vscode/argv.json".text = builtins.toJSON {
+    "password-store" = "gnome-libsecret";
+  };
+
   programs.vscode = {
     enable = true;
     package = pkgs.vscode;
     mutableExtensionsDir = false;
-
-    userArgv = {
-      "password-store" = "gnome-libsecret";
-    };
 
     profiles.default = {
       extensions = with pkgs.vscode-marketplace; [
