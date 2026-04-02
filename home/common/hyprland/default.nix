@@ -1,7 +1,8 @@
 # Hyprland shared config: keybindings, animations, rules, exec-once
-{ pkgs, config, isLaptop, ... }:
+{ pkgs, config, lib, isLaptop, ... }:
 let
   c = config.lib.stylix.colors;
+  wallpaper = config.stylix.image;
 
   showHyprKeybindings = pkgs.writeShellApplication {
     name = "show-hypr-keybindings";
@@ -43,6 +44,14 @@ in
 {
   imports = [ ]
     ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
+
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      preload = [ "${wallpaper}" ];
+      wallpaper = [ ", ${wallpaper}" ];
+    };
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
