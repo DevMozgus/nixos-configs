@@ -6,6 +6,9 @@
     "password-store" = "gnome-libsecret";
   };
 
+  # LSP and formatter for the nix-ide extension
+  home.packages = with pkgs; [ nil nixfmt-rfc-style ];
+
   programs.vscode = {
     enable = true;
     package = pkgs.vscode;
@@ -119,9 +122,17 @@
         "eslint.validate" = [ "typescript" "javascript" "typescriptreact" "javascriptreact" "html" "astro" ];
         "eslint.format.enable" = true;
 
-        # Nix
+        # Nix (jnoortheen.nix-ide)
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nil";
+        "nix.serverSettings" = {
+          "nil" = {
+            "formatting" = {
+              "command" = [ "nixfmt" ];
+            };
+          };
+        };
+        "[nix]" = { "editor.defaultFormatter" = "jnoortheen.nix-ide"; };
 
         # GitLens
         "gitlens.hovers.currentLine.over" = "line";
