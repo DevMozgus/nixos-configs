@@ -30,7 +30,7 @@
       jellyfin-media-player
 
       # File management
-      dolphin
+      kdePackages.dolphin
       peazip
 
       # Networking / remote
