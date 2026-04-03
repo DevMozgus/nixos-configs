@@ -42,7 +42,7 @@ let
             width: parent.width
 
             Image {
-                source: "logo.png"
+                source: "${logo}"
                 width: root.width * 0.35
                 height: Math.round(width * sourceSize.height / sourceSize.width)
                 fillMode: Image.PreserveAspectFit
@@ -133,7 +133,6 @@ stdenv.mkDerivation {
     cp ${mainQml} $out/share/sddm/themes/omarchy/Main.qml
     cp ${metadataDesktop} $out/share/sddm/themes/omarchy/metadata.desktop
     cp ${themeConf} $out/share/sddm/themes/omarchy/theme.conf
-    cp ${logo} $out/share/sddm/themes/omarchy/logo.png
   '';
 
   meta = with lib; {
