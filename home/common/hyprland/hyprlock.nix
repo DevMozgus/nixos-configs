@@ -1,5 +1,5 @@
 # Hyprlock — lock screen with Material Deep Ocean theme
-{ config, ... }:
+{ config, lib, ... }:
 let
   c = config.lib.stylix.colors;
   font = config.stylix.fonts.monospace.name;
@@ -15,7 +15,7 @@ in
         ignore_empty_input = true;
       };
 
-      background = [
+      background = lib.mkForce [
         {
           path = wallpaper;
           blur_passes = 0;
