@@ -57,7 +57,6 @@
           marketplace.mxsdev.typescript-explorer
           marketplace.parthr2031.colorful-comments
           marketplace.pkief.material-icon-theme
-          marketplace.sst-dev.opencode
           marketplace.streetsidesoftware.code-spell-checker
           marketplace.streetsidesoftware.code-spell-checker-austrian-german
           marketplace.streetsidesoftware.code-spell-checker-british-english

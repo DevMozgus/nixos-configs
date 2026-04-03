@@ -24,6 +24,7 @@
           ])
           ++ [
             "pulseaudio"
+            "custom/recording"
             "tray"
             "custom/notification"
             "custom/power-menu"
@@ -120,6 +121,16 @@
           escape = true;
         };
 
+        "custom/recording" = {
+          exec = "echo '󰑊 REC'";
+          exec-if = "pgrep -x wf-recorder";
+          interval = 1;
+          format = "{}";
+          tooltip = true;
+          tooltip-format = "Recording — click to stop";
+          on-click = "pkill -INT wf-recorder";
+        };
+
         "custom/power-menu" = {
           tooltip = true;
           tooltip-format = "Power menu";
@@ -166,6 +177,16 @@
       #pulseaudio { color: @base04; }
       #battery { color: @base0B; }
       #backlight { color: @base04; }
+
+      #custom-recording {
+        padding: 0 8px;
+        color: @base08;
+        animation: blink 1s step-start infinite;
+      }
+
+      @keyframes blink {
+        50% { opacity: 0.3; }
+      }
 
       #custom-notification {
         padding: 0 8px;

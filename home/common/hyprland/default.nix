@@ -73,6 +73,67 @@ let
       fi
     '';
   };
+
+  screenshotMenu = pkgs.writeShellApplication {
+    name = "screenshot-menu";
+    runtimeInputs = [
+      pkgs.rofi
+      pkgs.grimblast
+      pkgs.satty
+      pkgs.wf-recorder
+      pkgs.slurp
+      pkgs.wl-clipboard
+      pkgs.libnotify
+      pkgs.mpv
+    ];
+    text = ''
+      CHOSEN=$(printf '%s\n' \
+        "󰹑  Screenshot Screen" \
+        "󰹏  Screenshot Region" \
+        "󰻂  Record Region" \
+        "󰕧  Record Screen" \
+        "󰕧  Record Screen + Audio" \
+        "󰕧  Record + Webcam" \
+        | rofi -dmenu -p "")
+
+      case "$CHOSEN" in
+        "󰹑  Screenshot Screen")
+          grimblast save screen - | satty --filename - ;;
+        "󰹏  Screenshot Region")
+          grimblast save area - | satty --filename - ;;
+        "󰻂  Record Region")
+          GEOM=$(slurp)
+          mkdir -p "$HOME/Videos"
+          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+          notify-send "Screen Recording" "Recording region…"
+          wf-recorder -g "$GEOM" -f "$FILE"
+          wl-copy < "$FILE"
+          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
+        "󰕧  Record Screen")
+          mkdir -p "$HOME/Videos"
+          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+          notify-send "Screen Recording" "Recording screen…"
+          wf-recorder -f "$FILE"
+          wl-copy < "$FILE"
+          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
+        "󰕧  Record Screen + Audio")
+          mkdir -p "$HOME/Videos"
+          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+          notify-send "Screen Recording" "Recording with audio…"
+          wf-recorder --audio -f "$FILE"
+          wl-copy < "$FILE"
+          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
+        "󰕧  Record + Webcam")
+          mkdir -p "$HOME/Videos"
+          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+          notify-send "Screen Recording" "Recording with audio + webcam…"
+          mpv --no-border --ontop --geometry=320x240+20+20 /dev/video0 &
+          wf-recorder --audio -f "$FILE"
+          wl-copy < "$FILE"
+          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
+      esac
+    '';
+  };
 in
 {
   imports = [ ./hyprlock.nix ] ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
@@ -257,8 +318,10 @@ in
         "$mod SHIFT, 9, movetoworkspace, 9"
         "$mod SHIFT, 0, movetoworkspace, 10"
 
-        # Screenshot — area with editor
-        "$mod SHIFT, S, exec, grimblast save area - | satty --filename -"
+        # Screenshot — region to clipboard
+        "$mod, S, exec, grimblast copy area"
+        # Screenshot/recording menu
+        "$mod SHIFT, S, exec, screenshot-menu"
         # Screenshot — full screen to clipboard
         ", Print, exec, grimblast copy screen"
 
@@ -290,6 +353,7 @@ in
     hyprpaper
     grimblast
     satty
+    slurp
     wf-recorder
     libnotify
     wl-clipboard
@@ -299,6 +363,7 @@ in
     networkmanagerapplet
     showHyprKeybindings
     toggleRecording
+    screenshotMenu
     powerMenu
   ];
 }
