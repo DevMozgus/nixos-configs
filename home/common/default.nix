@@ -17,7 +17,7 @@
     ./storage.nix
     ./hyprland
     ./waybar
-    ./opencode
+    ./opencode.nix
   ];
 
   home = {
