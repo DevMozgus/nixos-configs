@@ -14,7 +14,6 @@ let
     name = "power-menu";
     runtimeInputs = [
       pkgs.rofi
-      pkgs.hyprlock
     ];
     text = ''
       CHOSEN=$(printf '%s\n' "󰌾" "󰒲" "󰍃" "󰑐" "󰐥" \
@@ -76,7 +75,7 @@ let
   };
 in
 {
-  imports = [ ] ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
+  imports = [ ./hyprlock.nix ] ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
 
   services.hyprpaper = {
     enable = true;
@@ -286,7 +285,6 @@ in
     wl-clipboard
     cliphist
     hypridle
-    hyprlock
     swaynotificationcenter
     networkmanagerapplet
     showHyprKeybindings
