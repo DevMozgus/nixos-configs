@@ -51,7 +51,7 @@
       btop
 
       # Office
-      libreoffice-bin
+      libreoffice
 
       # AI coding CLI
       opencode
