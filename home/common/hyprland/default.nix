@@ -25,7 +25,7 @@ let
       case "$CHOSEN" in
         "󰌾")  hyprlock ;;
         "󰒲")  systemctl suspend ;;
-        "󰍃")  loginctl terminate-user "$USER" ;;
+        "󰍃")  hyprctl dispatch exit ;;
         "󰑐")  systemctl reboot ;;
         "󰐥")  systemctl poweroff ;;
       esac
