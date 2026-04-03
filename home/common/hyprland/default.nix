@@ -56,13 +56,14 @@ in
 {
   imports = [ ] ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
 
-  services.hyprpaper.enable = lib.mkForce false;
-
-  xdg.configFile."hypr/hyprpaper.conf".text = ''
-    preload = ${wallpaper}
-    wallpaper = ,${wallpaper}
-    splash = false
-  '';
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      preload = [ "${wallpaper}" ];
+      wallpaper = [ ",${wallpaper}" ];
+      splash = false;
+    };
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -177,7 +178,6 @@ in
 
       exec-once = [
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-        "hyprpaper"
         "waybar"
         "swaync"
         "wl-paste --type text --watch cliphist store"
