@@ -17,23 +17,17 @@ let
       pkgs.hyprlock
     ];
     text = ''
-      LOCK="󰌾  Lock"
-      SUSPEND="󰒲  Suspend"
-      LOGOUT="󰍃  Logout"
-      REBOOT="󰑐  Reboot"
-      SHUTDOWN="󰐥  Shutdown"
-
-      CHOSEN=$(printf '%s\n' "$LOCK" "$SUSPEND" "$LOGOUT" "$REBOOT" "$SHUTDOWN" \
+      CHOSEN=$(printf '%s\n' "󰌾" "󰒲" "󰍃" "󰑐" "󰐥" \
         | rofi -dmenu \
             -theme "$HOME/.config/rofi/powermenu-theme.rasi" \
-            -p "Power")
+            -p "")
 
       case "$CHOSEN" in
-        "$LOCK")     hyprlock ;;
-        "$SUSPEND")  systemctl suspend ;;
-        "$LOGOUT")   loginctl terminate-user "$USER" ;;
-        "$REBOOT")   systemctl reboot ;;
-        "$SHUTDOWN") systemctl poweroff ;;
+        "󰌾")  hyprlock ;;
+        "󰒲")  systemctl suspend ;;
+        "󰍃")  loginctl terminate-user "$USER" ;;
+        "󰑐")  systemctl reboot ;;
+        "󰐥")  systemctl poweroff ;;
       esac
     '';
   };

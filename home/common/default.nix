@@ -13,6 +13,7 @@
     ./neovim.nix
     ./rofi.nix
     ./swaync.nix
+    ./swayosd.nix
     ./storage.nix
     ./hyprland
     ./waybar

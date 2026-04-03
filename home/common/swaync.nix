@@ -260,9 +260,26 @@ in
     }
 
     /* Floating notifications */
-    .blank-window,
+    .blank-window { background: transparent; }
     .floating-notifications { background: transparent; }
-    .floating-notifications .notification { box-shadow: none; }
+
+    .floating-notifications .notification-row .notification-background .notification {
+        border: 1px solid var(--border-color);
+        border-radius: 0px;
+        background: var(--bg-primary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .floating-notifications .notification-row .notification-background .notification.low {
+        border-left: 3px solid var(--priority-low);
+    }
+    .floating-notifications .notification-row .notification-background .notification.normal {
+        border-left: 3px solid var(--priority-normal);
+    }
+    .floating-notifications .notification-row .notification-background .notification.critical {
+        border-left: 3px solid var(--priority-critical);
+        background: alpha(var(--priority-critical), 0.06);
+    }
 
     /* Widgets */
     .widget-title > label {
