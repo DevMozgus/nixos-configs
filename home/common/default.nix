@@ -53,6 +53,7 @@
 
       # System monitoring
       btop
+      pavucontrol
 
       # Office
       libreoffice
