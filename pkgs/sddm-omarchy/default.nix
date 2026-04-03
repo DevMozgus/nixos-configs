@@ -48,7 +48,7 @@ let
             Image {
                 source: "logo.png"
                 width: root.width * 0.35
-                height: Math.round(width * implicitHeight / implicitWidth)
+                height: root.width * 0.35
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 anchors.horizontalCenter: parent.horizontalCenter
