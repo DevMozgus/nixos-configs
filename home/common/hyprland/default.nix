@@ -89,8 +89,8 @@ let
     text = ''
       CHOSEN=$(printf '%s\n' \
         "󰹑  Screenshot Screen" \
-        "󰹏  Screenshot Region" \
-        "󰻂  Record Region" \
+        "󰹑  Screenshot Region" \
+        "󰕧  Record Region" \
         "󰕧  Record Screen" \
         "󰕧  Record Screen + Audio" \
         "󰕧  Record + Webcam" \
@@ -99,9 +99,9 @@ let
       case "$CHOSEN" in
         "󰹑  Screenshot Screen")
           grimblast save screen - | satty --filename - ;;
-        "󰹏  Screenshot Region")
+        "󰹑  Screenshot Region")
           grimblast save area - | satty --filename - ;;
-        "󰻂  Record Region")
+        "󰕧  Record Region")
           GEOM=$(slurp)
           mkdir -p "$HOME/Videos"
           FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
