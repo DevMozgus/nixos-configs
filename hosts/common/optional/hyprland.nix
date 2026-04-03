@@ -14,9 +14,11 @@
   security.polkit.enable = true;
   security.rtkit.enable = true;
 
-  security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
 
   programs.dconf.enable = true;
+
+  services.udisks2.enable = true;
 
   # Enable native Wayland rendering for Electron apps including VS Code
   environment.sessionVariables.NIXOS_OZONE_WL = "1";

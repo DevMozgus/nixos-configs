@@ -12,6 +12,7 @@
     ./zen-browser.nix
     ./neovim.nix
     ./rofi.nix
+    ./storage.nix
     ./hyprland
     ./waybar
   ];
@@ -62,6 +63,20 @@
   services.syncthing.enable = true;
 
   gtk.gtk4.theme = null;
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = "zen-beta.desktop";
+      "x-scheme-handler/http" = "zen-beta.desktop";
+      "x-scheme-handler/https" = "zen-beta.desktop";
+      "application/xhtml+xml" = "zen-beta.desktop";
+      "inode/directory" = "org.kde.dolphin.desktop";
+      "x-scheme-handler/file" = "org.kde.dolphin.desktop";
+      "text/plain" = "nvim.desktop";
+      "x-scheme-handler/terminal" = "kitty.desktop";
+    };
+  };
 
   programs.home-manager.enable = true;
 }
