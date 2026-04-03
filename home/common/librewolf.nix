@@ -15,6 +15,12 @@ in
         "browser.uidensity" = 1;
       };
 
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+        ublock-origin
+        onepassword-password-manager
+        darkreader
+      ];
+
       userChrome = ''
         /* Material Deep Ocean — generated from Stylix palette */
         :root {
