@@ -146,4 +146,85 @@ in
         text-color:       @fg;
     }
   '';
+
+  # Power menu theme — horizontal icon picker, inherits palette from above
+  xdg.configFile."rofi/powermenu-theme.rasi".text = ''
+    /**
+     * Material Deep Ocean — Rofi Power Menu Theme
+     * Horizontal icon picker: 5 columns × 1 row
+     **/
+
+    * {
+        bg:     #${c.base00}FF;
+        fg:     #${c.base05}FF;
+        sel:    #${c.base02}FF;
+        border: #${c.base04}FF;
+        red:    #${c.base08}FF;
+        font:   "${font} Bold 26";
+    }
+
+    configuration {
+        show-icons: false;
+    }
+
+    window {
+        width:            500px;
+        location:         center;
+        anchor:           center;
+        margin:           0px;
+        padding:          0px;
+        border:           2px solid;
+        border-radius:    0px;
+        border-color:     @border;
+        background-color: @bg;
+        cursor:           "default";
+    }
+
+    mainbox {
+        enabled:          true;
+        background-color: inherit;
+        children:         [ "listview" ];
+    }
+
+    listview {
+        enabled:          true;
+        lines:            1;
+        columns:          5;
+        cycle:            true;
+        dynamic:          true;
+        scrollbar:        false;
+        layout:           vertical;
+        reverse:          false;
+        fixed-height:     true;
+        fixed-columns:    true;
+        spacing:          0px;
+        background-color: transparent;
+        text-color:       @fg;
+    }
+
+    element {
+        enabled:          true;
+        spacing:          0px;
+        padding:          24px 0px;
+        border:           0px 0px 0px 0px;
+        border-radius:    0px;
+        background-color: inherit;
+        text-color:       @fg;
+        cursor:           pointer;
+    }
+
+    element-text {
+        vertical-align:   0.5;
+        horizontal-align: 0.5;
+        font:             inherit;
+        text-color:       inherit;
+        background-color: transparent;
+        cursor:           inherit;
+    }
+
+    element selected.normal {
+        background-color: @sel;
+        text-color:       @red;
+    }
+  '';
 }

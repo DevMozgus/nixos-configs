@@ -13,7 +13,7 @@
       modules-center = [ "clock" ];
       modules-right =
         (lib.optionals isLaptop [ "battery" "backlight" "network" ])
-        ++ [ "pulseaudio" "cpu" "memory" "tray" ];
+        ++ [ "pulseaudio" "cpu" "memory" "tray" "custom/notification" "custom/power-menu" ];
 
       "hyprland/workspaces" = {
         format = "{icon}";
@@ -76,6 +76,35 @@
       tray = {
         spacing = 8;
       };
+
+      "custom/notification" = {
+        tooltip = true;
+        tooltip-format = "Notifications";
+        format = "{icon}";
+        format-icons = {
+          notification = "󱅫";
+          none = "󰂜";
+          dnd-notification = "󰂛";
+          dnd-none = "󰂜";
+          inhibited-notification = "󱅫";
+          inhibited-none = "󰂜";
+          dnd-inhibited-notification = "󰂛";
+          dnd-inhibited-none = "󰂜";
+        };
+        return-type = "json";
+        exec-if = "which swaync-client";
+        exec = "swaync-client -swb";
+        on-click = "swaync-client -t -sw";
+        on-click-right = "swaync-client -d -sw";
+        escape = true;
+      };
+
+      "custom/power-menu" = {
+        tooltip = true;
+        tooltip-format = "Power menu";
+        format = "󰐥";
+        on-click = "power-menu";
+      };
     }];
 
     style = lib.mkAfter ''
@@ -101,6 +130,30 @@
 
       #clock, #battery, #cpu, #memory, #network, #pulseaudio, #backlight, #tray {
         padding: 0 8px;
+      }
+
+      #custom-notification {
+        padding: 0 8px;
+        color: @base05;
+      }
+
+      #custom-notification.dnd-none,
+      #custom-notification.inhibited-none,
+      #custom-notification.dnd-inhibited-none {
+        color: @base03;
+      }
+
+      #custom-notification.notification,
+      #custom-notification.dnd-notification,
+      #custom-notification.inhibited-notification,
+      #custom-notification.dnd-inhibited-notification {
+        color: @base0D;
+      }
+
+      #custom-power-menu {
+        padding: 0 10px 0 6px;
+        color: @base08;
+        font-size: 14px;
       }
     '';
   };

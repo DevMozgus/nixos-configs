@@ -8,11 +8,11 @@
     ../common/optional/audio.nix
     ../common/optional/bluetooth.nix
     ../common/optional/docker.nix
+    ../common/optional/network-manager.nix
     ./hardware-configuration.nix
   ];
 
   networking.hostName = "laptop";
-  networking.networkmanager.enable = true;
 
   services.tlp.enable = true;
 

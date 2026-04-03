@@ -10,6 +10,34 @@ let
   c = config.lib.stylix.colors;
   wallpaper = config.stylix.image;
 
+  powerMenu = pkgs.writeShellApplication {
+    name = "power-menu";
+    runtimeInputs = [
+      pkgs.rofi
+      pkgs.hyprlock
+    ];
+    text = ''
+      LOCK="󰌾  Lock"
+      SUSPEND="󰒲  Suspend"
+      LOGOUT="󰍃  Logout"
+      REBOOT="󰑐  Reboot"
+      SHUTDOWN="󰐥  Shutdown"
+
+      CHOSEN=$(printf '%s\n' "$LOCK" "$SUSPEND" "$LOGOUT" "$REBOOT" "$SHUTDOWN" \
+        | rofi -dmenu \
+            -theme "$HOME/.config/rofi/powermenu-theme.rasi" \
+            -p "Power")
+
+      case "$CHOSEN" in
+        "$LOCK")     hyprlock ;;
+        "$SUSPEND")  systemctl suspend ;;
+        "$LOGOUT")   loginctl terminate-user "$USER" ;;
+        "$REBOOT")   systemctl reboot ;;
+        "$SHUTDOWN") systemctl poweroff ;;
+      esac
+    '';
+  };
+
   showHyprKeybindings = pkgs.writeShellApplication {
     name = "show-hypr-keybindings";
     runtimeInputs = [
@@ -180,6 +208,7 @@ in
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "waybar"
         "swaync"
+        "nm-applet"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "hypridle"
@@ -239,6 +268,12 @@ in
 
         # Lock
         "$mod SHIFT, L, exec, hyprlock"
+
+        # Power menu
+        "$mod SHIFT, Escape, exec, power-menu"
+
+        # Toggle notification center
+        "$mod, N, exec, swaync-client -t -sw"
       ];
 
       bindm = [
@@ -259,7 +294,9 @@ in
     hypridle
     hyprlock
     swaynotificationcenter
+    networkmanagerapplet
     showHyprKeybindings
     toggleRecording
+    powerMenu
   ];
 }

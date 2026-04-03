@@ -12,6 +12,7 @@
     ./zen-browser.nix
     ./neovim.nix
     ./rofi.nix
+    ./swaync.nix
     ./storage.nix
     ./hyprland
     ./waybar
