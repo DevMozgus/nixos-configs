@@ -38,7 +38,7 @@ in
         }
         # Date
         {
-          text = ''cmd[update:60000] echo "$(date +'%A, %B %d')"'';
+          text = ''cmd[update:60000] echo "$(LC_TIME=C date +'%A, %B %d')"'';
           font_size = 18;
           font_family = font;
           color = "0x${c.base05}CC";

@@ -14,6 +14,7 @@
     };
     sddmOmarchy = prev.callPackage ../pkgs/sddm-omarchy {
       logo = ../assets/icon.png;
+      wallpaper = ../assets/wallpaper3.png;
     };
   })
 ]

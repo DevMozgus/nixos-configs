@@ -1,6 +1,12 @@
 # SDDM theme: Material Deep Ocean (omarchy-style)
 # Minimal login screen: centered NixOS snowflake + password field.
-{ stdenv, lib, writeText, logo }:
+{
+  stdenv,
+  lib,
+  writeText,
+  logo,
+  wallpaper,
+}:
 
 let
   mainQml = writeText "Main.qml" ''
@@ -34,6 +40,12 @@ let
             function onLoginSucceeded() {
                 errorMessage.text = ""
             }
+        }
+
+        Image {
+            anchors.fill: parent
+            source: "wallpaper3.png"
+            fillMode: Image.PreserveAspectCrop
         }
 
         Column {
@@ -133,6 +145,7 @@ stdenv.mkDerivation {
     cp ${mainQml} $out/share/sddm/themes/omarchy/Main.qml
     cp ${metadataDesktop} $out/share/sddm/themes/omarchy/metadata.desktop
     cp ${themeConf} $out/share/sddm/themes/omarchy/theme.conf
+    cp ${wallpaper} $out/share/sddm/themes/omarchy/wallpaper3.png
   '';
 
   meta = with lib; {

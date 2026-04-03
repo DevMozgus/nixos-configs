@@ -215,8 +215,10 @@ in
         "$mod, M, exit,"
         "$mod, V, togglefloating,"
         "$mod, F, fullscreen,"
-        "$mod, P, pseudo,"
         "$mod, S, togglesplit,"
+        "$mod, E, exec, dolphin"
+        "$mod, P, exec, zen"
+        "$mod, C, exec, code"
 
         # Move focus
         "$mod, left, movefocus, l"
@@ -260,6 +262,7 @@ in
         "$mod SHIFT, R, exec, toggle-recording"
 
         # Lock
+        "$mod, L, exec, hyprlock"
         "$mod SHIFT, L, exec, hyprlock"
 
         # Power menu
