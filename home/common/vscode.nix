@@ -219,6 +219,7 @@
         "dart.debugSdkLibraries" = false;
         "redhat.telemetry.enabled" = false;
         "git.openRepositoryInParentFolders" = "never";
+        "keyboard.dispatch" = "keyCode";
         "svg.preview.mode" = "svg";
         "material-icon-theme.files.associations" = {
           "*.translation.ts" = "I18n";

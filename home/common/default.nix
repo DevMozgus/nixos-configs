@@ -29,6 +29,7 @@
       # Media players
       mpv
       jellyfin-media-player
+      jellyfin-tui
 
       # File management
       kdePackages.dolphin
