@@ -1,6 +1,6 @@
 # SDDM theme: Material Deep Ocean (omarchy-style)
 # Minimal login screen: centered NixOS snowflake + password field.
-{ stdenv, lib, writeText, nixosIcons }:
+{ stdenv, lib, writeText, icon }:
 
 let
   mainQml = writeText "Main.qml" ''
@@ -136,8 +136,7 @@ stdenv.mkDerivation {
     cp ${mainQml} $out/share/sddm/themes/omarchy/Main.qml
     cp ${metadataDesktop} $out/share/sddm/themes/omarchy/metadata.desktop
     cp ${themeConf} $out/share/sddm/themes/omarchy/theme.conf
-    cp ${nixosIcons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg \
-      $out/share/sddm/themes/omarchy/logo.svg
+    cp ${icon} $out/share/sddm/themes/omarchy/logo.svg
   '';
 
   meta = with lib; {

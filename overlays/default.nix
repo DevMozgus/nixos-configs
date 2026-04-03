@@ -10,10 +10,10 @@
   # Custom packages overlay
   (final: prev: {
     materialDeepOceanPlymouth = prev.callPackage ../pkgs/plymouth-material-deep-ocean {
-      nixosIcons = prev.nixos-icons;
+      logo = ../assets/logo.png;
     };
     sddmOmarchy = prev.callPackage ../pkgs/sddm-omarchy {
-      nixosIcons = prev.nixos-icons;
+      icon = ../assets/icon.svg;
     };
   })
 ]

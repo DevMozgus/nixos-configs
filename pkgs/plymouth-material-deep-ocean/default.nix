@@ -1,7 +1,7 @@
 # Custom Plymouth script-theme: Material Deep Ocean (omarchy-style)
-# Centered NixOS snowflake on flat dark background with animated progress bar
+# Centered logo on flat dark background with spinning circle animation
 # and full password dialog (lock, entry field, bullet dots).
-{ stdenv, lib, writeText, imagemagick, librsvg, nixosIcons }:
+{ stdenv, lib, writeText, imagemagick, logo }:
 
 let
   plymouthConfig = writeText "material-deep-ocean.plymouth" ''
@@ -24,21 +24,16 @@ let
     Window.SetBackgroundTopColor(0.059, 0.067, 0.102);
     Window.SetBackgroundBottomColor(0.059, 0.067, 0.102);
 
-    # Progress bar timing
-    global.fake_progress_limit = 0.7;
-    global.fake_progress_duration = 15.0;
-    global.fake_progress = 0.0;
-    global.real_progress = 0.0;
-    global.fake_progress_active = 0;
-    global.animation_frame = 0;
+    # Spinner state
+    global.spinner_angle = 0.0;
+    global.spinner_visible = 0;
     global.password_shown = 0;
-    global.max_progress = 0.0;
 
     # Track screen dimensions so we can detect resolution changes
     global.screen_width = 0;
     global.screen_height = 0;
 
-    #--- Load images and create sprites (images are screen-size-independent) ---
+    #--- Load images and create sprites ---
 
     logo.image = Image("logo.png");
     logo.sprite = Sprite(logo.image);
@@ -58,14 +53,9 @@ let
     bullet.image = Image("bullet.png");
     bullet.sprites = [];
 
-    progress_box.image = Image("progress_box.png");
-    progress_box.sprite = Sprite(progress_box.image);
-    progress_box.sprite.SetOpacity(0);
-
-    progress_bar.original_image = Image("progress_bar.png");
-    progress_bar.sprite = Sprite();
-    progress_bar.image = progress_bar.original_image.Scale(1, progress_bar.original_image.GetHeight());
-    progress_bar.sprite.SetOpacity(0);
+    spinner.image = Image("spinner.png");
+    spinner.sprite = Sprite();
+    spinner.sprite.SetOpacity(0);
 
     #--- Repositioning (called at init and whenever the screen resolution changes) ---
 
@@ -77,6 +67,9 @@ let
         logo.sprite.SetX(sw / 2 - logo.image.GetWidth() / 2);
         logo.sprite.SetY(sh / 2 - logo.image.GetHeight() / 2);
 
+        spinner_y = logo.sprite.GetY() + logo.image.GetHeight() + 40;
+        spinner.sprite.SetPosition(sw / 2 - spinner.image.GetWidth() / 2, spinner_y, 0);
+
         entry.y = logo.sprite.GetY() + logo.image.GetHeight() + 40;
         group_width = lock.width_val + 15 + entry.image.GetWidth();
         lock.x = sw / 2 - group_width / 2;
@@ -85,12 +78,6 @@ let
 
         entry.sprite.SetPosition(entry.x, entry.y, 10001);
         lock.sprite.SetPosition(lock.x, lock.y, 10001);
-
-        pb_y = entry.y + entry.image.GetHeight() / 2 - progress_box.image.GetHeight() / 2;
-        progress_box.sprite.SetPosition(sw / 2 - progress_box.image.GetWidth() / 2, pb_y, 0);
-
-        bar_y = pb_y + (progress_box.image.GetHeight() - progress_bar.original_image.GetHeight()) / 2;
-        progress_bar.sprite.SetPosition(sw / 2 - progress_bar.original_image.GetWidth() / 2, bar_y, 1);
 
         for (index = 0; bullet.sprites[index]; index++)
           {
@@ -102,30 +89,18 @@ let
 
     reposition_sprites();
 
-    #--- Helper Functions ---
+    #--- Spinner helpers ---
 
-    fun update_progress_bar (progress)
+    fun show_spinner ()
       {
-        if (progress > global.max_progress)
-          {
-            global.max_progress = progress;
-            width = Math.Int(progress_bar.original_image.GetWidth() * progress);
-            if (width < 1) width = 1;
-            progress_bar.image = progress_bar.original_image.Scale(width, progress_bar.original_image.GetHeight());
-            progress_bar.sprite.SetImage(progress_bar.image);
-          }
+        global.spinner_visible = 1;
+        spinner.sprite.SetOpacity(1);
       }
 
-    fun show_progress_bar ()
+    fun hide_spinner ()
       {
-        progress_box.sprite.SetOpacity(1);
-        progress_bar.sprite.SetOpacity(1);
-      }
-
-    fun hide_progress_bar ()
-      {
-        progress_box.sprite.SetOpacity(0);
-        progress_bar.sprite.SetOpacity(0);
+        global.spinner_visible = 0;
+        spinner.sprite.SetOpacity(0);
       }
 
     fun show_password_dialog ()
@@ -142,27 +117,10 @@ let
           bullet.sprites[index].SetOpacity(0);
       }
 
-    fun start_fake_progress ()
-      {
-        if (global.max_progress == 0.0)
-          {
-            global.fake_progress = 0.0;
-            global.real_progress = 0.0;
-            update_progress_bar(0.0);
-          }
-        global.fake_progress_active = 1;
-        global.animation_frame = 0;
-      }
-
-    fun stop_fake_progress ()
-      {
-        global.fake_progress_active = 0;
-      }
+    #--- Refresh ---
 
     fun refresh_callback ()
       {
-        global.animation_frame++;
-
         # Reposition everything if the display resolution changed
         if (global.screen_width != Window.GetWidth() || global.screen_height != Window.GetHeight())
           {
@@ -171,17 +129,13 @@ let
             reposition_sprites();
           }
 
-        if (global.fake_progress_active == 1)
+        if (global.spinner_visible == 1)
           {
-            elapsed_time = global.animation_frame / 50.0;
-            time_ratio = elapsed_time / global.fake_progress_duration;
-            if (time_ratio > 1.0)
-              time_ratio = 1.0;
-
-            # Apply easing curve: ease-out quadratic
-            eased_ratio = 1 - ((1 - time_ratio) * (1 - time_ratio));
-            global.fake_progress = eased_ratio * global.fake_progress_limit;
-            update_progress_bar(global.fake_progress);
+            global.spinner_angle = global.spinner_angle + 0.2;
+            if (global.spinner_angle >= 6.2832)
+              global.spinner_angle = global.spinner_angle - 6.2832;
+            rotated = spinner.image.Rotate(global.spinner_angle);
+            spinner.sprite.SetImage(rotated);
           }
       }
 
@@ -193,21 +147,14 @@ let
       {
         hide_password_dialog();
         mode = Plymouth.GetMode();
-        if ((mode == "boot" || mode == "resume") && global.password_shown == 1)
-          {
-            show_progress_bar();
-            start_fake_progress();
-          }
+        if (mode == "boot" || mode == "resume")
+          show_spinner();
       }
 
     fun display_password_callback (prompt, bullets)
       {
         global.password_shown = 1;
-        stop_fake_progress();
-        hide_progress_bar();
-        global.max_progress = 0.0;
-        global.fake_progress = 0.0;
-        global.real_progress = 0.0;
+        hide_spinner();
         show_password_dialog();
 
         for (index = 0; bullet.sprites[index]; index++)
@@ -235,20 +182,6 @@ let
 
     Plymouth.SetDisplayNormalFunction (display_normal_callback);
     Plymouth.SetDisplayPasswordFunction (display_password_callback);
-
-    #--- Progress Bar ---
-
-    fun progress_callback (duration, progress)
-      {
-        global.real_progress = progress;
-        if (progress > global.fake_progress_limit)
-          {
-            stop_fake_progress();
-            update_progress_bar(progress);
-          }
-      }
-
-    Plymouth.SetBootProgressFunction (progress_callback);
 
     #--- Quit ---
 
@@ -285,22 +218,14 @@ stdenv.mkDerivation {
 
   phases = [ "buildPhase" "installPhase" ];
 
-  nativeBuildInputs = [ imagemagick librsvg ];
+  nativeBuildInputs = [ imagemagick ];
 
   buildPhase = ''
-    # NixOS snowflake → 256×256 PNG logo
-    rsvg-convert -w 256 -h 256 \
-      ${nixosIcons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg \
-      -o logo.png
-
-    # Progress bar: 300×8px solid #82AAFF (base0D blue)
-    magick -size 300x8 xc:'#82AAFF' progress_bar.png
-
-    # Progress box: 300×8px transparent with 1px #EEFFFF border
-    magick -size 300x8 xc:transparent \
-      -fill none -stroke '#EEFFFF' -strokewidth 1 \
-      -draw "rectangle 0,0 299,7" \
-      progress_box.png
+    # Spinner: 60×60px arc (270-degree, #82AAFF, 5px stroke)
+    magick -size 60x60 xc:transparent \
+      -fill none -stroke '#82AAFF' -strokewidth 5 \
+      -draw "arc 5,5 55,55 0,270" \
+      spinner.png
 
     # Entry field: 280×36px dark bg (#0F111A) with 1px #EEFFFF border
     magick -size 280x36 xc:'#0F111A' \
@@ -325,7 +250,8 @@ stdenv.mkDerivation {
     mkdir -p $out/share/plymouth/themes/material-deep-ocean
     cp ${plymouthConfig} $out/share/plymouth/themes/material-deep-ocean/material-deep-ocean.plymouth
     cp ${plymouthScript} $out/share/plymouth/themes/material-deep-ocean/material-deep-ocean.script
-    cp logo.png progress_bar.png progress_box.png entry.png lock.png bullet.png \
+    cp ${logo} $out/share/plymouth/themes/material-deep-ocean/logo.png
+    cp spinner.png entry.png lock.png bullet.png \
       $out/share/plymouth/themes/material-deep-ocean/
 
     substituteInPlace $out/share/plymouth/themes/material-deep-ocean/material-deep-ocean.plymouth \
@@ -333,7 +259,7 @@ stdenv.mkDerivation {
   '';
 
   meta = with lib; {
-    description = "Material Deep Ocean Plymouth boot splash theme";
+    description = "Material Deep Ocean Plymouth boot splash theme (spinner variant)";
     license = licenses.mit;
     platforms = platforms.linux;
   };
