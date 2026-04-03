@@ -6,7 +6,7 @@
   # LSP and formatter for the nix-ide extension
   home.packages = with pkgs; [
     nil
-    nixfmt-rfc-style
+    nixfmt
   ];
 
   services.gnome-keyring = {
