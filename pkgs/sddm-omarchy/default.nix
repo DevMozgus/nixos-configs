@@ -4,7 +4,8 @@
 
 let
   mainQml = writeText "Main.qml" ''
-    import QtQuick
+    import QtQuick 2.0
+    import SddmComponents 2.0
 
     Rectangle {
         id: root
@@ -12,16 +13,11 @@ let
         height: 480
         color: "#0F111A"
 
-        property string currentUser: {
-            if (userModel.lastUser !== "") return userModel.lastUser
-            // SDDM UserModel.NameRole = Qt::UserRole + 1; Qt.DisplayRole is not handled
-            var n = userModel.data(userModel.index(0, 0), Qt.UserRole + 1)
-            return n ? n.toString() : ""
-        }
+        property string currentUser: userModel.lastUser
         property int sessionIndex: {
-            // SDDM SessionModel.NameRole = Qt::UserRole + 3
             for (var i = 0; i < sessionModel.rowCount(); i++) {
-                var name = (sessionModel.data(sessionModel.index(i, 0), Qt.UserRole + 3) || "").toString()
+                var name = (sessionModel.data(sessionModel.index(i, 0),
+                    Qt.DisplayRole) || "").toString()
                 if (name.indexOf("uwsm") !== -1)
                     return i
             }
@@ -48,9 +44,8 @@ let
             Image {
                 source: "logo.png"
                 width: root.width * 0.35
-                height: root.width * 0.35
+                height: Math.round(width * sourceSize.height / sourceSize.width)
                 fillMode: Image.PreserveAspectFit
-                smooth: true
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -89,7 +84,8 @@ let
 
                         Keys.onPressed: {
                             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                sddm.login(root.currentUser, password.text, root.sessionIndex)
+                                sddm.login(root.currentUser, password.text,
+                                    root.sessionIndex)
                                 event.accepted = true
                             }
                         }
