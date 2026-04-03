@@ -23,7 +23,7 @@ in
         }
       ];
 
-      label = [
+      label = lib.mkForce [
         # Time
         {
           text = ''cmd[update:1000] echo "$(date +'%H:%M')"'';
@@ -60,7 +60,7 @@ in
         }
       ];
 
-      input-field = [
+      input-field = lib.mkForce [
         {
           size = "300, 50";
           rounding = 0;
