@@ -33,6 +33,15 @@
           format = "{icon}";
           on-click = "activate";
           sort-by-number = true;
+          persistent-workspaces = {
+            "*" = [
+              1
+              2
+              3
+              4
+              5
+            ];
+          };
         };
 
         "hyprland/window" = {
@@ -125,12 +134,14 @@
       #workspaces button {
         margin: 4px 2px;
         padding: 0 6px;
+        border-bottom: 2px solid transparent;
       }
 
       #workspaces button.active {
-        background-color: @base0D;
-        color: @base00;
-        border-radius: 8px;
+        background-color: transparent;
+        color: @base06;
+        border-radius: 0;
+        border-bottom: 2px solid @base0D;
         margin: 4px 2px;
         padding: 0 6px;
       }
@@ -152,9 +163,9 @@
         padding: 0 8px;
       }
 
-      #pulseaudio { color: @base0D; }
+      #pulseaudio { color: @base04; }
       #battery { color: @base0B; }
-      #backlight { color: @base0A; }
+      #backlight { color: @base04; }
 
       #custom-notification {
         padding: 0 8px;
@@ -176,7 +187,7 @@
 
       #custom-power-menu {
         padding: 0 10px 0 6px;
-        color: @base08;
+        color: @base04;
         font-size: 14px;
       }
     '';

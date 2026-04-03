@@ -210,10 +210,11 @@ in
       bind = [
         "$mod, Return, exec, $terminal"
         "$mod, D, exec, $menu"
-        "$mod, H, exec, show-hypr-keybindings"
+        "$mod, I, exec, show-hypr-keybindings"
         "$mod, Q, killactive,"
         "$mod, M, exit,"
         "$mod, V, togglefloating,"
+        "$mod, SPACE, togglefloating,"
         "$mod, F, fullscreen,"
         "$mod, S, togglesplit,"
         "$mod, E, exec, dolphin"
@@ -225,6 +226,12 @@ in
         "$mod, right, movefocus, r"
         "$mod, up, movefocus, u"
         "$mod, down, movefocus, d"
+        "$mod, J, cyclenext,"
+        "$mod, K, cyclenext, prev"
+
+        # Move window in stack
+        "$mod SHIFT, J, swapnext,"
+        "$mod SHIFT, K, swapnext, prev"
 
         # Workspaces
         "$mod, 1, workspace, 1"
