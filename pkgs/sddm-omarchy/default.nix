@@ -48,8 +48,11 @@ let
             Image {
                 source: "logo.svg"
                 width: root.width * 0.35
-                height: Math.round(width * sourceSize.height / sourceSize.width)
+                height: Math.round(width * implicitHeight / implicitWidth)
+                sourceSize.width: root.width * 0.35 * Screen.devicePixelRatio
+                sourceSize.height: root.width * 0.35 * Screen.devicePixelRatio
                 fillMode: Image.PreserveAspectFit
+                smooth: true
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
