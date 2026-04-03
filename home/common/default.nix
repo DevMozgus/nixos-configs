@@ -17,6 +17,7 @@
     ./storage.nix
     ./hyprland
     ./waybar
+    ./opencode
   ];
 
   home = {
@@ -57,9 +58,6 @@
 
       # Office
       libreoffice
-
-      # AI coding CLI
-      opencode
     ];
   };
 
