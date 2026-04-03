@@ -13,7 +13,7 @@
       logo = ../assets/logo.png;
     };
     sddmOmarchy = prev.callPackage ../pkgs/sddm-omarchy {
-      icon = ../assets/icon.svg;
+      logo = ../assets/icon.png;
     };
   })
 ]

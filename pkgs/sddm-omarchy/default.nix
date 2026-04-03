@@ -1,6 +1,6 @@
 # SDDM theme: Material Deep Ocean (omarchy-style)
 # Minimal login screen: centered NixOS snowflake + password field.
-{ stdenv, lib, writeText, icon }:
+{ stdenv, lib, writeText, logo }:
 
 let
   mainQml = writeText "Main.qml" ''
@@ -46,11 +46,9 @@ let
             width: parent.width
 
             Image {
-                source: "logo.svg"
+                source: "logo.png"
                 width: root.width * 0.35
                 height: Math.round(width * implicitHeight / implicitWidth)
-                sourceSize.width: root.width * 0.35 * Screen.devicePixelRatio
-                sourceSize.height: root.width * 0.35 * Screen.devicePixelRatio
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -139,7 +137,7 @@ stdenv.mkDerivation {
     cp ${mainQml} $out/share/sddm/themes/omarchy/Main.qml
     cp ${metadataDesktop} $out/share/sddm/themes/omarchy/metadata.desktop
     cp ${themeConf} $out/share/sddm/themes/omarchy/theme.conf
-    cp ${icon} $out/share/sddm/themes/omarchy/logo.svg
+    cp ${logo} $out/share/sddm/themes/omarchy/logo.png
   '';
 
   meta = with lib; {
