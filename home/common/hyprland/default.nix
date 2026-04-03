@@ -279,7 +279,7 @@ in
         "$mod, F, fullscreen,"
         "$mod, S, togglesplit,"
         "$mod, E, exec, dolphin"
-        "$mod, P, exec, zen"
+        "$mod, P, exec, zen-beta"
         "$mod, C, exec, code"
 
         # Move focus
