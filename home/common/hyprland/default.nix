@@ -8,7 +8,7 @@
 }:
 let
   c = config.lib.stylix.colors;
-  wallpaper = config.stylix.image;
+  wallpaper = ../../../assets/wallpaper2.png;
 
   powerMenu = pkgs.writeShellApplication {
     name = "power-menu";

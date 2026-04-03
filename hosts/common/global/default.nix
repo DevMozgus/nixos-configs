@@ -19,7 +19,7 @@
     autoEnable = true;
     polarity = "dark";
     base16Scheme = ./../../../themes/material-deep-ocean.yaml;
-    image = ./../../../assets/wallpaper.png;
+    image = ./../../../assets/wallpaper2.png;
     imageScalingMode = "fill";
 
     fonts = {

@@ -3,7 +3,7 @@
 let
   c = config.lib.stylix.colors;
   font = config.stylix.fonts.monospace.name;
-  wallpaper = toString config.stylix.image;
+  wallpaper = toString ../../../assets/wallpaper2.png;
 in
 {
   programs.hyprlock = {
