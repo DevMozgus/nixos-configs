@@ -9,10 +9,18 @@
     nixfmt-rfc-style
   ];
 
+  services.gnome-keyring = {
+    enable = true;
+    components = [ "secrets" ];
+  };
+
   programs.vscode = {
     enable = true;
     package = pkgs.vscode;
     mutableExtensionsDir = false;
+    argvSettings = {
+      "password-store" = "gnome-libsecret";
+    };
 
     profiles.default = {
       extensions =
