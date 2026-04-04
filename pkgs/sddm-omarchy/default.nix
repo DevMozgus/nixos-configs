@@ -3,7 +3,6 @@
   stdenv,
   lib,
   writeText,
-  logo,
   wallpaper,
 }:
 
@@ -19,12 +18,12 @@ let
         color: "#0F111A"
 
         property string currentUser: userModel.lastUser
+        // 0 = normal, 1 = checking, 2 = failed
+        property int authState: 0
         property int sessionIndex: {
             for (var i = 0; i < sessionModel.rowCount(); i++) {
-                var name = (sessionModel.data(sessionModel.index(i, 0),
-                    Qt.DisplayRole) || "").toString()
-                if (name.indexOf("uwsm") !== -1)
-                    return i
+                var name = (sessionModel.data(sessionModel.index(i, 0), Qt.DisplayRole) || "").toString()
+                if (name.indexOf("uwsm") !== -1) return i
             }
             return sessionModel.lastIndex
         }
@@ -32,86 +31,125 @@ let
         Connections {
             target: sddm
             function onLoginFailed() {
-                errorMessage.text = "Login failed"
+                root.authState = 2
+                errorMsg.text = "Authentication failed"
                 password.text = ""
                 password.focus = true
             }
             function onLoginSucceeded() {
-                errorMessage.text = ""
+                root.authState = 0
+                errorMsg.text = ""
             }
         }
 
+        // Wallpaper
         Image {
             anchors.fill: parent
             source: "wallpaper3.png"
             fillMode: Image.PreserveAspectCrop
         }
 
-        Column {
-            anchors.centerIn: parent
-            spacing: root.height * 0.04
-            width: parent.width
+        // Clock timer (every second)
+        Timer { interval: 1000; running: true; repeat: true; onTriggered: timeLabel.text = Qt.formatTime(new Date(), "HH:mm") }
+        // Date timer (every minute)
+        Timer { interval: 60000; running: true; repeat: true; onTriggered: dateLabel.text = Qt.formatDate(new Date(), "dddd, MMMM d") }
 
-            Image {
-                source: "logo.png"
-                width: root.width * 0.35
-                height: Math.round(width * sourceSize.height / sourceSize.width)
-                fillMode: Image.PreserveAspectFit
-                anchors.horizontalCenter: parent.horizontalCenter
+        // ── Time (top, large) ────────────────────────────────────────────────
+        Text {
+            id: timeLabel
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: root.height * 0.083
+            text: Qt.formatTime(new Date(), "HH:mm")
+            font.family: "JetBrainsMono Nerd Font"
+            font.bold: true
+            font.pixelSize: root.height * 0.093
+            color: "#E6EEFFFF"
+        }
+
+        // ── Date (below time) ────────────────────────────────────────────────
+        Text {
+            id: dateLabel
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: root.height * 0.192
+            text: Qt.formatDate(new Date(), "dddd, MMMM d")
+            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: root.height * 0.017
+            color: "#CC8F93A2"
+        }
+
+        // ── Username (bottom) ────────────────────────────────────────────────
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: root.height * 0.729
+            text: "\uf007  " + userModel.lastUser
+            font.family: "JetBrainsMono Nerd Font"
+            font.bold: true
+            font.pixelSize: root.height * 0.013
+            color: "#8F93A2"
+        }
+
+        // ── Password input ───────────────────────────────────────────────────
+        Rectangle {
+            id: inputContainer
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: root.height * 0.792
+            width: root.height * 0.28
+            height: root.height * 0.046
+            color: "#881F2233"
+            border.color: root.authState === 0 ? "#F2676E95"
+                        : root.authState === 1 ? "#F2C3E88D"
+                        : "#F2FF5370"
+            border.width: 2
+
+            // Placeholder text
+            Text {
+                anchors.fill: parent
+                anchors.margins: root.height * 0.007
+                verticalAlignment: Text.AlignVCenter
+                text: "Enter password\u2026"
+                color: "#676E95"
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: root.height * 0.017
+                font.italic: true
+                visible: password.text.length === 0
             }
 
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: root.width * 0.007
+            TextInput {
+                id: password
+                anchors.fill: parent
+                anchors.margins: root.height * 0.007
+                verticalAlignment: TextInput.AlignVCenter
+                echoMode: TextInput.Password
+                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: root.height * 0.017
+                font.letterSpacing: root.height * 0.004
+                passwordCharacter: "\u2022"
+                color: "#E6EEFFFF"
+                focus: true
 
-                Text {
-                    text: "\uf023"
-                    color: "#EEFFFF"
-                    font.family: "JetBrainsMono Nerd Font"
-                    font.pixelSize: root.height * 0.025
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+                onTextChanged: { if (root.authState === 2) root.authState = 0 }
 
-                Rectangle {
-                    width: root.width * 0.17
-                    height: root.height * 0.04
-                    color: "#0F111A"
-                    border.color: "#8F93A2"
-                    border.width: 1
-                    clip: true
-
-                    TextInput {
-                        id: password
-                        anchors.fill: parent
-                        anchors.margins: root.height * 0.008
-                        verticalAlignment: TextInput.AlignVCenter
-                        echoMode: TextInput.Password
-                        font.family: "JetBrainsMono Nerd Font"
-                        font.pixelSize: root.height * 0.02
-                        font.letterSpacing: root.height * 0.004
-                        passwordCharacter: "\u2022"
-                        color: "#EEFFFF"
-                        focus: true
-
-                        Keys.onPressed: {
-                            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                sddm.login(root.currentUser, password.text,
-                                    root.sessionIndex)
-                                event.accepted = true
-                            }
-                        }
+                Keys.onPressed: function(event) {
+                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                        root.authState = 1
+                        sddm.login(root.currentUser, password.text, root.sessionIndex)
+                        event.accepted = true
                     }
                 }
             }
+        }
 
-            Text {
-                id: errorMessage
-                text: ""
-                color: "#FF5370"
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: root.height * 0.018
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
+        // ── Error message (below input) ──────────────────────────────────────
+        Text {
+            id: errorMsg
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: inputContainer.bottom
+            anchors.topMargin: root.height * 0.012
+            text: ""
+            color: "#F2FF5370"
+            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: root.height * 0.015
+            font.italic: true
         }
 
         Component.onCompleted: password.forceActiveFocus()
@@ -145,7 +183,6 @@ stdenv.mkDerivation {
     cp ${metadataDesktop} $out/share/sddm/themes/omarchy/metadata.desktop
     cp ${themeConf} $out/share/sddm/themes/omarchy/theme.conf
     cp ${wallpaper} $out/share/sddm/themes/omarchy/wallpaper3.png
-    cp ${logo} $out/share/sddm/themes/omarchy/logo.png
   '';
 
   meta = with lib; {
