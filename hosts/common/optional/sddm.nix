@@ -4,8 +4,7 @@
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
-    theme = "omarchy";
-    extraPackages = [ pkgs.sddmOmarchy ];
+    theme = "${pkgs.sddmOmarchy}/share/sddm/themes/omarchy";
   };
 
   environment.systemPackages = [ pkgs.sddmOmarchy ];
