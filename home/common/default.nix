@@ -24,6 +24,7 @@
     ./hyprland
     ./waybar
     ./opencode.nix
+    ./javascript.nix
   ];
 
   home = {
