@@ -8,6 +8,7 @@
 {
   imports = [
     inputs.nixvim.homeModules.nixvim
+    ./1password.nix
     ./shell.nix
     ./git.nix
     ./terminal.nix

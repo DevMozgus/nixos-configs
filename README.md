@@ -71,3 +71,17 @@ overlays/              # nix-vscode-extensions + NUR + custom pkgs
 - Run `git add -A` before `nixos-rebuild` — flakes only evaluate tracked files
 - `hardware-configuration.nix` is generated per-machine with `nixos-generate-config --no-filesystems`
 - Add your wallpaper as `assets/wallpaper.png` (any 1920×1080+ PNG)
+
+## 1Password — post-install setup
+
+1. **Enable the SSH agent** — open 1Password → Settings → Developer → check _Use the SSH agent_
+2. **Add your SSH signing key** — in 1Password, create or import the SSH key you want to use for Git signing
+3. **Set the signing key in git config** — edit `home/common/git.nix` and add the public key:
+   ```nix
+   user.signingKey = "ssh-ed25519 AAAA...";
+   ```
+   You can retrieve the public key after enabling the agent with:
+   ```bash
+   ssh-add -L
+   ```
+4. Rebuild and switch: `git add -A && sudo nixos-rebuild switch --flake .#<hostname>`
