@@ -85,6 +85,7 @@ let
       pkgs.wl-clipboard
       pkgs.libnotify
       pkgs.mpv
+      pkgs.hyprpicker
     ];
     text = ''
       CHOSEN=$(printf '%s\n' \
@@ -94,6 +95,7 @@ let
         "󰕧  Record Screen" \
         "󰕧  Record Screen + Audio" \
         "󰕧  Record + Webcam" \
+        "󰈠  Color Picker" \
         | rofi -dmenu -p "")
 
       case "$CHOSEN" in
@@ -127,10 +129,12 @@ let
           mkdir -p "$HOME/Videos"
           FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
           notify-send "Screen Recording" "Recording with audio + webcam…"
-          mpv --no-border --ontop --geometry=320x240+20+20 /dev/video0 &
+          mpv --title="webcam" --no-border /dev/video0 &
           wf-recorder --audio -f "$FILE"
           wl-copy < "$FILE"
           notify-send "Screen Recording" "Saved and copied: $FILE" ;;
+        "󰈠  Color Picker")
+          hyprpicker -a ;;
       esac
     '';
   };
@@ -347,10 +351,18 @@ in
         "$mod, mouse:273, resizewindow"
       ];
     };
+
+    extraConfig = ''
+      windowrule = float on, match:title webcam
+      windowrule = pin on, match:title webcam
+      windowrule = size 320 240, match:title webcam
+      windowrule = move 100%-340 100%-260, match:title webcam
+    '';
   };
 
   home.packages = with pkgs; [
     hyprpaper
+    hyprpicker
     grimblast
     satty
     slurp
