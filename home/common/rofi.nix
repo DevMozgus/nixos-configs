@@ -227,4 +227,124 @@ in
         text-color:       @red;
     }
   '';
+
+  # Keybindings reference theme — wide, compact, many lines at once
+  xdg.configFile."rofi/keybindings-theme.rasi".text = ''
+    /**
+     * Material Deep Ocean — Keybindings Reference Theme
+     * Wide layout designed to show many bindings at a glance
+     **/
+
+    * {
+        bg:      #${c.base00}FF;
+        bg-alt:  #${c.base01}FF;
+        bg-sel:  #${c.base02}FF;
+        fg:      #${c.base05}FF;
+        fg-em:   #${c.base06}EE;
+        accent:  #${c.base0D}FF;
+        comment: #${c.base03}CC;
+        font:    "${font} 10";
+    }
+
+    configuration {
+        show-icons: false;
+    }
+
+    window {
+        transparency:     "real";
+        location:         center;
+        anchor:           center;
+        fullscreen:       false;
+        width:            1100px;
+        border:           0px solid;
+        border-radius:    10px;
+        border-color:     @accent;
+        background-color: @bg;
+        cursor:           "default";
+    }
+
+    mainbox {
+        enabled:          true;
+        spacing:          0px;
+        background-color: transparent;
+        children:         [ "inputbar", "listview" ];
+    }
+
+    inputbar {
+        enabled:          true;
+        spacing:          10px;
+        padding:          10px 14px;
+        border-radius:    10px 10px 0px 0px;
+        background-color: @bg-alt;
+        text-color:       @accent;
+        children:         [ "prompt", "entry" ];
+    }
+
+    prompt {
+        enabled:          true;
+        background-color: inherit;
+        text-color:       inherit;
+    }
+
+    entry {
+        enabled:          true;
+        background-color: inherit;
+        text-color:       @fg-em;
+        cursor:           text;
+        placeholder:      "Filter bindings...";
+        placeholder-color: @comment;
+    }
+
+    listview {
+        enabled:          true;
+        columns:          1;
+        lines:            22;
+        cycle:            false;
+        dynamic:          true;
+        scrollbar:        true;
+        layout:           vertical;
+        spacing:          0px;
+        padding:          6px;
+        border-radius:    0px 0px 10px 10px;
+        background-color: @bg;
+        text-color:       @fg;
+    }
+
+    scrollbar {
+        width:            3px;
+        border:           0;
+        handle-color:     @bg-sel;
+        handle-width:     3px;
+        padding:          0;
+    }
+
+    element {
+        enabled:          true;
+        spacing:          0px;
+        padding:          3px 10px;
+        border-radius:    4px;
+        background-color: transparent;
+        text-color:       @fg;
+        cursor:           pointer;
+    }
+
+    element normal.normal {
+        background-color: transparent;
+        text-color:       @fg;
+    }
+
+    element selected.normal {
+        background-color: @bg-sel;
+        text-color:       @fg-em;
+    }
+
+    element-text {
+        background-color: transparent;
+        text-color:       inherit;
+        highlight:        inherit;
+        cursor:           inherit;
+        vertical-align:   0.5;
+        horizontal-align: 0.0;
+    }
+  '';
 }

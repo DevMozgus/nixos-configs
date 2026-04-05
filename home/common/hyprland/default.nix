@@ -33,25 +33,70 @@ let
 
   showHyprKeybindings = pkgs.writeShellApplication {
     name = "show-hypr-keybindings";
-    runtimeInputs = [
-      pkgs.jq
-      pkgs.rofi
-    ];
+    runtimeInputs = [ pkgs.rofi ];
     text = ''
-      hyprctl binds -j | jq -r '
-        def mods:
-          . as $m |
-          [ if (($m / 64 | floor) % 2) == 1 then "SUPER" else empty end,
-            if (($m / 8  | floor) % 2) == 1 then "ALT"   else empty end,
-            if (($m / 4  | floor) % 2) == 1 then "CTRL"  else empty end,
-            if (($m / 1  | floor) % 2) == 1 then "SHIFT" else empty end
-          ];
-        .[] | select(.mouse == false) |
-        ((.modmask | mods) + [.key] | join("+")) +
-        "  \u2192  " +
-        .dispatcher +
-        (if .arg != "" then " " + .arg else "" end)
-      ' | sort | rofi -dmenu -i -p "Keybindings"
+      hdr() { printf '<span foreground="#${c.base0A}" weight="bold">  ── %s ──────────────────────────────────────────────</span>\n' "$1"; }
+      kb()  { printf '  %-28s  %s\n' "$1" "$2"; }
+
+      {
+        hdr "Apps"
+        kb "SUPER + Return"           "Terminal (Kitty)"
+        kb "SUPER + D"                "App Launcher (Rofi)"
+        kb "SUPER + E"                "File Manager (Dolphin)"
+        kb "SUPER + P"                "Browser (Zen)"
+        kb "SUPER + C"                "Code Editor (VSCode)"
+        kb "SUPER + M"                "Media Player (Jellyfin TUI)"
+        echo ""
+        hdr "Window Management"
+        kb "SUPER + Q"                "Close Window"
+        kb "SUPER + V  /  SPACE"      "Toggle Floating"
+        kb "SUPER + F"                "Fullscreen"
+        kb "SUPER + S"                "Toggle Split"
+        echo ""
+        hdr "Focus & Navigation"
+        kb "SUPER + ←/→/↑/↓"         "Move Focus"
+        kb "SUPER + J  /  K"          "Cycle Focus (Next / Prev)"
+        kb "SUPER + SHIFT + J  /  K"  "Swap Windows (Next / Prev)"
+        echo ""
+        hdr "Resize"
+        kb "SUPER + H  /  L"          "Resize Horizontal (−100 / +100)"
+        kb "SUPER + SHIFT + H  /  L"  "Resize Vertical (−100 / +100)"
+        echo ""
+        hdr "Workspaces"
+        kb "SUPER + 1–0"              "Switch to Workspace 1–10"
+        kb "SUPER + SHIFT + 1–0"      "Move Window to Workspace 1–10"
+        echo ""
+        hdr "Mouse"
+        kb "SUPER + LMB drag"         "Move Window"
+        kb "SUPER + RMB drag"         "Resize Window"
+        echo ""
+        hdr "Screenshot & Recording"
+        kb "SUPER + S"                "Screenshot Region → Clipboard"
+        kb "SUPER + SHIFT + S"        "Screenshot / Recording Menu"
+        kb "Print"                    "Screenshot Screen → Clipboard"
+        kb "SUPER + SHIFT + R"        "Toggle Screen Recording"
+        echo ""
+        hdr "Clipboard & Notifications"
+        kb "SUPER + SHIFT + V"        "Clipboard History (cliphist)"
+        kb "SUPER + N"                "Notification Center (SwayNC)"
+        echo ""
+        hdr "Media Keys (Laptop)"
+        kb "XF86AudioRaiseVolume"     "Volume Up (+5%)"
+        kb "XF86AudioLowerVolume"     "Volume Down (−5%)"
+        kb "XF86AudioMute"            "Toggle Mute"
+        kb "XF86AudioMicMute"         "Toggle Mic Mute"
+        kb "XF86MonBrightnessUp"      "Brightness Up (+5%)"
+        kb "XF86MonBrightnessDown"    "Brightness Down (−5%)"
+        kb "XF86AudioPlay / Pause"    "Play / Pause"
+        kb "XF86AudioNext / Prev"     "Next / Previous Track"
+        echo ""
+        hdr "System"
+        kb "SUPER + B"                "Power Menu"
+        kb "SUPER + SHIFT + Escape"   "Power Menu"
+        kb "SUPER + I"                "Keybindings Reference (this menu)"
+      } | rofi -dmenu -markup-rows \
+            -theme "$HOME/.config/rofi/keybindings-theme.rasi" \
+            -p "󰌌  Keybindings" || true
     '';
   };
 
@@ -69,7 +114,7 @@ let
         mkdir -p "$HOME/Videos"
         FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
         notify-send "Screen Recording" "Recording started — $FILE"
-        wf-recorder -f "$FILE"
+        wf-recorder --audio-device rnnoise_source -f "$FILE"
       fi
     '';
   };
@@ -122,15 +167,15 @@ let
           mkdir -p "$HOME/Videos"
           FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
           notify-send "Screen Recording" "Recording with audio…"
-          wf-recorder --audio -f "$FILE"
+          wf-recorder --audio-device rnnoise_source -f "$FILE"
           wl-copy < "$FILE"
           notify-send "Screen Recording" "Saved and copied: $FILE" ;;
         "󰕧  Record + Webcam")
           mkdir -p "$HOME/Videos"
           FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
           notify-send "Screen Recording" "Recording with audio + webcam…"
-          mpv --title="webcam" --no-border /dev/video0 &
-          wf-recorder --audio -f "$FILE"
+          mpv --title="webcam" --no-border --autofit=320 /dev/video0 &
+          wf-recorder --audio-device rnnoise_source -f "$FILE"
           wl-copy < "$FILE"
           notify-send "Screen Recording" "Saved and copied: $FILE" ;;
         "󰈠  Color Picker")
@@ -356,10 +401,9 @@ in
     };
 
     extraConfig = ''
-      windowrule = float on, match:title webcam
-      windowrule = pin on, match:title webcam
-      windowrule = size 320 240, match:title webcam
-      windowrule = move 100%-340 100%-260, match:title webcam
+      windowrule = float on, match:initial_title webcam
+      windowrule = pin on, match:initial_title webcam
+      windowrule = move (monitor_w-window_w-20) (monitor_h-window_h-20), match:initial_title webcam
     '';
   };
 
