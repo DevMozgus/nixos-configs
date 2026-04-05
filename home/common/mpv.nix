@@ -22,6 +22,7 @@ in
       scripts = with pkgs.mpvScripts; [
         modernz
         sponsorblock
+        thumbfast
       ];
     };
 
