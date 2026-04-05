@@ -277,7 +277,6 @@ in
         "$mod, D, exec, $menu"
         "$mod, I, exec, show-hypr-keybindings"
         "$mod, Q, killactive,"
-        "$mod, M, exit,"
         "$mod, V, togglefloating,"
         "$mod, SPACE, togglefloating,"
         "$mod, F, fullscreen,"
@@ -285,6 +284,8 @@ in
         "$mod, E, exec, dolphin"
         "$mod, P, exec, zen-beta"
         "$mod, C, exec, code"
+        "$mod, B, exec, power-menu"
+        "$mod, M, exec, kitty -e jellyfin-tui"
 
         # Move focus
         "$mod, left, movefocus, l"
@@ -293,6 +294,12 @@ in
         "$mod, down, movefocus, d"
         "$mod, J, cyclenext,"
         "$mod, K, cyclenext, prev"
+
+        # Resize window
+        "$mod, H, resizeactive, -100 0"
+        "$mod, L, resizeactive, 100 0"
+        "$mod SHIFT, H, resizeactive, 0 -100"
+        "$mod SHIFT, L, resizeactive, 0 100"
 
         # Move window in stack
         "$mod SHIFT, J, swapnext,"
@@ -334,10 +341,6 @@ in
 
         # Screen recording toggle
         "$mod SHIFT, R, exec, toggle-recording"
-
-        # Lock
-        "$mod, L, exec, hyprlock"
-        "$mod SHIFT, L, exec, hyprlock"
 
         # Power menu
         "$mod SHIFT, Escape, exec, power-menu"

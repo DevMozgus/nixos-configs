@@ -80,6 +80,11 @@ $character";
     };
   };
 
+  programs.zsh.shellAliases = {
+    i-desktop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop";
+    i-laptop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop";
+  };
+
   programs.autojump.enable = true;
 
   programs.direnv = {

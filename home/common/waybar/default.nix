@@ -14,7 +14,6 @@
 
         modules-left = [
           "hyprland/workspaces"
-          "hyprland/window"
         ];
         modules-center = [ "clock" ];
         modules-right =
@@ -43,11 +42,6 @@
               5
             ];
           };
-        };
-
-        "hyprland/window" = {
-          max-length = 50;
-          separate-outputs = true;
         };
 
         clock = {

@@ -5,9 +5,9 @@
   # In 1Password Settings → Developer, enable "Use the SSH agent" first.
   programs.ssh = {
     enable = true;
-    extraConfig = ''
-      Host *
-          IdentityAgent ~/.1password/agent.sock
-    '';
+    enableDefaultConfig = false;
+    matchBlocks."*" = {
+      identityAgent = "~/.1password/agent.sock";
+    };
   };
 }
