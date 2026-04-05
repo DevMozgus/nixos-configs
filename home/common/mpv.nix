@@ -14,7 +14,7 @@ in
       };
     };
 
-    scripts = [ pkgs.mpvScripts.modernz ];
+    scripts = with pkgs.mpvScripts; [ modernz sponsorblock ];
 
     config = {
       # Required: disable the stock OSC so ModernZ takes over
