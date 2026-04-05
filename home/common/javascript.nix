@@ -4,6 +4,7 @@
   home.packages = with pkgs; [
     nodejs
     bun
+    deno
   ];
 
   # Redirect npm global prefix into home so `npm install -g` works
