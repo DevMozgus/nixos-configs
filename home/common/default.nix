@@ -46,6 +46,7 @@
       peazip
       imv
       kdePackages.okular
+      papirus-icon-theme
 
       # Dolphin thumbnailers (file previews)
       kdePackages.ffmpegthumbs
@@ -83,6 +84,37 @@
   services.syncthing.enable = true;
 
   gtk.gtk4.theme = null;
+
+  # Qt theming — enables Stylix's Qt target (uses qtct to theme Qt apps
+  # like Dolphin and Okular with the Material Deep Ocean palette).
+  qt.enable = true;
+
+  # Use Papirus-Dark icon theme for KDE apps (Dolphin, Okular, etc.).
+  # Breeze colorizes folders with the bright accent color making embedded
+  # icons hard to read; Papirus-Dark uses darker muted folder colors.
+  # kdeglobals is not written by Stylix when using the qtct platform theme.
+  xdg.configFile."kdeglobals".text = ''
+    [Icons]
+    Theme=Papirus-Dark
+  '';
+
+  # GTK button contrast fix — Stylix's generated GTK theme can leave button
+  # text too dark on dark backgrounds in apps like blueman.
+  gtk.gtk3.extraCss = ''
+    button {
+      color: #EEFFFF;
+      background-color: #1F2233;
+      border: 1px solid #464B5D;
+    }
+    button:hover {
+      background-color: #464B5D;
+    }
+    button:active,
+    button.suggested-action {
+      background-color: #82AAFF;
+      color: #0F111A;
+    }
+  '';
 
   xdg.mimeApps = {
     enable = true;
