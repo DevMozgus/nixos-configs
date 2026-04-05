@@ -8,7 +8,10 @@
     oh-my-zsh = {
       enable = true;
       theme = "robbyrussell";
-      plugins = [ "git" "docker" "kubectl" ];
+      plugins = [
+        "git"
+        "docker"
+      ];
     };
   };
 
@@ -37,15 +40,8 @@
 
   programs.zoxide.enable = true;
 
-  # Auto-start Hyprland via UWSM on TTY login
-  programs.zsh.profileExtra = ''
-    if uwsm check may-start; then
-      exec uwsm start hyprland-uwsm.desktop
-    fi
-  '';
-
   home.sessionVariables = {
     EDITOR = "nvim";
-    BROWSER = "firefox";
+    BROWSER = "zen-beta";
   };
 }

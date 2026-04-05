@@ -58,7 +58,6 @@
       resvg
 
       # Networking / remote
-      netbird
       rustdesk
 
       # Graphics

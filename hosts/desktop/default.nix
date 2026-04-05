@@ -10,6 +10,7 @@
     ../common/optional/docker.nix
     ../common/optional/network-manager.nix
     ../common/optional/1password.nix
+    ../common/optional/netbird.nix
     ./hardware-configuration.nix
   ];
 

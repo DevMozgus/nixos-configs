@@ -72,6 +72,17 @@ overlays/              # nix-vscode-extensions + NUR + custom pkgs
 - `hardware-configuration.nix` is generated per-machine with `nixos-generate-config --no-filesystems`
 - Add your wallpaper as `assets/wallpaper.png` (any 1920×1080+ PNG)
 
+## Netbird — post-install setup
+
+1. After rebuilding, authenticate the peer:
+   ```bash
+   netbird-wt0 login
+   ```
+2. Verify the connection:
+   ```bash
+   netbird-wt0 status
+   ```
+
 ## 1Password — post-install setup
 
 1. **Enable the SSH agent** — open 1Password → Settings → Developer → check _Use the SSH agent_
