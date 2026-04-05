@@ -25,6 +25,7 @@
     ./waybar
     ./opencode.nix
     ./javascript.nix
+    ./mpv.nix
   ];
 
   home = {
@@ -37,7 +38,6 @@
       google-chrome
 
       # Media players
-      mpv
       jellyfin-media-player
       jellyfin-tui
 

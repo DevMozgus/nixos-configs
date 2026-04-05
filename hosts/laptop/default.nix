@@ -11,6 +11,7 @@
     ../common/optional/network-manager.nix
     ../common/optional/1password.nix
     ../common/optional/netbird.nix
+    ../common/optional/codecs.nix
     ./hardware-configuration.nix
   ];
 
