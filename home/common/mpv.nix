@@ -1,5 +1,10 @@
 # mpv with ModernZ OSC — styled to Material Deep Ocean
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   c = config.lib.stylix.colors.withHashtag;
 in
@@ -8,13 +13,17 @@ in
     enable = true;
 
     # ffmpeg-full adds codec support for H.265/HEVC, AV1, VP9, Opus, etc.
+    # Scripts are bundled into the package override because `package` and
+    # `scripts` are mutually exclusive in the home-manager mpv module.
     package = pkgs.mpv.override {
       mpv-unwrapped = pkgs.mpv-unwrapped.override {
         ffmpeg = pkgs.ffmpeg-full;
       };
+      scripts = with pkgs.mpvScripts; [
+        modernz
+        sponsorblock
+      ];
     };
-
-    scripts = with pkgs.mpvScripts; [ modernz sponsorblock ];
 
     config = {
       # Required: disable the stock OSC so ModernZ takes over
@@ -34,18 +43,18 @@ in
       icon_style = "filled";
       seekbar_height = "medium";
 
-      # Colors — Material Deep Ocean palette
-      osc_color            = c.base00; # #0F111A  dark background
-      seekbarfg_color      = c.base0D; # #82AAFF  blue accent
-      seekbarbg_color      = c.base03; # #464B5D  muted blue-grey
-      hover_effect_color   = c.base0D; # #82AAFF
-      nibble_color         = c.base0D; # #82AAFF
-      title_color          = c.base06; # #EEFFFF  light foreground
-      time_color           = c.base05; # #8F93A2  foreground
-      chapter_title_color  = c.base05; # #8F93A2
-      side_buttons_color   = c.base06; # #EEFFFF
-      middle_buttons_color = c.base06; # #EEFFFF
-      playpause_color      = c.base06; # #EEFFFF
+      # Colors — Material Deep Ocean palette (lib.mkForce overrides Stylix mpv module)
+      osc_color = lib.mkForce c.base00; # #0F111A  dark background
+      seekbarfg_color = lib.mkForce c.base0D; # #82AAFF  blue accent
+      seekbarbg_color = lib.mkForce c.base03; # #464B5D  muted blue-grey
+      hover_effect_color = lib.mkForce c.base0D; # #82AAFF
+      nibble_color = lib.mkForce c.base0D; # #82AAFF
+      title_color = lib.mkForce c.base06; # #EEFFFF  light foreground
+      time_color = lib.mkForce c.base05; # #8F93A2  foreground
+      chapter_title_color = lib.mkForce c.base05; # #8F93A2
+      side_buttons_color = lib.mkForce c.base06; # #EEFFFF
+      middle_buttons_color = lib.mkForce c.base06; # #EEFFFF
+      playpause_color = lib.mkForce c.base06; # #EEFFFF
     };
   };
 }
