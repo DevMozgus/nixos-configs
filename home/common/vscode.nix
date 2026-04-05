@@ -99,10 +99,29 @@
         "workbench.iconTheme" = "material-icon-theme";
         "workbench.editor.pinnedTabsOnSeparateRow" = true;
         "workbench.secondarySideBar.defaultVisibility" = "hidden";
+
+        # Use VS Code's own dialog renderer so dialog.* / button.* color tokens apply
+        # (native Linux GTK dialogs bypass workbench.colorCustomizations entirely)
+        "window.dialogStyle" = "custom";
         "workbench.colorCustomizations" = {
           "[Material Theme Ocean High Contrast]" = {
             "editorLineNumber.activeForeground" = "#babed8";
             "editorCursor.foreground" = "#FFCC00";
+
+            # Dialog chrome
+            "dialog.background" = "#181A29";
+            "dialog.foreground" = "#8F93A2";
+            "dialog.border" = "#1F2233";
+
+            # Primary button (OK / confirm)
+            "button.background" = "#82AAFF";
+            "button.foreground" = "#0F111A";
+            "button.hoverBackground" = "#9ABBFF";
+
+            # Secondary buttons (Cancel, Don't Show Again)
+            "button.secondaryBackground" = "#1F2233";
+            "button.secondaryForeground" = "#8F93A2";
+            "button.secondaryHoverBackground" = "#464B5D";
           };
         };
 
