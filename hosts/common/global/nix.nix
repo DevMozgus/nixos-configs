@@ -1,4 +1,4 @@
-# Flake settings, garbage collection, substituters, trusted users
+# Flake settings, garbage collection, auto-upgrade, substituters, trusted users
 { ... }:
 {
   nixpkgs.config.allowUnfree = true;
@@ -28,7 +28,18 @@
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 7d";
+      options = "--delete-older-than 14d";
     };
+  };
+
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:DevMozgus/nixos-configs";
+    flags = [
+      "--update-input"
+      "nixpkgs"
+    ];
+    dates = "weekly";
+    randomizedDelaySec = "45min";
   };
 }
