@@ -73,6 +73,10 @@
         "editor.fontSize" = lib.mkForce 16;
         "editor.fontFamily" = lib.mkForce "FiraCode Nerd Font, Menlo, Monaco, 'Courier New', monospace";
         "editor.fontLigatures" = true;
+
+        # Terminal
+        "terminal.integrated.fontFamily" = "FiraCode Nerd Font";
+        "terminal.integrated.fontSize" = 14;
         "editor.fontWeight" = 500;
         "editor.formatOnSave" = true;
         "editor.lineNumbers" = "relative";
