@@ -78,6 +78,7 @@ let
         echo ""
         hdr "Clipboard & Notifications"
         kb "SUPER + SHIFT + V"        "Clipboard History (cliphist)"
+        kb "SUPER + SHIFT + SPACE"     "Emoji Picker"
         kb "SUPER + N"                "Notification Center (SwayNC)"
         echo ""
         hdr "Media Keys (Laptop)"
@@ -97,6 +98,20 @@ let
       } | rofi -dmenu -markup-rows \
             -theme "$HOME/.config/rofi/keybindings-theme.rasi" \
             -p "󰌌  Keybindings" || true
+    '';
+  };
+
+  emojiPicker = pkgs.writeShellApplication {
+    name = "emoji-picker";
+    runtimeInputs = [
+      pkgs.rofimoji
+      pkgs.rofi
+      pkgs.wl-clipboard
+    ];
+    text = ''
+      rofimoji \
+        --action copy \
+        --selector-args "--theme $HOME/.config/rofi/emoji-theme.rasi"
     '';
   };
 
@@ -384,6 +399,9 @@ in
         # Clipboard history
         "$mod SHIFT, V, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy"
 
+        # Emoji picker
+        "$mod SHIFT, SPACE, exec, emoji-picker"
+
         # Screen recording toggle
         "$mod SHIFT, R, exec, toggle-recording"
 
@@ -424,5 +442,6 @@ in
     toggleRecording
     screenshotMenu
     powerMenu
+    emojiPicker
   ];
 }

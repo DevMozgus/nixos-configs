@@ -52,7 +52,7 @@ in
         "text" = "Do Not Disturb";
       };
       "mpris" = {
-        "show-album-art" = "always";
+        "show-album-art" = "when-available";
         "loop-carousel" = false;
       };
       "volume" = {
@@ -320,6 +320,15 @@ in
     .widget-dnd switch slider { border-radius: 0px; }
     .widget-label { margin: 8px; }
 
+    /* Empty notification list placeholder */
+    .control-center-list-placeholder image {
+        opacity: 0;
+        min-width: 0;
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+    }
+
     /* Mpris */
     .widget-mpris { margin: 5px; }
     .widget-mpris .widget-mpris-player {
@@ -327,7 +336,9 @@ in
         border-radius: 0px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);
         border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
     }
+    .mpris-background { opacity: 0; }
     .widget-mpris .widget-mpris-player .mpris-overlay {
         padding: 16px;
         background-color: rgba(0, 0, 0, 0.55);
