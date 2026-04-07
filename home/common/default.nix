@@ -85,6 +85,11 @@
 
   gtk.gtk4.theme = null;
 
+  gtk.iconTheme = {
+    package = pkgs.papirus-icon-theme;
+    name = "Papirus-Dark";
+  };
+
   # Qt theming — enables Stylix's Qt target (uses qtct to theme Qt apps
   # like Dolphin and Okular with the Material Deep Ocean palette).
   qt.enable = true;

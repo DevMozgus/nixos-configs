@@ -23,6 +23,7 @@
           ])
           ++ [
             "pulseaudio"
+            "pulseaudio#microphone"
             "custom/recording"
             "tray"
             "custom/notification"
@@ -89,7 +90,15 @@
           on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
         };
 
+        "pulseaudio#microphone" = {
+          format = "{format_source}";
+          format-source = "󰍬 {volume}%";
+          format-source-muted = "󰍭";
+          on-click = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+        };
+
         tray = {
+          icon-size = 16;
           spacing = 8;
         };
 
@@ -168,13 +177,21 @@
         padding: 0 8px;
       }
 
-      #pulseaudio { color: @base04; }
-      #battery { color: @base0B; }
-      #backlight { color: @base04; }
+      #pulseaudio { color: @base04; font-size: 16px; }
+      #pulseaudio.microphone { color: @base04; font-size: 16px; padding: 0 8px; }
+      #pulseaudio.microphone.source-muted { color: @base03; }
+      #battery { color: @base0B; font-size: 16px; }
+      #backlight { color: @base04; font-size: 16px; }
+
+      .sn-button {
+        padding: 0 4px;
+        color: @base04;
+      }
 
       #custom-recording {
         padding: 0 8px;
         color: @base08;
+        font-size: 16px;
         animation: blink 1s step-start infinite;
       }
 
@@ -185,6 +202,7 @@
       #custom-notification {
         padding: 0 8px;
         color: @base05;
+        font-size: 16px;
       }
 
       #custom-notification.dnd-none,
@@ -203,7 +221,7 @@
       #custom-power-menu {
         padding: 0 10px 0 6px;
         color: @base04;
-        font-size: 14px;
+        font-size: 16px;
       }
     '';
   };
