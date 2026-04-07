@@ -37,6 +37,10 @@ in
       profile = "high-quality";
     };
 
+    scriptOpts.thumbfast = {
+      network = "yes";
+    };
+
     scriptOpts.modernz = {
       # Layout
       layout = "modern";
