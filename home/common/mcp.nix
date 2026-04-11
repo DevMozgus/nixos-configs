@@ -1,4 +1,4 @@
-# MCP server configuration — Context7 (docs) + fetch (web)
+# MCP server configuration — Context7 (docs) + nixos (Nix search) + astro-docs (Astro framework)
 # Servers are defined once via mcp-servers-nix and consumed by:
 #   - opencode: via programs.opencode.enableMcpIntegration
 #   - VS Code:  via programs.vscode.profiles.default.enableMcpIntegration
@@ -8,7 +8,7 @@ let
     Always use Context7 for library documentation:
 
     - Before suggesting code for any external library, use resolve-library-id and get-library-docs
-    - Never rely on training data for framework APIs (Next.js, React, Astro, Svelte, Nixos, etc.)
+    - Never rely on training data for framework APIs (Next.js, React, Svelte, Nixos, etc.)
     - Pull docs first, then code
     - Use version-specific documentation when available
   '';
@@ -18,10 +18,17 @@ in
   programs.mcp.enable = true;
 
   # mcp-servers-nix populates programs.mcp.servers with Nix-store-pinned
-  # server binaries for context7 and fetch.
+  # server binaries for context7 and nixos.
   mcp-servers.programs = {
     context7.enable = true;
-    fetch.enable = true;
+    nixos.enable = true;
+  };
+
+  # Custom remote HTTP servers
+  mcp-servers.settings.servers = {
+    "astro-docs" = {
+      url = "https://mcp.docs.astro.build/mcp";
+    };
   };
 
   # Both opencode and VS Code read from programs.mcp.servers when these
