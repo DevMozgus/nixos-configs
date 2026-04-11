@@ -26,6 +26,7 @@
     ./opencode.nix
     ./javascript.nix
     ./mpv.nix
+    ./mcp.nix
   ];
 
   home = {

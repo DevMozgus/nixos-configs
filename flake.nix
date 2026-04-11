@@ -33,6 +33,11 @@
     nur.url = "github:nix-community/NUR";
 
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
+
+    mcp-servers-nix = {
+      url = "github:natsukium/mcp-servers-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -66,7 +71,10 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "hm-backup";
-                sharedModules = [ inputs.zen-browser.homeModules.default ];
+                sharedModules = [
+                  inputs.zen-browser.homeModules.default
+                  inputs.mcp-servers-nix.homeManagerModules.default
+                ];
                 extraSpecialArgs = {
                   inherit inputs;
                   isLaptop = (hostname == "laptop");
@@ -95,7 +103,10 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 backupFileExtension = "hm-backup";
-                sharedModules = [ inputs.zen-browser.homeModules.default ];
+                sharedModules = [
+                  inputs.zen-browser.homeModules.default
+                  inputs.mcp-servers-nix.homeManagerModules.default
+                ];
                 extraSpecialArgs = {
                   inherit inputs;
                   isLaptop = false;
