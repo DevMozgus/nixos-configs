@@ -5,69 +5,55 @@
   xdg.configFile."opencode/oh-my-opencode-slim.json".text = builtins.toJSON {
     "$schema" = "https://unpkg.com/oh-my-opencode-slim@latest/oh-my-opencode-slim.schema.json";
 
-    agents = {
-      orchestrator = {
-        model = "zai-coding-plan/glm-5";
-        variant = "medium";
-      };
+    preset = "zai-plan";
 
-      explorer = {
-        model = "zai-coding-plan/glm-4.7-flash";
-        variant = "low";
-      };
-
-      oracle = {
-        model = "zai-coding-plan/glm-5";
-        variant = "high";
-      };
-
-      librarian = {
-        model = "zai-coding-plan/glm-4.7-flash";
-        variant = "low";
-      };
-
-      designer = {
-        model = "zai-coding-plan/glm-4.7";
-        variant = "low";
-      };
-
-      fixer = {
-        model = "zai-coding-plan/glm-4.7-flash";
-        variant = "low";
-      };
-    };
-
-    council = {
-      master = {
-        model = "zai-coding-plan/glm-5";
-        variant = "high";
-      };
-      presets.default = {
-        councillor1.model = "zai-coding-plan/glm-4.7";
-        councillor2.model = "zai-coding-plan/glm-4.7-flash";
+    presets = {
+      "zai-plan" = {
+        orchestrator = {
+          model = "zai-coding-plan/glm-5";
+          variant = "high";
+          skills = [ "*" ];
+          mcps = [ "*" ];
+        };
+        oracle = {
+          model = "zai-coding-plan/glm-5";
+          variant = "high";
+          skills = [ ];
+          mcps = [ ];
+        };
+        librarian = {
+          model = "zai-coding-plan/glm-5";
+          variant = "low";
+          skills = [ ];
+          mcps = [
+            "websearch"
+            "context7"
+            "grep_app"
+          ];
+        };
+        explorer = {
+          model = "zai-coding-plan/glm-5";
+          variant = "low";
+          skills = [ ];
+          mcps = [ ];
+        };
+        designer = {
+          model = "zai-coding-plan/glm-5";
+          variant = "medium";
+          skills = [ "agent-browser" ];
+          mcps = [ ];
+        };
+        fixer = {
+          model = "zai-coding-plan/glm-5";
+          variant = "low";
+          skills = [ ];
+          mcps = [ "context7" ];
+        };
       };
     };
 
     tmux = {
-      enable = false;
-    };
-
-    mcp = {
-      context7 = {
-        permissions = [ "search" ];
-      };
-
-      fetch = {
-        permissions = [ "fetch" ];
-      };
-
-      nixos = {
-        permissions = [ "nix" ];
-      };
-
-      astroDocs = {
-        permissions = [ "search" ];
-      };
+      enabled = false;
     };
   };
 }

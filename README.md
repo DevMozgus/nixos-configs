@@ -96,3 +96,9 @@ overlays/              # nix-vscode-extensions + NUR + custom pkgs
    ssh-add -L
    ```
 4. Rebuild and switch: `git add -A && sudo nixos-rebuild switch --flake .#<hostname>`
+
+## Opencode - post-install setup
+
+1. Authenticate in opencode with `/connect` (in opencode CLI)
+2. Authenticate plugin with `opencode auth login` in terminal
+3. Test if it works with `ping all agentst` (in opencode CLI)
