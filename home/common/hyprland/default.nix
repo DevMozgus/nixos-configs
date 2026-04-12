@@ -120,6 +120,7 @@ let
     runtimeInputs = [
       pkgs.wf-recorder
       pkgs.libnotify
+      pkgs.pulseaudio
     ];
     text = ''
       if pgrep -x wf-recorder > /dev/null; then
@@ -128,8 +129,9 @@ let
       else
         mkdir -p "$HOME/Videos"
         FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+        AUDIO_DEVICE="$(pactl get-default-sink).monitor"
         notify-send "Screen Recording" "Recording started — $FILE"
-        wf-recorder --audio-device rnnoise_source -f "$FILE"
+        wf-recorder --audio-device "$AUDIO_DEVICE" -f "$FILE"
       fi
     '';
   };
@@ -146,6 +148,7 @@ let
       pkgs.libnotify
       pkgs.mpv
       pkgs.hyprpicker
+      pkgs.pulseaudio
     ];
     text = ''
       CHOSEN=$(printf '%s\n' \
@@ -181,16 +184,18 @@ let
         "󰕧  Record Screen + Audio")
           mkdir -p "$HOME/Videos"
           FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+          AUDIO_DEVICE="$(pactl get-default-sink).monitor"
           notify-send "Screen Recording" "Recording with audio…"
-          wf-recorder --audio-device rnnoise_source -f "$FILE"
+          wf-recorder --audio-device "$AUDIO_DEVICE" -f "$FILE"
           wl-copy < "$FILE"
           notify-send "Screen Recording" "Saved and copied: $FILE" ;;
         "󰕧  Record + Webcam")
           mkdir -p "$HOME/Videos"
           FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
+          AUDIO_DEVICE="$(pactl get-default-sink).monitor"
           notify-send "Screen Recording" "Recording with audio + webcam…"
           mpv --title="webcam" --no-border --autofit=320 /dev/video0 &
-          wf-recorder --audio-device rnnoise_source -f "$FILE"
+          wf-recorder --audio-device "$AUDIO_DEVICE" -f "$FILE"
           wl-copy < "$FILE"
           notify-send "Screen Recording" "Saved and copied: $FILE" ;;
         "󰈠  Color Picker")
