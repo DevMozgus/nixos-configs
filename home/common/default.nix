@@ -24,6 +24,7 @@
     ./hyprland
     ./waybar
     ./opencode.nix
+    ./oh-my-opencode-slim.nix
     ./javascript.nix
     ./mpv.nix
     ./mcp.nix
