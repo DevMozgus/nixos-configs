@@ -16,13 +16,13 @@
           mcps = [ "*" ];
         };
         oracle = {
-          model = "zai-coding-plan/glm-5";
+          model = "zai-coding-plan/glm-4.7";
           variant = "high";
           skills = [ ];
           mcps = [ ];
         };
         librarian = {
-          model = "zai-coding-plan/glm-5";
+          model = "zai-coding-plan/glm-4.7";
           variant = "low";
           skills = [ ];
           mcps = [
@@ -32,22 +32,51 @@
           ];
         };
         explorer = {
-          model = "zai-coding-plan/glm-5";
+          model = "zai-coding-plan/glm-4.7";
           variant = "low";
           skills = [ ];
           mcps = [ ];
         };
         designer = {
-          model = "zai-coding-plan/glm-5";
+          model = "zai-coding-plan/glm-4.7";
           variant = "medium";
           skills = [ "agent-browser" ];
           mcps = [ ];
         };
         fixer = {
-          model = "zai-coding-plan/glm-5";
+          model = "zai-coding-plan/glm-4.7";
           variant = "low";
           skills = [ ];
-          mcps = [ "context7" ];
+          mcps = [
+            "context7"
+            "websearch"
+          ];
+        };
+      };
+    };
+
+    council = {
+      master = {
+        model = "zai-coding-plan/glm-5";
+        prompt = "Prioritise correctness and security over creativity. Flag any risks.";
+      };
+      presets = {
+        default = {
+          reviewer = {
+            model = "zai-coding-plan/glm-4.7";
+            prompt = "You are a meticulous code reviewer. Focus on edge cases, error handling, and potential bugs.";
+            mcps = [ "context7" ];
+          };
+          architect = {
+            model = "zai-coding-plan/glm-4.7";
+            prompt = "You are a systems architect. Focus on design patterns, scalability, and maintainability.";
+            mcps = [ "context7" ];
+          };
+          optimiser = {
+            model = "zai-coding-plan/glm-4.7";
+            prompt = "You are a performance specialist. Focus on latency, throughput, and resource usage.";
+            mcps = [ "context7" ];
+          };
         };
       };
     };
