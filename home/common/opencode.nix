@@ -11,6 +11,8 @@ in
 {
   home.packages = [ pkgs.beads ];
 
+  home.sessionVariables.OPENCODE_ENABLE_EXA = "1";
+
   programs.opencode = {
     enable = true;
     settings.theme = lib.mkForce "material-deep-ocean";
@@ -19,6 +21,7 @@ in
       "opencode-beads"
       "@tarquinen/opencode-dcp@latest"
     ];
+    settings.permission.websearch = "allow";
   };
 
   home.file.".config/opencode/themes/material-deep-ocean.json".text = builtins.toJSON {
