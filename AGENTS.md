@@ -27,6 +27,7 @@ hosts/
       audio.nix                   #   PipeWire + WirePlumber
       bluetooth.nix               #   BlueZ + blueman
       docker.nix                  #   Docker daemon + autoPrune
+      security.nix                #   Firewall, kernel hardening, module blacklist, audit
   desktop/
     default.nix                   # Imports global + all optionals; hostName="desktop"
     disko-config.nix              # LUKS2 + btrfs declarative disk layout
@@ -276,6 +277,27 @@ Three caches are configured in `hosts/common/global/nix.nix`:
 - `nix-community.cachix.org` — NixVim, home-manager, stylix, nix-vscode-extensions
 
 When adding a new flake input that has a public cache, add its URL and public key here.
+
+---
+
+## Security hardening (`hosts/common/optional/security.nix`)
+
+An opt-in module imported by desktop and laptop (not VM). Provides:
+
+| Layer | What | Key settings |
+|-------|------|-------------|
+| **Firewall** | `networking.firewall` | Default-deny inbound, reject (not drop), rate-limited logging. Opens Syncthing (22000/TCP, 21027/UDP). Netbird opens its own ports. Docker manages its own iptables chain. |
+| **Kernel sysctl** | `boot.kernel.sysctl` | `kptr_restrict=1`, `dmesg_restrict=1`, `ptrace_scope=1`, `rp_filter=2` (loose — required for WireGuard/Netbird), SYN cookies, no ICMP redirects, martian logging |
+| **Module blacklist** | `boot.blacklistedKernelModules` | dccp, sctp, rds, tipc, cramfs, freevxfs, jffs2, hfs, hfsplus, udf, vivid. **squashfs NOT blacklisted** (needed for AppImages) |
+| **Kernel image** | `security.protectKernelImage` | Prevents loading kernel image (rootkit protection) |
+
+### Compatibility notes
+
+- **rp_filter = 2 (loose)**: Strict mode (`1`) breaks WireGuard/Netbird due to asymmetric routing. Loose mode still validates source addresses.
+- **squashfs**: Intentionally NOT blacklisted because AppImages depend on it.
+- **kptr_restrict = 1**: Allows root/CAP_SYSLOG access (perf/bpftrace work with sudo).
+- **ptrace_scope = 1**: IDE debuggers (same-user) work fine; cross-user tracing blocked.
+- Docker's iptables chain is independent of NixOS firewall — no conflict.
 
 ---
 

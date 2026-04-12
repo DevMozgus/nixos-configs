@@ -108,7 +108,7 @@
 
   # GTK button contrast fix — Stylix's generated GTK theme can leave button
   # text too dark on dark backgrounds in apps like blueman.
-  gtk.gtk3.extraCss = ''
+  stylix.targets.gtk.extraCss = ''
     button {
       color: #EEFFFF;
       background-color: #1F2233;
