@@ -102,3 +102,7 @@ overlays/              # nix-vscode-extensions + NUR + custom pkgs
 1. Authenticate in opencode with `/connect` (in opencode CLI)
 2. Authenticate plugin with `opencode auth login` in terminal
 3. Test if it works with `ping all agentst` (in opencode CLI)
+
+## Other notes
+
+- opencode uses beads for task management, which you can find here: https://github.com/joshuadavidthomas/opencode-beads?tab=readme-ov-file

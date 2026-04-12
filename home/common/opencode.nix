@@ -1,13 +1,23 @@
 # opencode — AI coding CLI with Material Deep Ocean theme
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   c = config.lib.stylix.colors;
 in
 {
+  home.packages = [ pkgs.beads ];
+
   programs.opencode = {
     enable = true;
     settings.theme = lib.mkForce "material-deep-ocean";
-    settings.plugin = [ "oh-my-opencode-slim" ];
+    settings.plugin = [
+      "oh-my-opencode-slim"
+      "opencode-beads"
+    ];
   };
 
   home.file.".config/opencode/themes/material-deep-ocean.json".text = builtins.toJSON {

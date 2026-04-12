@@ -69,39 +69,6 @@ overlays/
 
 ---
 
-## flake.nix — mkHost + VM
-
-```nix
-mkHost = hostname: extraModules: nixpkgs.lib.nixosSystem {
-  inherit system;
-  specialArgs = { inherit inputs self; };
-  modules = [
-    disko.nixosModules.disko
-    stylix.nixosModules.stylix
-    home-manager.nixosModules.home-manager
-    ./hosts/${hostname}
-    ./hosts/${hostname}/disko-config.nix
-    {
-      home-manager = {
-        useGlobalPkgs = true;
-        useUserPackages = true;
-        backupFileExtension = "hm-backup";
-        extraSpecialArgs = { inherit inputs; isLaptop = (hostname == "laptop"); };
-        users.nicola = import ./home/${hostname}.nix;
-      };
-    }
-    { nixpkgs.overlays = import ./overlays { inherit inputs; }; }
-  ] ++ extraModules;
-};
-```
-
-- `specialArgs` carries `inputs` and `self` into every NixOS module.
-- `extraSpecialArgs` carries `inputs` and `isLaptop` into every home-manager module.
-- The VM does **not** use `mkHost`; it manually lists modules and uses `lib.mkForce` to override values inherited from `../desktop`.
-- `extraModules` is always `[]` today; it exists for future per-host additions.
-
----
-
 ## Stylix — theming architecture
 
 **Single source of truth:** `hosts/common/global/default.nix` configures Stylix completely.
@@ -319,6 +286,7 @@ When adding a new flake input that has a public cache, add its URL and public ke
 - **Never** add a NixOS module to `hosts/common/global/` unless it truly belongs on every host (the four existing files — nix, locale, users, boot — cover everything global).
 - **Never** import an optional module in `hosts/common/global/default.nix`; optional modules belong only in per-host `default.nix` files.
 - **Never** configure Stylix colours/fonts/cursor outside of `hosts/common/global/default.nix`.
+- **Never** edit files outside of this directory. All configuration must be done via the Nix files in this repo.
 - **Always** run `git add -A` before `nixos-rebuild switch --flake .#<hostname>`.
 - **Always** use `lib.mkForce` when overriding NixOS options in the VM host.
 - **Always** place new home-manager modules under `home/common/` and register them in `home/common/default.nix`.
