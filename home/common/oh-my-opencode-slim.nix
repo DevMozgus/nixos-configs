@@ -22,8 +22,8 @@
           mcps = [ ];
         };
         librarian = {
-          model = "zai-coding-plan/glm-4.7";
-          variant = "medium";
+          model = "zai-coding-plan/glm-4.7-flash";
+          variant = "high";
           skills = [ ];
           mcps = [
             "websearch"
@@ -32,8 +32,8 @@
           ];
         };
         explorer = {
-          model = "zai-coding-plan/glm-4.7";
-          variant = "medium";
+          model = "zai-coding-plan/glm-4.7-flash";
+          variant = "high";
           skills = [ ];
           mcps = [ ];
         };
@@ -48,7 +48,7 @@
         };
         fixer = {
           model = "zai-coding-plan/glm-4.7";
-          variant = "medium";
+          variant = "high";
           skills = [ ];
           mcps = [
             "context7"
