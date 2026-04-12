@@ -78,7 +78,13 @@ overlays/              # nix-vscode-extensions + NUR + custom pkgs
    ```bash
    netbird-wt0 login
    ```
-2. Verify the connection:
+2. Run netbird:
+
+   ```bash
+   sudo netbird-wt0 up
+   ```
+
+3. Verify the connection:
    ```bash
    netbird-wt0 status
    ```
