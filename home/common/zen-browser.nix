@@ -10,6 +10,12 @@
         ublock-origin
         onepassword-password-manager
         darkreader
+        sponsorblock
+        wappalyzer
+        tampermonkey
+        boring-rss
+        unhook
+        imagus
       ];
     };
   };
