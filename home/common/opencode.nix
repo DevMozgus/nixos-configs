@@ -17,6 +17,7 @@ in
     settings.plugin = [
       "oh-my-opencode-slim"
       "opencode-beads"
+      "@tarquinen/opencode-dcp@latest"
     ];
   };
 
