@@ -14,7 +14,6 @@
         wappalyzer
         tampermonkey
         boring-rss
-        unhook
         imagus
       ];
     };
