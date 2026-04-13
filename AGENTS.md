@@ -284,12 +284,12 @@ When adding a new flake input that has a public cache, add its URL and public ke
 
 An opt-in module imported by desktop and laptop (not VM). Provides:
 
-| Layer | What | Key settings |
-|-------|------|-------------|
-| **Firewall** | `networking.firewall` | Default-deny inbound, reject (not drop), rate-limited logging. Opens Syncthing (22000/TCP, 21027/UDP). Netbird opens its own ports. Docker manages its own iptables chain. |
-| **Kernel sysctl** | `boot.kernel.sysctl` | `kptr_restrict=1`, `dmesg_restrict=1`, `ptrace_scope=1`, `rp_filter=2` (loose — required for WireGuard/Netbird), SYN cookies, no ICMP redirects, martian logging |
-| **Module blacklist** | `boot.blacklistedKernelModules` | dccp, sctp, rds, tipc, cramfs, freevxfs, jffs2, hfs, hfsplus, udf, vivid. **squashfs NOT blacklisted** (needed for AppImages) |
-| **Kernel image** | `security.protectKernelImage` | Prevents loading kernel image (rootkit protection) |
+| Layer                | What                            | Key settings                                                                                                                                                               |
+| -------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Firewall**         | `networking.firewall`           | Default-deny inbound, reject (not drop), rate-limited logging. Opens Syncthing (22000/TCP, 21027/UDP). Netbird opens its own ports. Docker manages its own iptables chain. |
+| **Kernel sysctl**    | `boot.kernel.sysctl`            | `kptr_restrict=1`, `dmesg_restrict=1`, `ptrace_scope=1`, `rp_filter=2` (loose — required for WireGuard/Netbird), SYN cookies, no ICMP redirects, martian logging           |
+| **Module blacklist** | `boot.blacklistedKernelModules` | dccp, sctp, rds, tipc, cramfs, freevxfs, jffs2, hfs, hfsplus, udf, vivid. **squashfs NOT blacklisted** (needed for AppImages)                                              |
+| **Kernel image**     | `security.protectKernelImage`   | Prevents loading kernel image (rootkit protection)                                                                                                                         |
 
 ### Compatibility notes
 
@@ -317,30 +317,23 @@ An opt-in module imported by desktop and laptop (not VM). Provides:
 
 DO NOT RUN ANYTHING TO VERIFY IF CHANGES WORK WITHOUT EXPLICIT INSTRUCTION.
 
-Assume this sytsem isn't running on a machine configured with nix.
+Assume this system isn't running on a machine configured with NixOS.
 
 ## Landing the Plane (Session Completion)
-
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
 
 **MANDATORY WORKFLOW:**
 
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
+2. **Update issue status** - Close finished work, update in-progress items
+3. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
    git pull --rebase
    bd sync
    git push
    git status  # MUST show "up to date with origin"
    ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
+4. **Clean up** - Clear stashes, prune remote branches
+5. **Verify** - All changes committed AND pushed
+6. **Hand off** - Provide context for next session
 
-**CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
+** NOTE ** : Use conventional commits for all commit messages.
