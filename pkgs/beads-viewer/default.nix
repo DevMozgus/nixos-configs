@@ -2,7 +2,9 @@
   stdenv,
   lib,
   fetchurl,
-  patchelf,
+  autoPatchelfHook,
+  glibc,
+  zlib,
   ...
 }:
 
@@ -30,7 +32,12 @@ stdenv.mkDerivation rec {
   dontConfigure = true;
   dontBuild = true;
 
-  nativeBuildInputs = [ patchelf ];
+  nativeBuildInputs = [ autoPatchelfHook ];
+
+  buildInputs = [
+    glibc
+    zlib
+  ];
 
   unpackPhase = ''
     tar -xzf $src
@@ -40,11 +47,6 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
     cp bv $out/bin/
     chmod +x $out/bin/bv
-  '';
-
-  postFixup = ''
-    patchelf --set-interpreter $(cat $NIX_CC/nix-support/dynamic-linker) $out/bin/bv
-    patchelf --set-rpath ${stdenv.cc.cc.lib}/lib64 $out/bin/bv
   '';
 
   meta = with lib; {
