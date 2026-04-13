@@ -10,12 +10,12 @@ in
   wayland.windowManager.hyprland.settings = {
     exec-once = [ "swayosd-server" ];
 
-    # Volume
-    binde = [
-      ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume +2"
-      ", XF86AudioLowerVolume, exec, swayosd-client --output-volume -2"
+    # Volume — bindel: works on lock screen + allows repeat
+    bindel = [
+      ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume +5"
+      ", XF86AudioLowerVolume, exec, swayosd-client --output-volume -5"
     ];
-    bind = [
+    bindl = [
       ", XF86AudioMute,    exec, swayosd-client --output-volume mute-toggle"
       ", XF86AudioMicMute, exec, swayosd-client --input-volume  mute-toggle"
     ];
