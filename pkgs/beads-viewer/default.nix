@@ -1,4 +1,9 @@
-{ stdenv, lib, fetchzip, ... }:
+{
+  stdenv,
+  lib,
+  fetchzip,
+  ...
+}:
 
 stdenv.mkDerivation rec {
   pname = "beads-viewer";
@@ -6,9 +11,11 @@ stdenv.mkDerivation rec {
 
   src = fetchzip {
     url = "https://github.com/Dicklesworthstone/beads_viewer/releases/download/v${version}/bv_${version}_linux_${stdenv.hostPlatform.parsed.cpu.name}.tar.gz";
-    sha256 = stdenv.hostPlatform.parsed.cpu.name == "x86_64"
-      ? "467c7dee72c599e915d638eb22335a91eb842171eddc2e7baf43129058a7664e"
-      : "4bc9b327cedd54b08b55c445362ba74017cc8ae40530ba6f0451b866b47441be";
+    sha256 =
+      if stdenv.hostPlatform.parsed.cpu.name == "x86_64" then
+        "467c7dee72c599e915d638eb22335a91eb842171eddc2e7baf43129058a7664e"
+      else
+        "4bc9b327cedd54b08b55c445362ba74017cc8ae40530ba6f0451b866b47441be";
     stripRoot = false;
   };
 
