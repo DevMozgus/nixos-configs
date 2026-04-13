@@ -21,9 +21,9 @@ stdenv.mkDerivation rec {
     url = "https://github.com/Dicklesworthstone/beads_viewer/releases/download/v${version}/bv_${version}_linux_${arch}.tar.gz";
     sha256 =
       if stdenv.hostPlatform.parsed.cpu.name == "x86_64" then
-        "467c7dee72c599e915d638eb22335a91eb842171eddc2e7baf43129058a7664e"
+        "0kk6lxc904j3mxxjxp7df4hq9swib8rj5srqsqayk6f5fbp7sz26"
       else
-        "4bc9b327cedd54b08b55c445362ba74017cc8ae40530ba6f0451b866b47441be";
+        "1gj1fjs6df2i0ipvlc05wj5cq5s0lwmkcif4an5v0m6xrqkv7jab";
     stripRoot = false;
   };
 
