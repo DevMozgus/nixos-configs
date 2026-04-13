@@ -15,5 +15,6 @@
     sddmOmarchy = prev.callPackage ../pkgs/sddm-omarchy {
       wallpaper = ../assets/wallpaper3.png;
     };
+    beadsViewer = prev.callPackage ../pkgs/beads-viewer { };
   })
 ]

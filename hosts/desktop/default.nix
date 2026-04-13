@@ -12,6 +12,7 @@
     ../common/optional/1password.nix
     ../common/optional/netbird.nix
     ../common/optional/codecs.nix
+    ../common/optional/beads-viewer.nix
     ../common/optional/security.nix
     ./hardware-configuration.nix
   ];
