@@ -26,6 +26,7 @@
     ./opencode.nix
     ./opencode-skills.nix
     ./oh-my-opencode-slim.nix
+    ./opencode-agents.nix
     ./javascript.nix
     ./mpv.nix
     ./mcp.nix
