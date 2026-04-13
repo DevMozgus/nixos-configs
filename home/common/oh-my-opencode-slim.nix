@@ -18,8 +18,8 @@
         oracle = {
           model = "zai-coding-plan/glm-4.7";
           variant = "high";
-          skills = [ ];
-          mcps = [ ];
+          skills = [ "*" ];
+          mcps = [ "*" ];
         };
         librarian = {
           model = "zai-coding-plan/glm-4.7-flash";
@@ -40,16 +40,13 @@
         designer = {
           model = "zai-coding-plan/glm-4.7";
           variant = "medium";
-          skills = [
-            "agent-browser"
-            "frontend-design"
-          ];
+          skills = [ "*" ];
           mcps = [ ];
         };
         fixer = {
           model = "zai-coding-plan/glm-4.7";
           variant = "high";
-          skills = [ ];
+          skills = [ "*" ];
           mcps = [
             "context7"
             "websearch"
@@ -67,18 +64,21 @@
         default = {
           reviewer = {
             model = "zai-coding-plan/glm-4.7";
-            prompt = "You are a meticulous code reviewer. Focus on edge cases, error handling, and potential bugs.";
+            prompt = "You are a meticulous code reviewer. Focus on edge cases, error handling, and potential bugs. Use context7 to understand the code context deeply.";
             mcps = [ "context7" ];
+            skills = [ "*" ];
           };
           architect = {
             model = "zai-coding-plan/glm-4.7";
-            prompt = "You are a systems architect. Focus on design patterns, scalability, and maintainability.";
+            prompt = "You are a systems architect. Focus on design patterns, scalability, and maintainability. Use context7 to understand the code context deeply.";
             mcps = [ "context7" ];
+            skills = [ "*" ];
           };
           optimiser = {
             model = "zai-coding-plan/glm-4.7";
-            prompt = "You are a performance specialist. Focus on latency, throughput, and resource usage.";
+            prompt = "You are a performance specialist. Focus on latency, throughput, and resource usage. Use context7 to understand the code context deeply.";
             mcps = [ "context7" ];
+            skills = [ "*" ];
           };
         };
       };
