@@ -300,7 +300,7 @@ let
           case "$CHOSEN" in
             *"Desktop Audio"*)         audio_args=(-a default_output -ac aac) ;;
             *"Desktop + Mic"*)         audio_args=(-a "default_output|default_input" -ac aac) ;;
-            *"Webcam + Audio"*)        audio_args=(-a default_output -ac aac) ;;
+            *"Webcam + Audio"*)        audio_args=(-a "default_output|default_input" -ac aac) ;;
           esac
 
           want_webcam=false
