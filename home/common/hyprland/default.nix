@@ -72,7 +72,7 @@ let
         echo ""
         hdr "Screenshot & Recording"
         kb "SUPER + S"                "Screenshot Region → Clipboard"
-        kb "SUPER + SHIFT + S"        "Screenshot Menu (Screen / Region / Color Picker)"
+        kb "SUPER + SHIFT + S"        "Screenshot / Recording Menu"
         kb "Print"                    "Screenshot Screen → Clipboard"
         kb "SUPER + SHIFT + R"        "Toggle Screen Recording (with Desktop Audio)"
         echo ""
@@ -218,11 +218,72 @@ let
       pkgs.grimblast
       pkgs.satty
       pkgs.hyprpicker
+      pkgs.gpu-screen-recorder
+      pkgs.libnotify
+      pkgs.ffmpeg
+      pkgs.v4l-utils
+      pkgs.jq
     ];
     text = ''
+      PID_FILE="${recordingPid}"
+
+      start_webcam_overlay() {
+        # Kill any existing overlay
+        pkill -f "WebcamOverlay" 2>/dev/null || true
+
+        # Auto-detect first available webcam
+        local webcam_device
+        webcam_device=$(v4l2-ctl --list-devices 2>/dev/null | grep -m1 "^[[:space:]]*/dev/video" | tr -d '\t')
+        if [[ -z "$webcam_device" ]]; then
+          notify-send "No webcam found" -u critical -t 3000
+          return 1
+        fi
+
+        local scale
+        scale=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .scale')
+        local target_width
+        target_width=$(awk "BEGIN {printf \"%.0f\", 360 * $scale}")
+
+        # Try preferred 16:9 resolutions in order
+        local available_formats
+        available_formats=$(v4l2-ctl --list-formats-ext -d "$webcam_device" 2>/dev/null)
+        local video_size_args=()
+        for resolution in "640x360" "1280x720" "1920x1080"; do
+          if echo "$available_formats" | grep -q "$resolution"; then
+            video_size_args=(-video_size "$resolution")
+            break
+          fi
+        done
+
+        ffplay -f v4l2 "''${video_size_args[@]}" -framerate 30 "$webcam_device" \
+          -vf "crop=iw/2:ih,scale=''${target_width}:-1" \
+          -window_title "WebcamOverlay" \
+          -noborder \
+          -fflags nobuffer -flags low_delay \
+          -probesize 32 -analyzeduration 0 \
+          -loglevel quiet &
+        sleep 1
+      }
+
+      # If already recording, offer to stop
+      if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+        CHOSEN=$(printf '%s\n' \
+          "󰑊  Stop Recording" \
+          "󰑊  Cancel" \
+          | rofi -dmenu -p "")
+        case "$CHOSEN" in
+          "󰑊  Stop Recording") exec stop-recording ;;
+        esac
+        exit 0
+      fi
+
       CHOSEN=$(printf '%s\n' \
         "󰹑  Screenshot Screen" \
         "󰹑  Screenshot Region" \
+        "󰕧  Record Screen (No Audio)" \
+        "󰕧  Record Screen + Desktop Audio" \
+        "󰕧  Record Screen + Desktop + Mic" \
+        "󰕧  Record Screen + Webcam + Audio" \
         "󰈠  Color Picker" \
         | rofi -dmenu -p "")
 
@@ -233,6 +294,44 @@ let
           grimblast save area - | satty --filename - ;;
         "󰈠  Color Picker")
           hyprpicker -a ;;
+        *)
+          # Determine audio args
+          audio_args=()
+          case "$CHOSEN" in
+            *"Desktop Audio"*)         audio_args=(-a default_output -ac aac) ;;
+            *"Desktop + Mic"*)         audio_args=(-a "default_output|default_input" -ac aac) ;;
+            *"Webcam + Audio"*)        audio_args=(-a default_output -ac aac) ;;
+          esac
+
+          want_webcam=false
+          case "$CHOSEN" in
+            *"Webcam"*) want_webcam=true ;;
+          esac
+
+          mkdir -p "$HOME/Videos"
+          FILE="$HOME/Videos/screenrecording-$(date +'%Y-%m-%d_%H-%M-%S').mp4"
+          notify-send "Screen Recording" "Select area to record…" -t 3000
+
+          gpu-screen-recorder -w portal -k auto -s 0x0 -f 60 -fm cfr -fallback-cpu-encoding yes \
+            -o "$FILE" "''${audio_args[@]}" &
+          pid=$!
+
+          echo "$pid" > "$PID_FILE"
+
+          while kill -0 "$pid" 2>/dev/null && [[ ! -f "$FILE" ]]; do
+            sleep 0.2
+          done
+
+          if kill -0 "$pid" 2>/dev/null; then
+            echo "$FILE" > "${recordingFile}"
+            pkill -RTMIN+8 waybar 2>/dev/null || true
+            # Start webcam overlay AFTER portal selection, so it doesn't get killed by the dialog
+            [[ "$want_webcam" == "true" ]] && start_webcam_overlay
+            notify-send "Screen Recording" "Recording started" -t 2000
+          else
+            rm -f "$PID_FILE" "${recordingFile}"
+          fi
+          ;;
       esac
     '';
   };
@@ -456,7 +555,11 @@ in
       ];
     };
 
-    extraConfig = "";
+    extraConfig = ''
+      windowrule = float on, match:initial_title WebcamOverlay
+      windowrule = pin on, match:initial_title WebcamOverlay
+      windowrule = move (monitor_w-window_w-20) (monitor_h-window_h-20), match:initial_title WebcamOverlay
+    '';
   };
 
   home.packages = with pkgs; [
