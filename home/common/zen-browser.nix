@@ -14,6 +14,7 @@
         wappalyzer
         tampermonkey
         boring-rss
+        untrap-for-youtube
         imagus
       ];
     };
