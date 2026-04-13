@@ -126,12 +126,12 @@
 
         "custom/recording" = {
           exec = "echo '󰑊 REC'";
-          exec-if = "pgrep -x wf-recorder";
+          exec-if = "test -f /tmp/screenrecord-pid && kill -0 $(cat /tmp/screenrecord-pid) 2>/dev/null";
           interval = 1;
           format = "{}";
           tooltip = true;
           tooltip-format = "Recording — click to stop";
-          on-click = "pkill -INT wf-recorder";
+          on-click = "stop-recording";
         };
 
         "custom/power-menu" = {

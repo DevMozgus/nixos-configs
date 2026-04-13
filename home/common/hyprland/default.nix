@@ -72,9 +72,9 @@ let
         echo ""
         hdr "Screenshot & Recording"
         kb "SUPER + S"                "Screenshot Region → Clipboard"
-        kb "SUPER + SHIFT + S"        "Screenshot / Recording Menu"
+        kb "SUPER + SHIFT + S"        "Screenshot Menu (Screen / Region / Color Picker)"
         kb "Print"                    "Screenshot Screen → Clipboard"
-        kb "SUPER + SHIFT + R"        "Toggle Screen Recording"
+        kb "SUPER + SHIFT + R"        "Toggle Screen Recording (with Desktop Audio)"
         echo ""
         hdr "Clipboard & Notifications"
         kb "SUPER + SHIFT + V"        "Clipboard History (cliphist)"
@@ -115,23 +115,98 @@ let
     '';
   };
 
+  recordingFile = "/tmp/screenrecord-filename";
+  recordingPid = "/tmp/screenrecord-pid";
+
+  stopRecording = pkgs.writeShellApplication {
+    name = "stop-recording";
+    runtimeInputs = [
+      pkgs.libnotify
+      pkgs.ffmpeg
+    ];
+    text = ''
+      PID_FILE="${recordingPid}"
+
+      if [[ ! -f "$PID_FILE" ]]; then
+        exit 0
+      fi
+
+      pid=$(cat "$PID_FILE")
+
+      if ! kill -0 "$pid" 2>/dev/null; then
+        rm -f "$PID_FILE" "${recordingFile}"
+        exit 0
+      fi
+
+      # SIGINT is required for gpu-screen-recorder to save the file properly
+      kill -SIGINT "$pid" 2>/dev/null || true
+
+      # Wait up to 5 seconds for graceful shutdown
+      count=0
+      while kill -0 "$pid" 2>/dev/null && (( count < 50 )); do
+        sleep 0.1
+        count=$((count + 1))
+      done
+
+      pkill -RTMIN+8 waybar 2>/dev/null || true
+
+      if kill -0 "$pid" 2>/dev/null; then
+        kill -9 "$pid" 2>/dev/null || true
+        notify-send "Screen Recording" "Error: force-killed. Video may be corrupted." -u critical -t 5000
+      else
+        filename=$(cat "${recordingFile}" 2>/dev/null || true)
+        if [[ -n "$filename" && -f "$filename" ]]; then
+          trimmed="''${filename%.mp4}-trimmed.mp4"
+          if ffmpeg -y -ss 0.1 -i "$filename" -c copy "$trimmed" -loglevel quiet 2>/dev/null; then
+            mv "$trimmed" "$filename" 2>/dev/null || true
+          fi
+          rm -f "$trimmed" 2>/dev/null || true
+          notify-send "Screen Recording" "Saved: $filename" -t 5000
+        fi
+      fi
+      rm -f "${recordingFile}" "$PID_FILE"
+    '';
+  };
+
   toggleRecording = pkgs.writeShellApplication {
     name = "toggle-recording";
     runtimeInputs = [
-      pkgs.wf-recorder
+      pkgs.gpu-screen-recorder
       pkgs.libnotify
-      pkgs.pulseaudio
     ];
     text = ''
-      if pgrep -x wf-recorder > /dev/null; then
-        pkill -INT wf-recorder
-        notify-send "Screen Recording" "Recording stopped"
+      PID_FILE="${recordingPid}"
+
+      # If PID file exists and process is alive → stop
+      if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+        exec stop-recording
+      fi
+
+      # Clean up stale state and start fresh
+      rm -f "$PID_FILE" "${recordingFile}"
+      mkdir -p "$HOME/Videos"
+      FILE="$HOME/Videos/screenrecording-$(date +'%Y-%m-%d_%H-%M-%S').mp4"
+      notify-send "Screen Recording" "Select area to record…" -t 3000
+
+      gpu-screen-recorder -w portal -k auto -s 0x0 -f 60 -fm cfr -fallback-cpu-encoding yes \
+        -a default_output -ac aac -o "$FILE" &
+      pid=$!
+
+      # Write PID immediately so waybar picks it up during portal selection
+      echo "$pid" > "$PID_FILE"
+
+      # Wait for recording to actually start (output file appears after portal selection)
+      while kill -0 "$pid" 2>/dev/null && [[ ! -f "$FILE" ]]; do
+        sleep 0.2
+      done
+
+      if kill -0 "$pid" 2>/dev/null; then
+        echo "$FILE" > "${recordingFile}"
+        pkill -RTMIN+8 waybar 2>/dev/null || true
+        notify-send "Screen Recording" "Recording started" -t 2000
       else
-        mkdir -p "$HOME/Videos"
-        FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
-        AUDIO_DEVICE="$(pactl get-default-sink).monitor"
-        notify-send "Screen Recording" "Recording started — $FILE"
-        wf-recorder --audio-device "$AUDIO_DEVICE" -f "$FILE"
+        # Process died (user cancelled portal or error) — clean up
+        rm -f "$PID_FILE" "${recordingFile}"
       fi
     '';
   };
@@ -142,22 +217,12 @@ let
       pkgs.rofi
       pkgs.grimblast
       pkgs.satty
-      pkgs.wf-recorder
-      pkgs.slurp
-      pkgs.wl-clipboard
-      pkgs.libnotify
-      pkgs.mpv
       pkgs.hyprpicker
-      pkgs.pulseaudio
     ];
     text = ''
       CHOSEN=$(printf '%s\n' \
         "󰹑  Screenshot Screen" \
         "󰹑  Screenshot Region" \
-        "󰕧  Record Region" \
-        "󰕧  Record Screen" \
-        "󰕧  Record Screen + Audio" \
-        "󰕧  Record + Webcam" \
         "󰈠  Color Picker" \
         | rofi -dmenu -p "")
 
@@ -166,38 +231,6 @@ let
           grimblast save screen - | satty --filename - ;;
         "󰹑  Screenshot Region")
           grimblast save area - | satty --filename - ;;
-        "󰕧  Record Region")
-          GEOM=$(slurp)
-          mkdir -p "$HOME/Videos"
-          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
-          notify-send "Screen Recording" "Recording region…"
-          wf-recorder -g "$GEOM" -f "$FILE"
-          wl-copy < "$FILE"
-          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
-        "󰕧  Record Screen")
-          mkdir -p "$HOME/Videos"
-          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
-          notify-send "Screen Recording" "Recording screen…"
-          wf-recorder -f "$FILE"
-          wl-copy < "$FILE"
-          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
-        "󰕧  Record Screen + Audio")
-          mkdir -p "$HOME/Videos"
-          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
-          AUDIO_DEVICE="$(pactl get-default-sink).monitor"
-          notify-send "Screen Recording" "Recording with audio…"
-          wf-recorder --audio-device "$AUDIO_DEVICE" -f "$FILE"
-          wl-copy < "$FILE"
-          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
-        "󰕧  Record + Webcam")
-          mkdir -p "$HOME/Videos"
-          FILE="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
-          AUDIO_DEVICE="$(pactl get-default-sink).monitor"
-          notify-send "Screen Recording" "Recording with audio + webcam…"
-          mpv --title="webcam" --no-border --autofit=320 /dev/video0 &
-          wf-recorder --audio-device "$AUDIO_DEVICE" -f "$FILE"
-          wl-copy < "$FILE"
-          notify-send "Screen Recording" "Saved and copied: $FILE" ;;
         "󰈠  Color Picker")
           hyprpicker -a ;;
       esac
@@ -423,11 +456,7 @@ in
       ];
     };
 
-    extraConfig = ''
-      windowrule = float on, match:initial_title webcam
-      windowrule = pin on, match:initial_title webcam
-      windowrule = move (monitor_w-window_w-20) (monitor_h-window_h-20), match:initial_title webcam
-    '';
+    extraConfig = "";
   };
 
   home.packages = with pkgs; [
@@ -436,7 +465,7 @@ in
     grimblast
     satty
     slurp
-    wf-recorder
+    gpu-screen-recorder
     libnotify
     wl-clipboard
     cliphist
@@ -444,6 +473,7 @@ in
     swaynotificationcenter
     networkmanagerapplet
     showHyprKeybindings
+    stopRecording
     toggleRecording
     screenshotMenu
     powerMenu

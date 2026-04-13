@@ -10,8 +10,7 @@
 
     # Creates a virtual microphone source named "rnnoise_source" that applies
     # RNNoise-based noise suppression to the default capture device.
-    # Use it as: wf-recorder --audio-device rnnoise_source
-    # Or set it as the default input in pavucontrol / audio settings.
+    # Use with gpu-screen-recorder: -a default_input (or set as default in pavucontrol).
     extraConfig.pipewire."99-noise-suppression" = {
       context.modules = [
         {
