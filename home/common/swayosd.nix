@@ -10,22 +10,16 @@ in
   wayland.windowManager.hyprland.settings = {
     exec-once = [ "swayosd-server" ];
 
-    # Volume — bindel: works on lock screen + allows repeat
+    # Volume + Brightness — bindel: works on lock screen + allows repeat
     bindel = [
-      ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume +5"
-      ", XF86AudioLowerVolume, exec, swayosd-client --output-volume -5"
+      ", XF86AudioRaiseVolume,   exec, swayosd-client --output-volume +5"
+      ", XF86AudioLowerVolume,   exec, swayosd-client --output-volume -5"
+      ", XF86MonBrightnessUp,    exec, swayosd-client --brightness raise"
+      ", XF86MonBrightnessDown,  exec, swayosd-client --brightness lower"
     ];
     bindl = [
-      ", XF86AudioMute,    exec, swayosd-client --output-volume mute-toggle"
-      ", XF86AudioMicMute, exec, swayosd-client --input-volume  mute-toggle"
-    ];
-
-    # Brightness
-    bindel = [
-      ", XF86MonBrightnessUp,   exec, swayosd-client --brightness raise"
-      ", XF86MonBrightnessDown, exec, swayosd-client --brightness lower"
-    ];
-    bindl = [
+      ", XF86AudioMute,          exec, swayosd-client --output-volume mute-toggle"
+      ", XF86AudioMicMute,       exec, swayosd-client --input-volume  mute-toggle"
       "$mod, XF86MonBrightnessUp,   exec, swayosd-client --brightness 100"
       "$mod, XF86MonBrightnessDown, exec, swayosd-client --brightness 0"
     ];
