@@ -148,6 +148,8 @@
       #workspaces button {
         margin: 4px 2px;
         padding: 0 6px;
+        background-color: transparent;
+        border: none;
         border-bottom: 2px solid transparent;
       }
 
@@ -155,6 +157,7 @@
         background-color: transparent;
         color: @base06;
         border-radius: 0;
+        border: none;
         border-bottom: 2px solid @base0D;
         margin: 4px 2px;
         padding: 0 6px;
