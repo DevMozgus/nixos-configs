@@ -38,6 +38,11 @@
       url = "github:natsukium/mcp-servers-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    peon-ping = {
+      url = "github:PeonPing/peon-ping";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -50,6 +55,7 @@
       nixvim,
       nix-vscode-extensions,
       nur,
+      peon-ping,
       ...
     }@inputs:
     let
@@ -74,6 +80,7 @@
                 sharedModules = [
                   inputs.zen-browser.homeModules.default
                   inputs.mcp-servers-nix.homeManagerModules.default
+                  inputs.peon-ping.homeManagerModules.default
                 ];
                 extraSpecialArgs = {
                   inherit inputs;
@@ -106,6 +113,7 @@
                 sharedModules = [
                   inputs.zen-browser.homeModules.default
                   inputs.mcp-servers-nix.homeManagerModules.default
+                  inputs.peon-ping.homeManagerModules.default
                 ];
                 extraSpecialArgs = {
                   inherit inputs;
