@@ -64,9 +64,9 @@
       mkHost =
         hostname: extraModules:
         nixpkgs.lib.nixosSystem {
-          inherit system;
           specialArgs = { inherit inputs self; };
           modules = [
+            { nixpkgs.hostPlatform = system; }
             disko.nixosModules.disko
             stylix.nixosModules.stylix
             home-manager.nixosModules.home-manager
@@ -99,9 +99,9 @@
         desktop = mkHost "desktop" [ ];
         laptop = mkHost "laptop" [ ];
         vm = nixpkgs.lib.nixosSystem {
-          inherit system;
           specialArgs = { inherit inputs self; };
           modules = [
+            { nixpkgs.hostPlatform = system; }
             stylix.nixosModules.stylix
             home-manager.nixosModules.home-manager
             ./hosts/vm

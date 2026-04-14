@@ -8,7 +8,7 @@
 }:
 
 let
-  peonPkg = inputs.peon-ping.packages.${pkgs.system}.default;
+  peonPkg = inputs.peon-ping.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   programs.peon-ping = {
@@ -16,7 +16,7 @@ in
     package = peonPkg;
 
     settings = {
-      default_pack = "duke_nukem";
+      default_pack = "solid_snake";
       volume = 0.5;
       enabled = true;
       desktop_notifications = true;
@@ -32,7 +32,6 @@ in
     };
 
     installPacks = [
-      "duke_nukem"
       {
         name = "solid_snake";
         src = pkgs.fetchFromGitHub {
