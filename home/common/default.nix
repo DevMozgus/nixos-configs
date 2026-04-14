@@ -45,6 +45,7 @@
       # Media players
       jellyfin-media-player
       jellyfin-tui
+      open-in-mpv
 
       # File management
       kdePackages.dolphin
@@ -154,6 +155,9 @@
       "video/3gpp" = "mpv.desktop";
       "video/ogg" = "mpv.desktop";
       "video/x-flv" = "mpv.desktop";
+
+      # mpv:// protocol (open-in-mpv browser extension)
+      "x-scheme-handler/mpv" = "open-in-mpv.desktop";
 
       # Audio → mpv
       "audio/mpeg" = "mpv.desktop";

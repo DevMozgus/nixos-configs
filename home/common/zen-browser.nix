@@ -6,17 +6,20 @@
     profiles.default = {
       isDefault = true;
 
-      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-        ublock-origin
-        onepassword-password-manager
-        darkreader
-        sponsorblock
-        wappalyzer
-        tampermonkey
-        boring-rss
-        untrap-for-youtube
-        imagus
-      ];
+      extensions.packages =
+        with pkgs.nur.repos.rycee.firefox-addons;
+        [
+          ublock-origin
+          onepassword-password-manager
+          darkreader
+          sponsorblock
+          wappalyzer
+          tampermonkey
+          boring-rss
+          untrap-for-youtube
+          imagus
+        ]
+        ++ [ pkgs.firefoxAddonOpenInMpv ];
     };
   };
 

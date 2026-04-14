@@ -35,6 +35,9 @@ in
 
       # High-quality upscaling/downscaling
       profile = "high-quality";
+
+      # IPC socket for open-in-mpv enqueue/playlist support
+      input-ipc-server = "/tmp/mpvsocket";
     };
 
     scriptOpts.thumbfast = {
