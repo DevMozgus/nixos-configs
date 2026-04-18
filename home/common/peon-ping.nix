@@ -16,7 +16,7 @@ in
     package = peonPkg;
 
     settings = {
-      default_pack = "solid_snake";
+      default_pack = "lcars";
       volume = 0.5;
       enabled = true;
       desktop_notifications = true;
@@ -25,20 +25,20 @@ in
         "task.complete" = true;
         "task.error" = true;
         "input.required" = true;
-        "resource.limit" = true;
-        "user.spam" = true;
+        "resource.limit" = false;
+        "user.spam" = false;
         "task.acknowledge" = false;
       };
     };
 
     installPacks = [
       {
-        name = "solid_snake";
+        name = "lcars";
         src = pkgs.fetchFromGitHub {
-          owner = "wsturgiss";
-          repo = "openpeon-solid-snake";
+          owner = "heidilux";
+          repo = "openpeon-lcars";
           rev = "v1.0.0";
-          sha256 = "sha256-pAUZer6QQq5BNTvhJTMjcA/CLHlgdARGcN+GT2sX2OY=";
+          sha256 = "sha256-8FJr45EV1ExFpe0evfNareoUItYzoa5tBAzrJadmQz4=";
         };
       }
     ];
