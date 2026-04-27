@@ -80,7 +80,6 @@
                 sharedModules = [
                   inputs.zen-browser.homeModules.default
                   inputs.mcp-servers-nix.homeManagerModules.default
-                  inputs.peon-ping.homeManagerModules.default
                 ];
                 extraSpecialArgs = {
                   inherit inputs;
@@ -113,7 +112,6 @@
                 sharedModules = [
                   inputs.zen-browser.homeModules.default
                   inputs.mcp-servers-nix.homeManagerModules.default
-                  inputs.peon-ping.homeManagerModules.default
                 ];
                 extraSpecialArgs = {
                   inherit inputs;
