@@ -31,6 +31,7 @@
     ./javascript.nix
     ./mpv.nix
     ./mcp.nix
+    ./zed.nix
   ];
 
   home = {

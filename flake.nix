@@ -112,6 +112,8 @@
                 sharedModules = [
                   inputs.zen-browser.homeModules.default
                   inputs.mcp-servers-nix.homeManagerModules.default
+                  # Disable Zed editor in VM — not needed for testing
+                  ({ lib, ... }: { programs.zed-editor.enable = lib.mkForce false; })
                 ];
                 extraSpecialArgs = {
                   inherit inputs;
