@@ -10,7 +10,7 @@
     presets = {
       "zai-plan" = {
         orchestrator = {
-          model = "zai-coding-plan/glm-5";
+          model = "zai-coding-plan/glm-5.1";
           variant = "high";
           skills = [ "*" ];
           mcps = [ "*" ];
@@ -57,7 +57,7 @@
 
     council = {
       master = {
-        model = "zai-coding-plan/glm-5";
+        model = "zai-coding-plan/glm-5.1";
         prompt = "Prioritise correctness and security over creativity. Flag any risks.";
       };
       presets = {
