@@ -19,9 +19,10 @@ in
 
   # mcp-servers-nix populates programs.mcp.servers with Nix-store-pinned
   # server binaries for context7 and nixos.
+  # nixos server disabled: aioboto3 (transitive dep) fails tests with Python 3.13.
   mcp-servers.programs = {
     context7.enable = true;
-    nixos.enable = true;
+    # nixos.enable = true;
   };
 
   # Custom remote HTTP servers
