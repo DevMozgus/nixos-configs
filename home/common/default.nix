@@ -105,6 +105,10 @@
   # icons hard to read; Papirus-Dark uses darker muted folder colors.
   # kdeglobals is not written by Stylix when using the qtct platform theme.
   xdg.configFile."kdeglobals".text = ''
+    [General]
+    TerminalApplication=kitty
+    TerminalService=kitty.desktop
+
     [Icons]
     Theme=Papirus-Dark
   '';

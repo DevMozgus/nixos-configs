@@ -83,8 +83,8 @@ $character";
   programs.zsh.shellAliases = {
     i-desktop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop";
     i-laptop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop";
-    u-desktop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop --upgrade";
-    u-laptop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop --upgrade";
+    u-desktop = "nix flake update && sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop --upgrade";
+    u-laptop = "nix flake update && sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop --upgrade";
   };
 
   programs.autojump.enable = true;
