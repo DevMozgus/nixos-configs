@@ -44,7 +44,7 @@
       google-chrome
 
       # Media players
-      jellyfin-media-player
+      jellyfin-desktop
       jellyfin-tui
       open-in-mpv
 
