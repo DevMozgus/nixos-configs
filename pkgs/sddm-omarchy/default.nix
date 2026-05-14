@@ -17,16 +17,7 @@ let
         height: 480
         color: "#0F111A"
 
-        property string currentUser: {
-            // Use the last logged-in user, but on first boot (no previous
-            // login) fall back to the first user in the model so the login
-            // call is never sent with an empty username.
-            var last = userModel.lastUser
-            if (last && last.length > 0) return last
-            if (userModel.rowCount() > 0)
-                return (userModel.data(userModel.index(0, 0), Qt.DisplayRole) || "").toString()
-            return ""
-        }
+        property string currentUser: "nicola"
         // 0 = normal, 1 = checking, 2 = failed
         property int authState: 0
         property int sessionIndex: {
