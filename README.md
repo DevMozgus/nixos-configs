@@ -24,6 +24,12 @@ Fully declarative NixOS dotfiles for desktop and laptop systems.
 
 1. Boot the NixOS minimal ISO
 2. Connect to the internet
+
+```bash
+nmcli device wifi list
+nmcli device wifi connect "YourSSID" password "YourPassword"
+```
+
 3. Enter a nix-shell with git: `nix-shell -p git`
 4. Clone this repo: `git clone https://github.com/DevMozgus/nixos-configs.git && cd nixos-configs`
 5. Identify the target disk: `lsblk`
