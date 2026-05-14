@@ -21,9 +21,17 @@ let
         // 0 = normal, 1 = checking, 2 = failed
         property int authState: 0
         property int sessionIndex: {
+            // SDDM SessionModel roles: NameRole=0, FileRole=258
+            // The UWSM session file is named "hyprland-uwsm.desktop" but its
+            // display name is just "Hyprland" — so search by file path.
             for (var i = 0; i < sessionModel.rowCount(); i++) {
-                var name = (sessionModel.data(sessionModel.index(i, 0), Qt.DisplayRole) || "").toString()
-                if (name.indexOf("uwsm") !== -1) return i
+                var file = (sessionModel.data(sessionModel.index(i, 0), 258) || "").toString()
+                if (file.indexOf("uwsm") !== -1) return i
+            }
+            // Fallback: any Hyprland session
+            for (var i = 0; i < sessionModel.rowCount(); i++) {
+                var name = (sessionModel.data(sessionModel.index(i, 0), Qt.DisplayRole) || "").toString().toLowerCase()
+                if (name.indexOf("hyprland") !== -1) return i
             }
             return sessionModel.lastIndex
         }

@@ -9,6 +9,10 @@
 
   environment.systemPackages = [ pkgs.sddmOmarchy ];
 
+  # Ensure uwsm is in the display-manager service PATH so the UWSM session
+  # desktop file (Exec=uwsm start …) can actually be executed by SDDM.
+  systemd.services.display-manager.path = [ pkgs.uwsm ];
+
   services.displayManager.defaultSession = "hyprland-uwsm";
 
   # Enable GNOME Keyring daemon and unlock it on SDDM login

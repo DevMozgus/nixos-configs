@@ -5,6 +5,15 @@
     enable = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
+
+    # Launch Hyprland via UWSM when logging in on tty1 (not used by SDDM).
+    # See: https://wiki.hyprland.org/Useful-Utilities/Systemd-start/
+    profileExtra = ''
+      if uwsm check may-start && uwsm select; then
+        exec uwsm start default
+      fi
+    '';
+
     oh-my-zsh = {
       enable = true;
       plugins = [
