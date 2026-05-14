@@ -13,12 +13,13 @@
       "networkmanager"
       "docker"
     ];
-    # Persistent password read from /persist on every boot.
-    # Falls back to initialPassword when the file doesn't exist yet
-    # (e.g. first boot after install). After first login, set the
-    # persistent hash with:
+    # hashedPasswordFile is read on every activation for new users.
+    # On first install the file won't exist yet, so initialPassword
+    # provides a working password for the first login ("nixos").
+    # After first login, change it with: passwd
+    # Optionally create the persistent file for declarative management:
     #   mkdir -p /persist/passwords
-    #   echo "$(mkpasswd -m sha-512)" | sudo tee /persist/passwords/nicola
+    #   mkpasswd -m sha-512 | sudo tee /persist/passwords/nicola
     #   sudo chmod 600 /persist/passwords/nicola
     hashedPasswordFile = "/persist/passwords/nicola";
     initialPassword = "nixos";

@@ -17,7 +17,16 @@ let
         height: 480
         color: "#0F111A"
 
-        property string currentUser: userModel.lastUser
+        property string currentUser: {
+            // Use the last logged-in user, but on first boot (no previous
+            // login) fall back to the first user in the model so the login
+            // call is never sent with an empty username.
+            var last = userModel.lastUser
+            if (last && last.length > 0) return last
+            if (userModel.rowCount() > 0)
+                return (userModel.data(userModel.index(0, 0), Qt.DisplayRole) || "").toString()
+            return ""
+        }
         // 0 = normal, 1 = checking, 2 = failed
         property int authState: 0
         property int sessionIndex: {
@@ -81,7 +90,7 @@ let
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             y: root.height * 0.729
-            text: "\uf007  " + userModel.lastUser
+            text: "\uf007  " + root.currentUser
             font.family: "JetBrainsMono Nerd Font"
             font.bold: true
             font.pixelSize: root.height * 0.013

@@ -30,23 +30,25 @@ nmcli device wifi list
 nmcli device wifi connect "YourSSID" password "YourPassword"
 ```
 
-3. Enter a nix-shell with git: `nix-shell -p git`
-4. Clone this repo: `git clone https://github.com/DevMozgus/nixos-configs.git && cd nixos-configs`
-5. Identify the target disk: `lsblk`
-6. Run the installer:
+3. Clone this repo: `git clone https://github.com/DevMozgus/nixos-configs.git && cd nixos-configs`
+4. Identify the target disk: `lsblk`
+5. Run the installer:
 
 ```bash
 ./install.sh desktop /dev/nvme0n1
 ```
 
-7. Reboot, enter LUKS passphrase, log in as `nicola`
-8. Verify: `sudo nixos-rebuild switch --flake .#desktop`
-9. Run these commands to set your real persistent password:
+6. Reboot, enter LUKS passphrase, log in as `nicola`
+7. Verify: `sudo nixos-rebuild switch --flake .#desktop`
+8. Run these commands to set your real persistent password:
+
+- Change password: passwd
+- Optionally create the persistent password file for declarative management:
 
 ```bash
-mkdir -p /persist/passwords
-echo "$(mkpasswd -m sha-512)" | sudo tee /persist/passwords/nicola
-sudo chmod 600 /persist/passwords/nicola
+  mkdir -p /persist/passwords
+  mkpasswd -m sha-512 | sudo tee /persist/passwords/nicola
+  sudo chmod 600 /persist/passwords/nicola
 ```
 
 mkpasswd will prompt for the new password interactively. After this, initialPassword is ignored since hashedPasswordFile is processed first and takes precedence.
