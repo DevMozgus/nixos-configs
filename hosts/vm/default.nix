@@ -40,5 +40,9 @@
 
   networking.hostName = lib.mkForce "vm";
 
+  # VM has a single virtio DRM device (card0); neutralize the desktop host's
+  # amdgpu-specific AQ_DRM_DEVICES (inherited via ../desktop).
+  environment.sessionVariables.AQ_DRM_DEVICES = lib.mkForce "/dev/dri/card0";
+
   system.stateVersion = "25.05";
 }

@@ -19,6 +19,14 @@
 
   networking.hostName = "desktop";
 
+  # Pin Hyprland/Aquamarine to the discrete amdgpu (RX 7900 XT) only.
+  # simpledrm grabs /dev/dri/card0 early (EFI framebuffer, no HW rendering),
+  # forcing amdgpu onto card1; without this Hyprland latches onto card0 and
+  # renders a black screen. Scoped to this host — the PCI path is physical.
+  # Ref: https://github.com/hyprwm/aquamarine/issues/301
+  environment.sessionVariables.AQ_DRM_DEVICES =
+    "/dev/dri/by-path/pci-0000:03:00.0-card";
+
   programs.steam.enable = true;
 
   system.stateVersion = "25.05";
