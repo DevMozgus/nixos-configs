@@ -348,6 +348,14 @@ in
     };
   };
 
+  # Import home-manager session variables into the UWSM-managed Hyprland
+  # session. Recommended by the Hyprland wiki for the NixOS + UWSM setup so
+  # that PATH and the rest of home.sessionVariables are present inside the
+  # session (uwsm sources ~/.config/uwsm/env on start).
+  # https://wiki.hypr.land/Nix/Hyprland-on-Home-Manager/#nixos-uwsm
+  xdg.configFile."uwsm/env".source =
+    "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
+
   wayland.windowManager.hyprland = {
     enable = true;
     package = null;
