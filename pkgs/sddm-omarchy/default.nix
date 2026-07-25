@@ -9,6 +9,7 @@
 let
   mainQml = writeText "Main.qml" ''
     import QtQuick 2.0
+    import QtQuick.Controls 2.15
     import SddmComponents 2.0
 
     Rectangle {
@@ -20,15 +21,17 @@ let
         property string currentUser: "nicola"
         // 0 = normal, 1 = checking, 2 = failed
         property int authState: 0
-        property int sessionIndex: {
-            // SDDM SessionModel roles: NameRole=0, FileRole=258
-            // The UWSM session file is named "hyprland-uwsm.desktop" but its
-            // display name is just "Hyprland" — so search by file path.
+
+        // Default to the UWSM-managed Hyprland session, but the session
+        // selector below lets the user pick plain "Hyprland" instead (useful
+        // for diagnostics). SDDM SessionModel roles: NameRole=0, FileRole=258.
+        function findDefaultSession() {
+            // Prefer the UWSM session (file path contains "uwsm").
             for (var i = 0; i < sessionModel.rowCount(); i++) {
                 var file = (sessionModel.data(sessionModel.index(i, 0), 258) || "").toString()
                 if (file.indexOf("uwsm") !== -1) return i
             }
-            // Fallback: any Hyprland session
+            // Fallback: any Hyprland session.
             for (var i = 0; i < sessionModel.rowCount(); i++) {
                 var name = (sessionModel.data(sessionModel.index(i, 0), Qt.DisplayRole) || "").toString().toLowerCase()
                 if (name.indexOf("hyprland") !== -1) return i
@@ -83,6 +86,25 @@ let
             font.family: "JetBrainsMono Nerd Font"
             font.pixelSize: root.height * 0.017
             color: "#CC8F93A2"
+        }
+
+        // ── Session selector (Hyprland vs Hyprland (UWSM)) ───────────────────
+        ComboBox {
+            id: sessionSelector
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: root.height * 0.645
+            width: root.height * 0.28
+            model: sessionModel
+            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: root.height * 0.014
+
+            // Match the dark Material Deep Ocean palette.
+            palette.text: "#EEFFFF"
+            palette.buttonText: "#8F93A2"
+            palette.button: "#1F2233"
+            palette.base: "#181A29"
+            palette.highlight: "#82AAFF"
+            palette.highlightedText: "#0F111A"
         }
 
         // ── Username (bottom) ────────────────────────────────────────────────
@@ -140,7 +162,7 @@ let
                 Keys.onPressed: function(event) {
                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         root.authState = 1
-                        sddm.login(root.currentUser, password.text, root.sessionIndex)
+                        sddm.login(root.currentUser, password.text, sessionSelector.currentIndex)
                         event.accepted = true
                     }
                 }
@@ -160,7 +182,10 @@ let
             font.italic: true
         }
 
-        Component.onCompleted: password.forceActiveFocus()
+        Component.onCompleted: {
+            sessionSelector.currentIndex = root.findDefaultSession()
+            password.forceActiveFocus()
+        }
     }
   '';
 
