@@ -30,6 +30,8 @@ nmcli device wifi list
 nmcli device wifi connect "YourSSID" password "YourPassword"
 ```
 
+or using `nmtui`
+
 3. Clone this repo: `git clone https://github.com/DevMozgus/nixos-configs.git && cd nixos-configs`
 4. Identify the target disk: `lsblk`
 5. Run the installer:
