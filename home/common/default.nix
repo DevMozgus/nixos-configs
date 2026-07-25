@@ -66,7 +66,7 @@
       resvg
 
       # Networking / remote
-      rustdesk
+      # rustdesk
 
       # Graphics
       inkscape
