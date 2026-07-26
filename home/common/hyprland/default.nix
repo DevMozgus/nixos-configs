@@ -444,7 +444,6 @@ in
       ];
 
       dwindle = {
-        pseudotile = true;
         preserve_split = true;
         force_split = 2;
       };
@@ -489,7 +488,7 @@ in
         "$mod, V, togglefloating,"
         "$mod, SPACE, togglefloating,"
         "$mod, F, fullscreen,"
-        "$mod, S, togglesplit,"
+        # "$mod, S, layoutmsg, togglesplit"
         "$mod, E, exec, dolphin"
         "$mod, P, exec, zen-beta"
         "$mod, C, exec, code"
