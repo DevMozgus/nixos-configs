@@ -19,19 +19,12 @@
 
   networking.hostName = "desktop";
 
-  # Pin Hyprland/Aquamarine to the discrete amdgpu (RX 7900 XT) only.
-  # simpledrm grabs /dev/dri/card0 early (EFI framebuffer, no HW rendering),
-  # forcing amdgpu onto card1; without this Hyprland latches onto the
-  # render-less card0 and shows a black screen.
-  #
-  # IMPORTANT: use the plain /dev/dri/cardN node, NOT the by-path symlink.
-  # Aquamarine parses AQ_DRM_DEVICES with ':' as the device separator, and
-  # PCI by-path names contain colons (pci-0000:03:00.0-card), which makes
-  # Aquamarine split the path into garbage tokens and abort with
-  # "Found no gpus to use". card1 is stable on this box: simpledrm always
-  # claims card0 and the 7900 XT is the only other DRM device.
-  # Refs: https://github.com/hyprwm/aquamarine/issues/301
-  environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/card1";
+  # No AQ_DRM_DEVICES pin: amdgpu is loaded in the initrd (see
+  # hardware-configuration.nix), so it claims card0 and is the primary DRM
+  # device; Hyprland picks it up automatically. A static card-number pin is
+  # fragile — card1 disappeared when amdgpu hadn't loaded yet (crash), and PCI
+  # by-path values break Aquamarine's ':' device separator. Refs:
+  # https://github.com/hyprwm/aquamarine/issues/301
 
   programs.steam.enable = true;
 
