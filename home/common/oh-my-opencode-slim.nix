@@ -22,7 +22,7 @@
           mcps = [ "*" ];
         };
         librarian = {
-          model = "zai-coding-plan/glm-4.7-flash";
+          model = "zai-coding-plan/glm-4.7";
           variant = "high";
           skills = [ ];
           mcps = [
@@ -32,7 +32,7 @@
           ];
         };
         explorer = {
-          model = "zai-coding-plan/glm-4.7-flash";
+          model = "zai-coding-plan/glm-4.7";
           variant = "high";
           skills = [ ];
           mcps = [ ];
@@ -66,17 +66,14 @@
           reviewer = {
             model = "zai-coding-plan/glm-4.7";
             variant = "high";
-            prompt = "You are a meticulous code reviewer. Focus on edge cases, error handling, and potential bugs.";
           };
           architect = {
             model = "zai-coding-plan/glm-4.7";
             variant = "high";
-            prompt = "You are a systems architect. Focus on design patterns, scalability, and maintainability.";
           };
           optimiser = {
             model = "zai-coding-plan/glm-4.7";
             variant = "high";
-            prompt = "You are a performance specialist. Focus on latency, throughput, and resource usage.";
           };
         };
       };

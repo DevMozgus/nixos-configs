@@ -7,7 +7,7 @@
     ---
     description: Manages beads workflow: create/update/close issues, handle dependencies, sync with git
     mode: primary
-    model: zai-coding-plan/glm-4.7-flash
+    model: zai-coding-plan/glm-4.7
     temperature: 0.2
     permission:
       bash:
