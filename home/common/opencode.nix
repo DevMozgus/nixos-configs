@@ -11,11 +11,19 @@ in
 {
   home.packages = [ pkgs.beads ];
 
-  home.sessionVariables.OPENCODE_ENABLE_EXA = "1";
+  home.sessionVariables = {
+    OPENCODE_ENABLE_EXA = "1";
+    OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS = "true";
+  };
 
   programs.opencode = {
     enable = true;
     tui.theme = lib.mkForce "material-deep-ocean";
+    settings.lsp = true;
+    settings.agent = {
+      general.disable = true;
+      explore.disable = true;
+    };
     settings.plugin = [
       "oh-my-opencode-slim"
       "opencode-beads"

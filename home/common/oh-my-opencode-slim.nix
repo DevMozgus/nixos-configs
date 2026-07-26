@@ -2,7 +2,7 @@
 # Multi-agent orchestration: Orchestrator, Explorer, Oracle, Council, Librarian, Designer, Fixer
 { config, lib, ... }:
 {
-  xdg.configFile."opencode/oh-my-opencode-slim.json".text = builtins.toJSON {
+  xdg.configFile."opencode/oh-my-opencode-slim.jsonc".text = builtins.toJSON {
     "$schema" = "https://unpkg.com/oh-my-opencode-slim@latest/oh-my-opencode-slim.schema.json";
 
     preset = "zai-plan";
@@ -28,7 +28,7 @@
           mcps = [
             "websearch"
             "context7"
-            "grep_app"
+            "gh_grep"
           ];
         };
         explorer = {
@@ -52,40 +52,34 @@
             "websearch"
           ];
         };
-      };
-    };
-
-    council = {
-      master = {
-        model = "zai-coding-plan/glm-5.1";
-        prompt = "Prioritise correctness and security over creativity. Flag any risks.";
-      };
-      presets = {
-        default = {
-          reviewer = {
-            model = "zai-coding-plan/glm-4.7";
-            prompt = "You are a meticulous code reviewer. Focus on edge cases, error handling, and potential bugs. Use context7 to understand the code context deeply.";
-            mcps = [ "context7" ];
-            skills = [ "*" ];
-          };
-          architect = {
-            model = "zai-coding-plan/glm-4.7";
-            prompt = "You are a systems architect. Focus on design patterns, scalability, and maintainability. Use context7 to understand the code context deeply.";
-            mcps = [ "context7" ];
-            skills = [ "*" ];
-          };
-          optimiser = {
-            model = "zai-coding-plan/glm-4.7";
-            prompt = "You are a performance specialist. Focus on latency, throughput, and resource usage. Use context7 to understand the code context deeply.";
-            mcps = [ "context7" ];
-            skills = [ "*" ];
-          };
+        council = {
+          model = "zai-coding-plan/glm-5.1";
+          variant = "high";
         };
       };
     };
 
-    tmux = {
-      enabled = false;
+    council = {
+      default_preset = "default";
+      presets = {
+        default = {
+          reviewer = {
+            model = "zai-coding-plan/glm-4.7";
+            variant = "high";
+            prompt = "You are a meticulous code reviewer. Focus on edge cases, error handling, and potential bugs.";
+          };
+          architect = {
+            model = "zai-coding-plan/glm-4.7";
+            variant = "high";
+            prompt = "You are a systems architect. Focus on design patterns, scalability, and maintainability.";
+          };
+          optimiser = {
+            model = "zai-coding-plan/glm-4.7";
+            variant = "high";
+            prompt = "You are a performance specialist. Focus on latency, throughput, and resource usage.";
+          };
+        };
+      };
     };
   };
 }
