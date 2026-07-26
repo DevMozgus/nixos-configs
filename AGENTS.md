@@ -132,7 +132,7 @@ config.lib.stylix.colors.base0D   # → "82AAFF"
 | -------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Plymouth | Custom script-theme, not a Stylix target                             | `boot.plymouth.theme = lib.mkForce "material-deep-ocean"`                       |
 | SDDM     | Custom QML theme; Stylix has no `sddm` target                        | `services.displayManager.sddm.theme = "omarchy"` overrides Stylix automatically |
-| GTK4     | Stylix GTK4 override causes issues                                   | `gtk.gtk4.theme = null` in `home/common/default.nix`                            |
+| GTK4     | Stylix GTK4 override causes issues                                   | `gtk.gtk4.theme = lib.mkForce null` in `home/common/default.nix`                |
 | Kitty    | Stylix handles colours; override font size only                      | `font.size = lib.mkForce 13`                                                    |
 | Waybar   | Stylix CSS generated first; custom rules appended with `lib.mkAfter` | `style = lib.mkAfter ''…''`                                                     |
 | Firefox  | Stylix targets the profile; userChrome uses colour vars              | `config.lib.stylix.colors.withHashtag`                                          |

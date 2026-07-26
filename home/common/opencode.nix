@@ -15,7 +15,7 @@ in
 
   programs.opencode = {
     enable = true;
-    settings.theme = lib.mkForce "material-deep-ocean";
+    tui.theme = lib.mkForce "material-deep-ocean";
     settings.plugin = [
       "oh-my-opencode-slim"
       "opencode-beads"

@@ -361,6 +361,7 @@ in
     package = null;
     portalPackage = null;
     systemd.enable = false; # Required with UWSM
+    configType = "hyprlang";
 
     settings = {
       "$mod" = "SUPER";

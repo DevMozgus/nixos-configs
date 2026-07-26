@@ -90,7 +90,9 @@
   # Syncthing user-level service
   services.syncthing.enable = true;
 
-  gtk.gtk4.theme = null;
+  gtk.gtk4.theme = lib.mkForce null;
+
+  home.pointerCursor.enable = true;
 
   gtk.iconTheme = {
     package = pkgs.papirus-icon-theme;

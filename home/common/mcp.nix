@@ -39,7 +39,7 @@ in
   programs.vscode.profiles.default.enableMcpIntegration = true;
 
   # System prompt: always consult Context7 before suggesting library code.
-  programs.opencode.rules = context7Instructions;
+  programs.opencode.context = context7Instructions;
   programs.vscode.profiles.default.userSettings."github.copilot.chat.codeGeneration.instructions" = [
     { text = context7Instructions; }
   ];

@@ -22,7 +22,6 @@
     gst_all_1.gst-plugins-bad
     gst_all_1.gst-plugins-ugly
     gst_all_1.gst-libav # ffmpeg bridge for GStreamer
-    gst_all_1.gst-vaapi # VA-API hardware decoding for GStreamer
 
     # Diagnostic tool to verify VA-API is working
     libva-utils
