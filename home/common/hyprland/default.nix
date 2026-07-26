@@ -372,7 +372,11 @@ in
           [ ", preferred, auto, 1" ]
         else
           [
-            "DP-1, 2560x1440@144, 0x0, 1"
+            # Do NOT force a refresh rate (e.g. 2560x1440@144): on this monitor
+            # the forced @144 modeline fails DRM scanout, leaving Hyprland alive
+            # but rendering a black screen. "preferred" lets Aquamarine use the
+            # monitor's advertised preferred mode, which scanout commits cleanly.
+            "DP-1, preferred, auto, 1"
             ", preferred, auto, 1"
           ];
 
