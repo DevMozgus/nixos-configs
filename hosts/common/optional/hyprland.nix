@@ -1,25 +1,28 @@
 # Hyprland compositor: portals, polkit, PAM, UWSM
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   programs.hyprland = {
     enable = true;
     withUWSM = true;
   };
 
-  # Register the UWSM-managed Hyprland session. `programs.hyprland.withUWSM`
-  # only enables uwsm (programs.uwsm.enable = true); it does NOT create a
-  # display-manager session file. Declaring waylandCompositors.hyprland
-  # generates share/wayland-sessions/hyprland-uwsm.desktop
-  # (Exec=uwsm start -F -- …/Hyprland), which is what
-  # services.displayManager.defaultSession = "hyprland-uwsm" and the omarchy
-  # SDDM theme select. Without it there is no uwsm session to launch, so SDDM
-  # falls back to plain Hyprland and the session starts without proper UWSM
-  # systemd management — resulting in a black screen with no interaction.
+  # `withUWSM = true` registers the hyprland compositor with UWSM
+  # (programs.uwsm.waylandCompositors.hyprland) and generates the
+  # share/wayland-sessions/hyprland-uwsm.desktop session that SDDM's
+  # defaultSession = "hyprland-uwsm" launches. However, the upstream module
+  # sets binPath to the raw `Hyprland` binary, which launches Hyprland
+  # directly and bypasses the `start-hyprland` watchdog wrapper. Hyprland
+  # warns about this ("launched without start-hyprland") and you also lose the
+  # --watchdog-fd systemd watchdog / crash-recovery integration that the
+  # wrapper provides. Override binPath to the watchdog wrapper; the compositor
+  # identity (and thus XDG_CURRENT_DESKTOP=Hyprland) still comes from the
+  # attrset key, not the exec'd binary.
   # See: https://wiki.hyprland.org/Useful-Utilities/Systemd-start/
+  #      https://github.com/hyprwm/Hyprland/discussions/12661
   programs.uwsm.waylandCompositors.hyprland = {
     prettyName = "Hyprland";
     comment = "Hyprland compositor managed by UWSM";
-    binPath = "/run/current-system/sw/bin/Hyprland";
+    binPath = lib.mkForce "/run/current-system/sw/bin/start-hyprland";
   };
 
   xdg.portal = {
