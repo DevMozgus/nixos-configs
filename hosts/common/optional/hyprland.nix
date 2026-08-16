@@ -1,28 +1,26 @@
 # Hyprland compositor: portals, polkit, PAM, UWSM
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   programs.hyprland = {
     enable = true;
+    # Enables UWSM (programs.uwsm.enable) so Hyprland runs as a proper systemd
+    # graphical session. The hyprland package itself ships the
+    # `hyprland-uwsm.desktop` session (Exec=`uwsm start -e -D Hyprland
+    # hyprland.desktop`, DesktopNames=Hyprland), which SDDM's
+    # defaultSession = "hyprland-uwsm" launches, and `passthru.providedSessions`
+    # registers it with the display manager.
+    #
+    # Do NOT manually declare `programs.uwsm.waylandCompositors.hyprland`. That
+    # option generates a *competing* hyprland-uwsm.desktop whose Exec points
+    # uwsm at a raw binary and which has NO DesktopNames field, so uwsm derives
+    # XDG_CURRENT_DESKTOP from the binary basename (e.g. "start-hyprland:Hyprland")
+    # — triggering Hyprland's "XDG managed externally" warning and breaking the
+    # desktop portal / screen sharing. The package-provided session instead feeds
+    # hyprland.desktop to uwsm, giving both the start-hyprland watchdog and a
+    # correct XDG_CURRENT_DESKTOP=Hyprland.
+    # Refs: https://wiki.hyprland.org/Useful-Utilities/Systemd-start/
+    #       https://github.com/hyprwm/Hyprland/discussions/12661
     withUWSM = true;
-  };
-
-  # `withUWSM = true` registers the hyprland compositor with UWSM
-  # (programs.uwsm.waylandCompositors.hyprland) and generates the
-  # share/wayland-sessions/hyprland-uwsm.desktop session that SDDM's
-  # defaultSession = "hyprland-uwsm" launches. However, the upstream module
-  # sets binPath to the raw `Hyprland` binary, which launches Hyprland
-  # directly and bypasses the `start-hyprland` watchdog wrapper. Hyprland
-  # warns about this ("launched without start-hyprland") and you also lose the
-  # --watchdog-fd systemd watchdog / crash-recovery integration that the
-  # wrapper provides. Override binPath to the watchdog wrapper; the compositor
-  # identity (and thus XDG_CURRENT_DESKTOP=Hyprland) still comes from the
-  # attrset key, not the exec'd binary.
-  # See: https://wiki.hyprland.org/Useful-Utilities/Systemd-start/
-  #      https://github.com/hyprwm/Hyprland/discussions/12661
-  programs.uwsm.waylandCompositors.hyprland = {
-    prettyName = "Hyprland";
-    comment = "Hyprland compositor managed by UWSM";
-    binPath = lib.mkForce "/run/current-system/sw/bin/start-hyprland";
   };
 
   xdg.portal = {

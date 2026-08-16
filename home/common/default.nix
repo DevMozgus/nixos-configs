@@ -40,6 +40,8 @@
     stateVersion = "25.05";
 
     packages = with pkgs; [
+      keepassxc
+
       # Browsers
       google-chrome
 
@@ -47,10 +49,13 @@
       jellyfin-desktop
       jellyfin-tui
       open-in-mpv
+      yt-dlp
+      tartube-yt-dlp
 
       # File management
       kdePackages.dolphin
       peazip
+      veracrypt
       imv
       kdePackages.okular
       papirus-icon-theme
