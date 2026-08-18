@@ -10,8 +10,8 @@
     presets = {
       "zai-plan" = {
         orchestrator = {
-          model = "zai-coding-plan/glm-5.1";
-          variant = "high";
+          model = "zai-coding-plan/glm-5.3";
+          variant = "medium";
           skills = [ "*" ];
           mcps = [ "*" ];
         };
@@ -53,7 +53,7 @@
           ];
         };
         council = {
-          model = "zai-coding-plan/glm-5.1";
+          model = "zai-coding-plan/glm-5-turbo";
           variant = "high";
         };
       };
