@@ -33,6 +33,18 @@
 
   security.pam.services.hyprlock = { };
 
+  # Polkit authentication agent (shows the password dialog on the Hyprland
+  # session; started via exec-once in home/common/hyprland) and the kio-admin
+  # KIO worker, which lets Dolphin manage files as root via `admin://` URLs
+  # (Ctrl+L in Dolphin → e.g. admin:///etc). kio-admin must be a *system*
+  # package: polkitd only reads share/polkit-1 from the system profile and
+  # D-Bus needs its org.kde.kio.admin system service. Password prompts accept
+  # nicola's own password (security.polkit.adminIdentities defaults to wheel).
+  environment.systemPackages = with pkgs; [
+    hyprpolkitagent
+    kdePackages.kio-admin
+  ];
+
   programs.dconf.enable = true;
 
   services.udisks2.enable = true;

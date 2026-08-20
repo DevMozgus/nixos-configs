@@ -478,6 +478,9 @@ in
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "hypridle"
+        # nixpkgs hyprpolkitagent installs no bin/ — the binary lives in libexec,
+        # so the bare name is not on PATH. Absolute path required.
+        "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent"
       ];
 
       bind = [
