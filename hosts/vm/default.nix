@@ -35,6 +35,17 @@
   # Disable Plymouth in VM
   boot.plymouth.enable = lib.mkForce false;
 
+  # Disable local AI stack inherited from ../desktop — the VM has no dGPU
+  # and a 4 GB memory cap; ROCm inference is pointless here. The ollama
+  # module gates Open WebUI, the CLI package and the Modelfile loader on
+  # this same switch.
+  services.ollama.enable = lib.mkForce false;
+
+  # Disable ComfyUI inherited from ../desktop — same reason: no dGPU,
+  # 4 GB memory cap. The flake module gates its user, package and service
+  # on this switch.
+  services.comfyui.enable = lib.mkForce false;
+
   # Disable LUKS in VM
   boot.initrd.luks.devices = lib.mkForce {};
 

@@ -7,6 +7,10 @@
   # NUR — provides pkgs.nur.repos.rycee.firefox-addons
   inputs.nur.overlays.default
 
+  # comfyui-nix — provides pkgs.comfy-ui-rocm (pre-built PyTorch ROCm
+  # wheels) for hosts/common/optional/comfyui.nix
+  inputs.comfyui-nix.overlays.default
+
   # Custom packages overlay
   (final: prev: {
     materialDeepOceanPlymouth = prev.callPackage ../pkgs/plymouth-material-deep-ocean {

@@ -15,6 +15,8 @@
     ../common/optional/codecs.nix
     ../common/optional/beads-viewer.nix
     ../common/optional/security.nix
+    ../common/optional/ollama.nix
+    ../common/optional/comfyui.nix
     ./hardware-configuration.nix
   ];
 

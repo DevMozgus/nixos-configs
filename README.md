@@ -128,6 +128,20 @@ overlays/              # nix-vscode-extensions + NUR + custom pkgs
 2. Authenticate plugin with `opencode auth login` in terminal
 3. Test if it works with `ping all agents` (in opencode CLI)
 
+## Openweb UI
+
+1. Open the Openweb UI in your browser: `http://localhost:8080`
+
+## ComfyUI
+
+1. Open the ComfyUI in your browser: `http://localhost:8188`
+
+Download models to /var/lib/comfyui/models/:
+
+- diffusion_models/z_image_turbo_bf16.safetensors (~12GB) — BF16, not fp8 (RDNA3 has no FP8 hardware; fp8 just upcasts)
+- text_encoders/qwen_3_4b.safetensors (~8GB) — the Z-Image-specific Qwen3-4B
+- vae/ae.safetensors (~335MB)
+
 ## Other notes
 
 - opencode uses beads for task management, which you can find here: https://github.com/joshuadavidthomas/opencode-beads?tab=readme-ov-file

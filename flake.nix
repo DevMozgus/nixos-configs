@@ -42,6 +42,12 @@
       url = "github:PeonPing/peon-ping";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # ComfyUI with pre-built PyTorch ROCm/CUDA wheels — deliberately NOT
+    # following our nixpkgs pin: the wheels and the comfyui.cachix.org
+    # binary cache are built against this flake's own snapshot, and
+    # following would drift both into source rebuilds.
+    comfyui-nix.url = "github:utensils/comfyui-nix";
   };
 
   outputs =
