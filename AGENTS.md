@@ -309,7 +309,6 @@ An opt-in module imported by desktop and laptop (not VM). Provides:
 - **Never** import an optional module in `hosts/common/global/default.nix`; optional modules belong only in per-host `default.nix` files.
 - **Never** configure Stylix colours/fonts/cursor outside of `hosts/common/global/default.nix`.
 - **Never** edit files outside of this directory. All configuration must be done via the Nix files in this repo.
-- **Never** use beads or bd tools. This repo is excluded from any beads tracking.
 - **Always** run `git add -A` before `nixos-rebuild switch --flake .#<hostname>`.
 - **Always** use `lib.mkForce` when overriding NixOS options in the VM host.
 - **Always** place new home-manager modules under `home/common/` and register them in `home/common/default.nix`.
@@ -329,7 +328,6 @@ Assume this system isn't running on a machine configured with NixOS.
 3. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
    git pull --rebase
-   bd sync
    git push
    git status  # MUST show "up to date with origin"
    ```

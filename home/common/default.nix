@@ -26,7 +26,6 @@
     ./opencode.nix
     ./opencode-skills.nix
     ./oh-my-opencode-slim.nix
-    ./opencode-agents.nix
     ./opencode-sandbox.nix
     ./peon-ping.nix
     ./javascript.nix

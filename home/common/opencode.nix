@@ -9,8 +9,6 @@ let
   c = config.lib.stylix.colors;
 in
 {
-  home.packages = [ pkgs.beads ];
-
   home.sessionVariables = {
     OPENCODE_ENABLE_EXA = "1";
     OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS = "true";
@@ -26,13 +24,11 @@ in
     };
     settings.plugin = [
       "oh-my-opencode-slim"
-      "opencode-beads"
       "@tarquinen/opencode-dcp@latest"
     ];
     settings.permission.websearch = "allow";
     # Dangerous commands require approval before running; everything else
-    # executes freely. Applies to built-in build/plan agents — the custom
-    # agents in opencode-agents.nix keep their own stricter frontmatter rules.
+    # executes freely.
     settings.permission.bash = {
       # Filesystem destruction / ownership
       "rm" = "ask";
@@ -64,6 +60,12 @@ in
       # Git
       "git" = "ask";
       "git *" = "ask";
+      "git status" = "allow";
+      "git status *" = "allow";
+      "git diff" = "allow";
+      "git diff *" = "allow";
+      "git log" = "allow";
+      "git log *" = "allow";
       # Arbitrary code / network fetches (paired with sandbox domain allowlist)
       "curl" = "ask";
       "curl *" = "ask";
