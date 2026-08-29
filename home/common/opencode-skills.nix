@@ -2331,28 +2331,34 @@
   xdg.configFile."opencode/skills/clonedeps".source = "${pkgs.ohMyOpencodeSlim}/skills/clonedeps";
   xdg.configFile."opencode/skills/codemap".source = "${pkgs.ohMyOpencodeSlim}/skills/codemap";
   xdg.configFile."opencode/skills/deepwork".source = "${pkgs.ohMyOpencodeSlim}/skills/deepwork";
-  xdg.configFile."opencode/skills/oh-my-opencode-slim".source = "${pkgs.ohMyOpencodeSlim}/skills/oh-my-opencode-slim";
+  xdg.configFile."opencode/skills/oh-my-opencode-slim".source =
+    "${pkgs.ohMyOpencodeSlim}/skills/oh-my-opencode-slim";
   xdg.configFile."opencode/skills/reflect".source = "${pkgs.ohMyOpencodeSlim}/skills/reflect";
   xdg.configFile."opencode/skills/simplify".source = "${pkgs.ohMyOpencodeSlim}/skills/simplify";
-  xdg.configFile."opencode/skills/verification-planning".source = "${pkgs.ohMyOpencodeSlim}/skills/verification-planning";
+  xdg.configFile."opencode/skills/verification-planning".source =
+    "${pkgs.ohMyOpencodeSlim}/skills/verification-planning";
   xdg.configFile."opencode/skills/worktrees".source = "${pkgs.ohMyOpencodeSlim}/skills/worktrees";
 
   # New skills vendored from upstream (2026-08-29).
   # vercel-labs/agent-skills (no repo-level license):
-  xdg.configFile."opencode/skills/web-design-guidelines".source = ./opencode-skills/web-design-guidelines;
-  xdg.configFile."opencode/skills/react-best-practices".source = ./opencode-skills/react-best-practices;
+  xdg.configFile."opencode/skills/web-design-guidelines".source =
+    ./opencode-skills/web-design-guidelines;
+  xdg.configFile."opencode/skills/react-best-practices".source =
+    ./opencode-skills/react-best-practices;
   # addyosmani/agent-skills (MIT):
-  xdg.configFile."opencode/skills/frontend-ui-engineering".source = ./opencode-skills/frontend-ui-engineering;
+  xdg.configFile."opencode/skills/frontend-ui-engineering".source =
+    ./opencode-skills/frontend-ui-engineering;
   # dominika-zajac/better-frontend-skills (MIT) — drive the chrome-devtools MCP server:
   xdg.configFile."opencode/skills/accessibility-audit".source = ./opencode-skills/accessibility-audit;
   xdg.configFile."opencode/skills/accessibility-fix".source = ./opencode-skills/accessibility-fix;
   # obra/superpowers (MIT):
-  xdg.configFile."opencode/skills/systematic-debugging".source = ./opencode-skills/systematic-debugging;
-  xdg.configFile."opencode/skills/test-driven-development".source = ./opencode-skills/test-driven-development;
+  xdg.configFile."opencode/skills/systematic-debugging".source =
+    ./opencode-skills/systematic-debugging;
+  xdg.configFile."opencode/skills/test-driven-development".source =
+    ./opencode-skills/test-driven-development;
   xdg.configFile."opencode/skills/writing-plans".source = ./opencode-skills/writing-plans;
   xdg.configFile."opencode/skills/executing-plans".source = ./opencode-skills/executing-plans;
   # anthropics/skills (source-available, per-skill LICENSE.txt vendored):
   xdg.configFile."opencode/skills/theme-factory".source = ./opencode-skills/theme-factory;
-  xdg.configFile."opencode/skills/brand-guidelines".source = ./opencode-skills/brand-guidelines;
   xdg.configFile."opencode/skills/canvas-design".source = ./opencode-skills/canvas-design;
 }

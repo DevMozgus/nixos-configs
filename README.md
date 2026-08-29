@@ -126,7 +126,8 @@ overlays/              # nix-vscode-extensions + NUR + custom pkgs
 
 1. Authenticate in opencode with `/connect` (in opencode CLI)
 2. Authenticate plugin with `opencode auth login` in terminal
-3. Test if it works with `ping all agents` (in opencode CLI)
+3. Run `opencode models --refresh`
+4. Test if it works with `ping all agents` (in opencode CLI)
 
 ## Openweb UI
 

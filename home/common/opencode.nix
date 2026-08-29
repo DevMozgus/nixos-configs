@@ -30,6 +30,46 @@ in
       "@tarquinen/opencode-dcp@latest"
     ];
     settings.permission.websearch = "allow";
+    # Dangerous commands require approval before running; everything else
+    # executes freely. Applies to built-in build/plan agents — the custom
+    # agents in opencode-agents.nix keep their own stricter frontmatter rules.
+    settings.permission.bash = {
+      # Filesystem destruction / ownership
+      "rm" = "ask";
+      "rm *" = "ask";
+      "chmod *" = "ask";
+      "chown *" = "ask";
+      "shred *" = "ask";
+      # Raw disk operations
+      "dd" = "ask";
+      "dd *" = "ask";
+      "mkfs *" = "ask";
+      "mkfs.ext2 *" = "ask";
+      "mkfs.ext3 *" = "ask";
+      "mkfs.ext4 *" = "ask";
+      "mkfs.btrfs *" = "ask";
+      "mkfs.fat *" = "ask";
+      "mkfs.vfat *" = "ask";
+      "mkfs.xfs *" = "ask";
+      # Privilege escalation
+      "sudo" = "deny";
+      "sudo *" = "deny";
+      # System state
+      "nixos-rebuild" = "ask";
+      "nixos-rebuild *" = "ask";
+      "systemctl *" = "ask";
+      "shutdown *" = "ask";
+      "reboot" = "ask";
+      "poweroff" = "ask";
+      # Git
+      "git" = "ask";
+      "git *" = "ask";
+      # Arbitrary code / network fetches (paired with sandbox domain allowlist)
+      "curl" = "ask";
+      "curl *" = "ask";
+      "wget" = "ask";
+      "wget *" = "ask";
+    };
   };
 
   home.file.".config/opencode/themes/material-deep-ocean.json".text = builtins.toJSON {
