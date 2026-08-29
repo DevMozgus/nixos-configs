@@ -25,6 +25,7 @@ stdenvNoCC.mkDerivation rec {
   installPhase = ''
     runHook preInstall
 
+    mkdir -p $out
     cp -r src/skills $out/skills
 
     runHook postInstall
