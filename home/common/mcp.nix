@@ -1,4 +1,4 @@
-# MCP server configuration — Context7 (docs) + nixos (Nix search) + astro-docs (Astro framework)
+# MCP server configuration — Context7 (docs) + playwright (browser automation) + astro-docs (Astro framework)
 # Servers are defined once via mcp-servers-nix and consumed by:
 #   - opencode: via programs.opencode.enableMcpIntegration
 #   - VS Code:  via programs.vscode.profiles.default.enableMcpIntegration
@@ -18,11 +18,16 @@ in
   programs.mcp.enable = true;
 
   # mcp-servers-nix populates programs.mcp.servers with Nix-store-pinned
-  # server binaries for context7 and nixos.
+  # server binaries for context7 and playwright.
   # nixos server disabled: aioboto3 (transitive dep) fails tests with Python 3.13.
   mcp-servers.programs = {
     context7.enable = true;
     # nixos.enable = true;
+
+    # Browser automation (headed by default — window is visible on Hyprland).
+    # Uses nixpkgs playwright-mcp + playwright-driver.browsers (chromium);
+    # module auto-passes --executable-path (default: pkgs.chromium).
+    playwright.enable = true;
   };
 
   # Custom remote HTTP servers
