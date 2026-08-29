@@ -1,4 +1,5 @@
-# MCP server configuration — Context7 (docs) + playwright (browser automation) + astro-docs (Astro framework)
+# MCP server configuration — Context7 (docs), playwright + chrome-devtools (browser),
+# sequential-thinking (reasoning), astro-docs (Astro framework)
 # Servers are defined once via mcp-servers-nix and consumed by:
 #   - opencode: via programs.opencode.enableMcpIntegration
 #   - VS Code:  via programs.vscode.profiles.default.enableMcpIntegration
@@ -28,6 +29,14 @@ in
     # Uses nixpkgs playwright-mcp + playwright-driver.browsers (chromium);
     # module auto-passes --executable-path (default: pkgs.chromium).
     playwright.enable = true;
+
+    # Chrome DevTools protocol debugging (console, network, performance traces).
+    # Same executable pattern as playwright; pairs with the vendored
+    # accessibility-audit / accessibility-fix opencode skills.
+    chrome-devtools.enable = true;
+
+    # Structured reasoning scratchpad (zero-config stdio server from nixpkgs).
+    sequential-thinking.enable = true;
   };
 
   # Custom remote HTTP servers

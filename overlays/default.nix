@@ -21,5 +21,6 @@
     };
     beadsViewer = prev.callPackage ../pkgs/beads-viewer { };
     firefoxAddonOpenInMpv = prev.callPackage ../pkgs/firefox-addon-open-in-mpv { };
+    ohMyOpencodeSlim = prev.callPackage ../pkgs/oh-my-opencode-slim { };
   })
 ]
