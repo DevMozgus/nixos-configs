@@ -12,6 +12,7 @@
     ../common/optional/1password.nix
     ../common/optional/netbird.nix
     ../common/optional/wireguard.nix
+    ../common/optional/nfs.nix
     ../common/optional/codecs.nix
     ../common/optional/security.nix
     ../common/optional/ollama.nix

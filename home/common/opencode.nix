@@ -26,7 +26,7 @@ in
       "oh-my-opencode-slim"
       "@tarquinen/opencode-dcp@latest"
     ];
-    settings.permission.websearch = "allow";
+    settings.permission.websearch = "ask";
     # Dangerous commands require approval before running; everything else
     # executes freely.
     settings.permission.bash = {
@@ -66,6 +66,12 @@ in
       "git diff *" = "allow";
       "git log" = "allow";
       "git log *" = "allow";
+      "git show" = "allow";
+      "git show *" = "allow";
+      "git pull" = "allow";
+      "git pull *" = "allow";
+      "git add" = "allow";
+      "git add *" = "allow";
       # Arbitrary code / network fetches (paired with sandbox domain allowlist)
       "curl" = "ask";
       "curl *" = "ask";
