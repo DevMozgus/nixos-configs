@@ -25,7 +25,9 @@ Singleton {
     property int unread: 0                // reset by markRead()
 
     signal newToast(var notif)
-    signal historyChanged()
+    // NOTE: do NOT declare historyChanged() — QML auto-generates it for
+    // the `history` property; redeclaring it is an invalid override that
+    // fails the whole config load.
 
     readonly property alias center: notifCenter
 
@@ -40,14 +42,12 @@ Singleton {
     function clearAll() {
         root.history = [];
         root.unread = 0;
-        root.historyChanged();
         root._persist();
     }
 
     // Drop one history entry (user-close in the center).
     function dismiss(key) {
         root.history = root.history.filter(r => r.key !== String(key));
-        root.historyChanged();
         root._persist();
     }
 
@@ -83,7 +83,6 @@ Singleton {
         // (its toast deadline is refreshed by Toasts.push).
         root.history = [record].concat(root.history.filter(r => r.key !== record.key)).slice(0, 100);
         root.unread += 1;
-        root.historyChanged();
         root._persist();
     }
 
@@ -158,7 +157,6 @@ Singleton {
                             .filter(e => e !== null && typeof e === "object")
                             .map(e => Object.assign({}, e, { object: null }))
                             .slice(0, 100);
-                    root.historyChanged();
                 }
             }
         } catch (e) {

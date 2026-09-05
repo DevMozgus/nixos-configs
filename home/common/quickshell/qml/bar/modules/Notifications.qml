@@ -23,17 +23,7 @@ BarWidget {
     checked: Store.center.visible
 
     onClicked: Store.center.openWindow()
-
-    // BarWidget only emits left-clicks — overlay a right-button-only
-    // MouseArea for the DND toggle (hoverEnabled off keeps the pill's
-    // own hover wash alive; left clicks pass through to it).
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.RightButton
-        hoverEnabled: false
-        cursorShape: Qt.PointingHandCursor
-        onClicked: Store.toggleDnd()
-    }
+    onAltClicked: Store.toggleDnd()
 
     Text {
         anchors.verticalCenter: parent.verticalCenter

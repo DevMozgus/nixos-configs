@@ -39,12 +39,9 @@ Popover {
     }
 
     function _isWifi(dev) {
-        // Defensive: NetworkDeviceType member names have varied across
-        // quickshell versions — fall back to the presence of the wifi
-        // network model, which wired devices don't have.
-        if (NetworkDeviceType.Wifi !== undefined)
-            return dev.type === NetworkDeviceType.Wifi;
-        return dev.networks !== undefined;
+        // DeviceType is a module-level enum in Quickshell.Networking
+        // (members: None, Wifi, Wired) — stable across 0.3.x.
+        return dev.type === DeviceType.Wifi;
     }
 
     function _findDevice(wantWifi) {
@@ -260,12 +257,15 @@ Popover {
                     }
 
                     // Saved profile without stored secrets → reveal the
-                    // passphrase field below this row.
+                    // passphrase field below this row. In 0.3.x there is no
+                    // NoSecrets signal; connect() emits connectionFailed()
+                    // with ConnectionFailReason.NoSecrets instead.
                     Connections {
                         target: netEntry.modelData
 
-                        function onNoSecrets() {
-                            if (root.connectingNet === netEntry.modelData)
+                        function onConnectionFailed(reason) {
+                            if (reason === ConnectionFailReason.NoSecrets
+                                && root.connectingNet === netEntry.modelData)
                                 root.pendingConnect = netEntry.modelData;
                         }
                     }

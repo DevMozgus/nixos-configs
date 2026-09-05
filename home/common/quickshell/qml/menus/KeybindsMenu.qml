@@ -114,6 +114,7 @@ ModalWindow {
 
             Text {
                 anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
                 visible: searchInput.text === ""
                 text: "Search keybinds…"
                 font.family: Theme.fonts.sans

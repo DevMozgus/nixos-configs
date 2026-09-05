@@ -145,6 +145,7 @@ Singleton {
         readonly property string sun: "\uF185"
         readonly property string moon: "\uF186"
         readonly property string power: "\uF011"
+        readonly property string drive: "\uF0A0"
         readonly property string lock: "\uF023"
         readonly property string logout: "\uF2F5"
         readonly property string reboot: "\uF2F1"
@@ -155,5 +156,17 @@ Singleton {
         readonly property string batteryEmpty: "\uF244"
         readonly property string bolt: "\uF0E7"
         readonly property string record: "\uF111"
+        readonly property string usb: "\uF287"
+    }
+
+    // Icon-theme names must go through the "image://icon/<name>" scheme for
+    // IconImage; bare names are treated as qrc-relative URLs and fail to
+    // load. Absolute paths and image:///http(s) URLs pass through untouched.
+    function iconSource(raw) {
+        if (raw === null || raw === undefined || raw === "")
+            return "";
+        if (raw.startsWith("/") || raw.startsWith("image://") || raw.startsWith("http"))
+            return raw;
+        return "image://icon/" + raw;
     }
 }

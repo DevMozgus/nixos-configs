@@ -73,17 +73,8 @@ BarWidget {
         onTriggered: root.refresh()
     }
 
-    // Wheel scrub over the whole pill. The area lives in the content row,
-    // so it anchors to the grandparent (the pill itself) — anchored items
-    // are skipped by the Row layout. NoButton keeps clicks falling through
-    // to the BarWidget mouse area; wheels propagate down to this area
-    // because BarWidget's own MouseArea has no onWheel handler.
-    MouseArea {
-        anchors.fill: parent.parent
-        acceptedButtons: Qt.NoButton
-
-        onWheel: wheel => root._set(root.percent + (wheel.angleDelta.y > 0 ? 5 : -5))
-    }
+    // Wheel scrub arrives via BarWidget's `wheeled` signal.
+    onWheeled: delta => root._set(root.percent + (delta > 0 ? 5 : -5))
 
     onClicked: {
         if (root.hub)

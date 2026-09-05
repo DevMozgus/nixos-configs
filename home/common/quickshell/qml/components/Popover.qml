@@ -44,8 +44,8 @@ PopupWindow {
 
     // ── Window setup ────────────────────────────────────────────────────
     color: "transparent"
-    width: root.popWidth
-    height: frame.height
+    implicitWidth: root.popWidth
+    implicitHeight: frame.height
     grabFocus: true
 
     anchor {
@@ -92,7 +92,7 @@ PopupWindow {
     Rectangle {
         id: frame
 
-        width: root.width
+        width: root.popWidth
         height: contentColumn.implicitHeight + root.popPadding * 2
 
         radius: Theme.radius.md

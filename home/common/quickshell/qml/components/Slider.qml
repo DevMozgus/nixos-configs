@@ -103,5 +103,5 @@ Item {
     }
 
     Accessible.role: Accessible.Slider
-    Accessible.value: root.value
+    Accessible.name: Math.round(root.value * 100) + "%"
 }

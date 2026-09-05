@@ -24,7 +24,19 @@ BarWidget {
     padH: 4
     contentSpacing: 6
 
-    readonly property var items: SystemTray.items ? (SystemTray.items.values ?? []) : []
+    // Visible tray items. Some entries are filtered out on purpose:
+    //  - bluetooth: the custom Bluetooth bar module + popover own that
+    //    UX, so the blueman/bluetooth SNI icon would only duplicate it;
+    //  - drive-removable*: no installed icon theme ships these names
+    //    (udisks-style per-device entries), so they can never render.
+    readonly property var items: {
+        const all = SystemTray.items ? (SystemTray.items.values ?? []) : [];
+        return all.filter(it => {
+            const hay = ((it.id ?? "") + " " + (it.title ?? "") + " " + (it.icon ?? "")).toLowerCase();
+            return !hay.includes("blueman") && !hay.includes("bluetooth")
+                && !hay.includes("drive-removable");
+        });
+    }
 
     visible: root.items.length > 0
 
@@ -48,15 +60,29 @@ BarWidget {
             height: 16
             anchors.verticalCenter: parent.verticalCenter
 
-            // IconImage (Quickshell.Widgets) resolves tray icon names as
-            // well as image:// URLs; a plain Image only understands URLs,
-            // which is why it is not the primary choice here.
-            IconImage {
-                anchors.fill: parent
+            // IconImage (Quickshell.Widgets) resolves icon-theme names only
+            // through the "image://icon/<name>" scheme (Theme.iconSource);
+            // bare names are qrc-relative and fail. When the theme lacks the
+            // icon (status never reaches Ready) a crisp drive glyph shows
+            // instead — brighter fg so the fallback reads as intentional.
+            Text {
+                anchors.centerIn: parent
+                visible: !trayImage.ready
+                text: Theme.icons.drive
+                font.family: Theme.fonts.mono
+                font.pixelSize: 13
+                color: Theme.fg
+            }
 
-                source: trayIcon.modelData.icon
-                sourceSize.width: 16
-                sourceSize.height: 16
+            IconImage {
+                id: trayImage
+
+                readonly property bool ready: status === Image.Ready
+
+                anchors.fill: parent
+                visible: trayImage.ready
+
+                source: Theme.iconSource(trayIcon.modelData.icon)
                 asynchronous: true
             }
 

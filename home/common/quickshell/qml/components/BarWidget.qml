@@ -31,6 +31,14 @@ Rectangle {
 
     signal clicked()
 
+    // Right-click on the pill (e.g. Notifications toggles DND with it).
+    signal altClicked()
+
+    // Vertical wheel delta from the pill's own mouse area (e.g. Backlight
+    // scrubs brightness with it). Wheel events reach the internal MouseArea
+    // regardless of acceptedButtons.
+    signal wheeled(real delta)
+
     // ── Visuals ─────────────────────────────────────────────────────────
     implicitWidth: contentRow.implicitWidth + root.padH * 2
     implicitHeight: Theme.barHeight - 6
@@ -69,6 +77,9 @@ Rectangle {
         enabled: root.interactive
         hoverEnabled: true
         cursorShape: root.interactive ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: root.clicked()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.button === Qt.RightButton ? root.altClicked()
+                                                           : root.clicked()
+        onWheel: wheel => root.wheeled(wheel.angleDelta.y)
     }
 }

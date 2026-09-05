@@ -108,6 +108,7 @@ ModalWindow {
 
             Text {
                 anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
                 visible: searchInput.text === ""
                 text: "Search applications…"
                 font.family: Theme.fonts.sans
@@ -222,9 +223,15 @@ ModalWindow {
                         }
 
                         IconImage {
+                            id: appIcon
+
+                            // Covers the glyph placeholder only once the
+                            // theme icon has actually resolved.
+                            readonly property bool ready: status === Image.Ready
+
                             anchors.fill: parent
-                            visible: row.modelData.icon !== ""
-                            source: row.modelData.icon
+                            visible: appIcon.ready
+                            source: Theme.iconSource(row.modelData.icon)
                         }
                     }
 
@@ -291,20 +298,5 @@ ModalWindow {
         }
     }
 
-    Rectangle {
-        width: parent.width
-        height: 1
-        color: Theme.hairline
-    }
-
-    // ── Footer key hints ────────────────────────────────────────────────
-    Text {
-        width: parent.width
-        horizontalAlignment: Text.AlignHCenter
-
-        text: "↵ launch   ↑↓ navigate   esc close"
-        font.family: Theme.fonts.mono
-        font.pixelSize: Theme.fonts.size.xs
-        color: Theme.fgDark
-    }
+    // Footer key hints removed by user request (2026-09).
 }

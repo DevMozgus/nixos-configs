@@ -107,8 +107,22 @@ Rectangle {
             id: trailingSlot
 
             anchors.verticalCenter: parent.verticalCenter
-            implicitWidth: childrenRect.width
-            implicitHeight: childrenRect.height
+
+            // Size off children's implicit geometry, NOT childrenRect —
+            // vertically-anchored children make childrenRect.height depend
+            // on this item's height (binding loop).
+            implicitWidth: {
+                let w = 0;
+                for (let i = 0; i < visibleChildren.length; i++)
+                    w = Math.max(w, visibleChildren[i].implicitWidth);
+                return w;
+            }
+            implicitHeight: {
+                let h = 0;
+                for (let i = 0; i < visibleChildren.length; i++)
+                    h = Math.max(h, visibleChildren[i].implicitHeight);
+                return h;
+            }
         }
 
         Text {

@@ -25,7 +25,9 @@ PanelWindow {
     property int cardPadding: Theme.spacing.lg
 
     signal opened()
-    signal closed()
+    // `closed` is inherited from PanelWindow (ProxyWindowBase); do not
+    // redeclare — it logs an invalidOverride warning. We emit it manually
+    // in onVisibleChanged for the hide transition.
 
     function openWindow() {
         root.visible = true;
@@ -38,7 +40,10 @@ PanelWindow {
     // ── Window setup ────────────────────────────────────────────────────
     visible: false
     color: "transparent"
-    screen: Quickshell.primaryScreen
+    // NOTE: `screen` is intentionally left unset — assigning
+    // Quickshell.primaryScreen at creation time binds before screens are
+    // enumerated ("Unable to assign [undefined]…"). Unset windows follow
+    // the default (primary) screen, matching Toasts.qml.
 
     anchors {
         top: true

@@ -149,6 +149,7 @@ ModalWindow {
 
             Text {
                 anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
                 visible: searchInput.text === ""
                 text: "Search emojis…"
                 font.family: Theme.fonts.sans
