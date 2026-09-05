@@ -26,7 +26,7 @@ in
       "oh-my-opencode-slim"
       "@tarquinen/opencode-dcp@latest"
     ];
-    settings.permission.websearch = "ask";
+    settings.permission.websearch = "allow";
     # Dangerous commands require approval before running; everything else
     # executes freely.
     settings.permission.bash = {
