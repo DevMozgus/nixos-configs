@@ -1,7 +1,7 @@
 # GitHub Copilot — NixOS Configs Instructions
 
 This is a fully declarative NixOS flake managing three hosts (desktop, laptop, vm) with
-Hyprland + Waybar, Stylix theming, NixVim, and home-manager as a NixOS sub-module.
+Hyprland + Quickshell, Stylix theming, NixVim, and home-manager as a NixOS sub-module.
 All code is in Nix. Never suggest imperative shell workarounds for things that belong in Nix.
 
 ---
@@ -50,12 +50,21 @@ home/
     vscode.nix                    # VSCodium + nix-vscode-extensions + Stylix colour overrides
     firefox.nix                   # Firefox + NUR extensions + Stylix userChrome
     neovim.nix                    # NixVim: LSP (nil_ls/pyright/ts_ls), Telescope, Treesitter
-    rofi.nix                      # rofi-wayland (Stylix auto-themes)
     hyprland/
       default.nix                 # Keybinds, animations, exec-once; conditionally imports laptop.nix
       laptop.nix                  # Touchpad, gestures, lid-switch bindl
-    waybar/
-      default.nix                 # Bar layout; lib.optionals isLaptop for battery/backlight/network
+    quickshell/                   # Quickshell shell, config name "mdo"; package from flake input
+      default.nix                 # Package + xdg.configFile qml/ → ~/.config/quickshell/mdo/; generates Theme.json
+      qml/
+        shell.qml                 # ShellRoot: bars per screen, IPC hub, global windows
+        Theme.qml                 # Singleton reading Theme.json — the ONLY place colors may live
+        components/               # Popover, ModalWindow, BarWidget, IconButton, MenuRow, SectionHeader, Slider, Toggle, ScrollableList
+        bar/                      # Bar.qml + modules/ (Workspaces, Clock, Battery, Backlight, Recording, Audio, Network, Bluetooth, Notifications, Tray, Power)
+        popovers/                 # Audio, Network, Bluetooth, Clock/calendar, Backlight, PowerMenu
+        launcher/                 # Launcher.qml (app launcher)
+        menus/                    # EmojiPicker, ScreenshotMenu, ClipboardMenu, KeybindsMenu
+        notifications/            # Store singleton w/ NotificationServer, Toasts, NotificationCenter
+        data/                     # emojis.json
 
 pkgs/
   default.nix                     # { pkgs }: { materialDeepOceanPlymouth = pkgs.callPackage … }
@@ -134,9 +143,55 @@ config.lib.stylix.colors.base0D   # → "82AAFF"
 | SDDM     | Custom QML theme; Stylix has no `sddm` target                        | `services.displayManager.sddm.theme = "omarchy"` overrides Stylix automatically |
 | GTK4     | Stylix GTK4 override causes issues                                   | `gtk.gtk4.theme = lib.mkForce null` in `home/common/default.nix`                |
 | Kitty    | Stylix handles colours; override font size only                      | `font.size = lib.mkForce 13`                                                    |
-| Waybar   | Stylix CSS generated first; custom rules appended with `lib.mkAfter` | `style = lib.mkAfter ''…''`                                                     |
+| Quickshell | No Stylix target                                                     | Theme.json generated from palette in `home/common/quickshell/default.nix`; Theme.qml singleton reads it |
 | Firefox  | Stylix targets the profile; userChrome uses colour vars              | `config.lib.stylix.colors.withHashtag`                                          |
 | VSCode   | `workbench.colorCustomizations."[Stylix]"` uses Stylix palette       | `config.lib.stylix.colors.withHashtag`                                          |
+
+---
+
+## Quickshell — shell architecture
+
+The desktop shell is Quickshell with config name **`mdo`** (Material Deep Ocean), defined in
+`home/common/quickshell/`. The QML tree under `qml/` is deployed recursively to
+`~/.config/quickshell/mdo/` via `xdg.configFile`; the shell runs as `qs -c mdo`.
+
+- Flake input: `quickshell = github:quickshell-mirror/quickshell` with `nixpkgs.follows = "nixpkgs"`.
+- Package: `inputs.quickshell.packages.${pkgs.system}.default`, set in `home/common/quickshell/default.nix`.
+- `shell.qml` is the `ShellRoot`: one bar per screen, the IPC hub, and global windows.
+
+### Theming: Theme.json / Theme.qml
+
+`Theme.json` is **generated at build time** in `home/common/quickshell/default.nix` via
+`builtins.toJSON` from `config.lib.stylix.colors.withHashtag`, `config.stylix.fonts`,
+`isLaptop`, and `barHeight = 36`. The `Theme.qml` singleton reads it — and is the **only**
+place literal hex colours may live (there only as `??` fallbacks).
+
+Theming rules:
+
+- Components consume `Theme` tokens — never raw hex values in QML.
+- Fonts come from `Theme.fonts` (populated from Stylix), not QML literals.
+- Laptop/desktop gating goes through `Theme.isLaptop`, not ad-hoc QML checks.
+
+### IPC contract
+
+Hyprland keybinds never spawn surfaces directly; they call the IPC hub:
+
+```
+qs -c mdo ipc call <target> <fn>
+```
+
+| Target         | Function          | Surface                              |
+| -------------- | ----------------- | ------------------------------------ |
+| `launcher`     | `open`            | App launcher                         |
+| `power`        | `open`            | Power menu                           |
+| `notifications`| `open` / `center` | Notification center / toasts         |
+| `clipboard`    | `open`            | Clipboard history (cliphist store)   |
+| `emoji`        | `open`            | Emoji picker                         |
+| `screenshot`   | `open`            | Screenshot menu (grimblast + satty)  |
+| `keybinds`     | `open`            | Keybinds cheat sheet                 |
+
+**Agents must never run `qs` or any build.** The shell only runs on the actual machines;
+evaluate changes by reading the QML and Nix, not by executing them.
 
 ---
 
@@ -214,8 +269,8 @@ Passed as `extraSpecialArgs` from the flake. Use it for conditional configuratio
 # home-manager module
 { lib, isLaptop, ... }:
 {
-  # Waybar pattern
-  modules-right = (lib.optionals isLaptop [ "battery" "backlight" "network" ]) ++ [ "cpu" ];
+  # Quickshell pattern — isLaptop is baked into the generated Theme.json
+  themeJson = builtins.toJSON { inherit isLaptop; barHeight = 36; };
 
   # Hyprland pattern
   imports = [] ++ (if isLaptop then [ ./laptop.nix ] else []);
@@ -251,6 +306,8 @@ boot.plymouth.theme = lib.mkForce "material-deep-ocean";
 
 - NixOS side (`hosts/common/optional/hyprland.nix`): enables the compositor, UWSM, portals, polkit, PAM.
 - Home side (`home/common/hyprland/default.nix`): configures keybindings, animations, `exec-once`, monitor layout.
+- `exec-once` starts the shell: `qs -c mdo`.
+- Keybinds open shell surfaces via the IPC contract: `qs -c mdo ipc call <target> <fn>` (see Quickshell section).
 - Always set `package = null` and `portalPackage = null` in the home module (packages come from the NixOS module).
 - Always set `systemd.enable = false` (UWSM handles the systemd session).
 - Hyprland is launched via UWSM from `~/.zprofile` (the `profileExtra` in `shell.nix`).
@@ -308,6 +365,8 @@ An opt-in module imported by desktop and laptop (not VM). Provides:
 - **Never** add a NixOS module to `hosts/common/global/` unless it truly belongs on every host (the four existing files — nix, locale, users, boot — cover everything global).
 - **Never** import an optional module in `hosts/common/global/default.nix`; optional modules belong only in per-host `default.nix` files.
 - **Never** configure Stylix colours/fonts/cursor outside of `hosts/common/global/default.nix`.
+- **Never** configure shell UI outside `home/common/quickshell/qml/`.
+- **Never** edit `Theme.json` by hand — it is generated at build time from the Stylix palette.
 - **Never** edit files outside of this directory. All configuration must be done via the Nix files in this repo.
 - **Always** run `git add -A` before `nixos-rebuild switch --flake .#<hostname>`.
 - **Always** use `lib.mkForce` when overriding NixOS options in the VM host.

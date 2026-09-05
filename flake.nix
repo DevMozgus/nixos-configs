@@ -31,6 +31,11 @@
 
     nur.url = "github:nix-community/NUR";
 
+    quickshell = {
+      url = "github:quickshell-mirror/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
     mcp-servers-nix = {
@@ -60,6 +65,7 @@
       nixvim,
       nix-vscode-extensions,
       nur,
+      quickshell,
       peon-ping,
       ...
     }@inputs:

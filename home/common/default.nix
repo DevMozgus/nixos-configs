@@ -17,12 +17,10 @@
     ./librewolf.nix
     ./zen-browser.nix
     ./neovim.nix
-    ./rofi.nix
-    ./swaync.nix
     ./swayosd.nix
     ./storage.nix
     ./hyprland
-    ./waybar
+    ./quickshell
     ./opencode.nix
     ./opencode-skills.nix
     ./oh-my-opencode-slim.nix

@@ -10,111 +10,6 @@ let
   c = config.lib.stylix.colors;
   wallpaper = ../../../assets/wallpaper3.png;
 
-  powerMenu = pkgs.writeShellApplication {
-    name = "power-menu";
-    runtimeInputs = [
-      pkgs.rofi
-    ];
-    text = ''
-      CHOSEN=$(printf '%s\n' "󰌾" "󰒲" "󰍃" "󰑐" "󰐥" \
-        | rofi -dmenu \
-            -theme "$HOME/.config/rofi/powermenu-theme.rasi" \
-            -p "")
-
-      case "$CHOSEN" in
-        "󰌾")  hyprlock ;;
-        "󰒲")  systemctl suspend ;;
-        "󰍃")  hyprctl dispatch exit ;;
-        "󰑐")  systemctl reboot ;;
-        "󰐥")  systemctl poweroff ;;
-      esac
-    '';
-  };
-
-  showHyprKeybindings = pkgs.writeShellApplication {
-    name = "show-hypr-keybindings";
-    runtimeInputs = [ pkgs.rofi ];
-    text = ''
-      hdr() { printf '<span foreground="#${c.base0A}" weight="bold">  ── %s ──────────────────────────────────────────────</span>\n' "$1"; }
-      kb()  { printf '  %-28s  %s\n' "$1" "$2"; }
-
-      {
-        hdr "Apps"
-        kb "SUPER + Return"           "Terminal (Kitty)"
-        kb "SUPER + D"                "App Launcher (Rofi)"
-        kb "SUPER + E"                "File Manager (Dolphin)"
-        kb "SUPER + P"                "Browser (Zen)"
-        kb "SUPER + C"                "Code Editor (VSCode)"
-        kb "SUPER + M"                "Media Player (Jellyfin TUI)"
-        echo ""
-        hdr "Window Management"
-        kb "SUPER + Q"                "Close Window"
-        kb "SUPER + V  /  SPACE"      "Toggle Floating"
-        kb "SUPER + F"                "Fullscreen"
-        kb "SUPER + S"                "Toggle Split"
-        echo ""
-        hdr "Focus & Navigation"
-        kb "SUPER + ←/→/↑/↓"         "Move Focus"
-        kb "SUPER + J  /  K"          "Cycle Focus (Next / Prev)"
-        kb "SUPER + SHIFT + J  /  K"  "Swap Windows (Next / Prev)"
-        echo ""
-        hdr "Resize"
-        kb "SUPER + H  /  L"          "Resize Horizontal (−100 / +100)"
-        kb "SUPER + SHIFT + H  /  L"  "Resize Vertical (−100 / +100)"
-        echo ""
-        hdr "Workspaces"
-        kb "SUPER + 1–0"              "Switch to Workspace 1–10"
-        kb "SUPER + SHIFT + 1–0"      "Move Window to Workspace 1–10"
-        echo ""
-        hdr "Mouse"
-        kb "SUPER + LMB drag"         "Move Window"
-        kb "SUPER + RMB drag"         "Resize Window"
-        echo ""
-        hdr "Screenshot & Recording"
-        kb "SUPER + S"                "Screenshot Region → Clipboard"
-        kb "SUPER + SHIFT + S"        "Screenshot / Recording Menu"
-        kb "Print"                    "Screenshot Screen → Clipboard"
-        kb "SUPER + SHIFT + R"        "Toggle Screen Recording (with Desktop Audio)"
-        echo ""
-        hdr "Clipboard & Notifications"
-        kb "SUPER + SHIFT + V"        "Clipboard History (cliphist)"
-        kb "SUPER + SHIFT + SPACE"     "Emoji Picker"
-        kb "SUPER + N"                "Notification Center (SwayNC)"
-        echo ""
-        hdr "Media Keys (Laptop)"
-        kb "XF86AudioRaiseVolume"     "Volume Up (+5%)"
-        kb "XF86AudioLowerVolume"     "Volume Down (−5%)"
-        kb "XF86AudioMute"            "Toggle Mute"
-        kb "XF86AudioMicMute"         "Toggle Mic Mute"
-        kb "XF86MonBrightnessUp"      "Brightness Up (+5%)"
-        kb "XF86MonBrightnessDown"    "Brightness Down (−5%)"
-        kb "XF86AudioPlay / Pause"    "Play / Pause"
-        kb "XF86AudioNext / Prev"     "Next / Previous Track"
-        echo ""
-        hdr "System"
-        kb "SUPER + B"                "Power Menu"
-        kb "SUPER + SHIFT + Escape"   "Power Menu"
-        kb "SUPER + I"                "Keybindings Reference (this menu)"
-      } | rofi -dmenu -markup-rows \
-            -theme "$HOME/.config/rofi/keybindings-theme.rasi" \
-            -p "󰌌  Keybindings" || true
-    '';
-  };
-
-  emojiPicker = pkgs.writeShellApplication {
-    name = "emoji-picker";
-    runtimeInputs = [
-      pkgs.rofimoji
-      pkgs.rofi
-      pkgs.wl-clipboard
-    ];
-    text = ''
-      rofimoji \
-        --action copy \
-        --selector-args "--theme $HOME/.config/rofi/emoji-theme.rasi"
-    '';
-  };
-
   recordingFile = "/tmp/screenrecord-filename";
   recordingPid = "/tmp/screenrecord-pid";
 
@@ -147,8 +42,6 @@ let
         sleep 0.1
         count=$((count + 1))
       done
-
-      pkill -RTMIN+8 waybar 2>/dev/null || true
 
       if kill -0 "$pid" 2>/dev/null; then
         kill -9 "$pid" 2>/dev/null || true
@@ -192,7 +85,7 @@ let
         -a default_output -ac aac -o "$FILE" &
       pid=$!
 
-      # Write PID immediately so waybar picks it up during portal selection
+      # Write PID immediately so the shell picks it up during portal selection
       echo "$pid" > "$PID_FILE"
 
       # Wait for recording to actually start (output file appears after portal selection)
@@ -202,7 +95,6 @@ let
 
       if kill -0 "$pid" 2>/dev/null; then
         echo "$FILE" > "${recordingFile}"
-        pkill -RTMIN+8 waybar 2>/dev/null || true
         notify-send "Screen Recording" "Recording started" -t 2000
       else
         # Process died (user cancelled portal or error) — clean up
@@ -211,130 +103,6 @@ let
     '';
   };
 
-  screenshotMenu = pkgs.writeShellApplication {
-    name = "screenshot-menu";
-    runtimeInputs = [
-      pkgs.rofi
-      pkgs.grimblast
-      pkgs.satty
-      pkgs.hyprpicker
-      pkgs.gpu-screen-recorder
-      pkgs.libnotify
-      pkgs.ffmpeg
-      pkgs.v4l-utils
-      pkgs.jq
-    ];
-    text = ''
-      PID_FILE="${recordingPid}"
-
-      start_webcam_overlay() {
-        # Kill any existing overlay
-        pkill -f "WebcamOverlay" 2>/dev/null || true
-
-        # Auto-detect first available webcam
-        local webcam_device
-        webcam_device=$(v4l2-ctl --list-devices 2>/dev/null | grep -m1 "^[[:space:]]*/dev/video" | tr -d '\t')
-        if [[ -z "$webcam_device" ]]; then
-          notify-send "No webcam found" -u critical -t 3000
-          return 1
-        fi
-
-        local scale
-        scale=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .scale')
-        local target_width
-        target_width=$(awk "BEGIN {printf \"%.0f\", 360 * $scale}")
-
-        # Try preferred 16:9 resolutions in order
-        local available_formats
-        available_formats=$(v4l2-ctl --list-formats-ext -d "$webcam_device" 2>/dev/null)
-        local video_size_args=()
-        for resolution in "640x360" "1280x720" "1920x1080"; do
-          if echo "$available_formats" | grep -q "$resolution"; then
-            video_size_args=(-video_size "$resolution")
-            break
-          fi
-        done
-
-        ffplay -f v4l2 "''${video_size_args[@]}" -framerate 30 "$webcam_device" \
-          -vf "crop=iw/2:ih,scale=''${target_width}:-1" \
-          -window_title "WebcamOverlay" \
-          -noborder \
-          -fflags nobuffer -flags low_delay \
-          -probesize 32 -analyzeduration 0 \
-          -loglevel quiet &
-        sleep 1
-      }
-
-      # If already recording, offer to stop
-      if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-        CHOSEN=$(printf '%s\n' \
-          "󰑊  Stop Recording" \
-          "󰑊  Cancel" \
-          | rofi -dmenu -p "")
-        case "$CHOSEN" in
-          "󰑊  Stop Recording") exec stop-recording ;;
-        esac
-        exit 0
-      fi
-
-      CHOSEN=$(printf '%s\n' \
-        "󰹑  Screenshot Screen" \
-        "󰹑  Screenshot Region" \
-        "󰕧  Record Screen (No Audio)" \
-        "󰕧  Record Screen + Desktop Audio" \
-        "󰕧  Record Screen + Desktop + Mic" \
-        "󰕧  Record Screen + Webcam + Audio" \
-        "󰈠  Color Picker" \
-        | rofi -dmenu -p "")
-
-      case "$CHOSEN" in
-        "󰹑  Screenshot Screen")
-          grimblast save screen - | satty --filename - ;;
-        "󰹑  Screenshot Region")
-          grimblast save area - | satty --filename - ;;
-        "󰈠  Color Picker")
-          hyprpicker -a ;;
-        *)
-          # Determine audio args
-          audio_args=()
-          case "$CHOSEN" in
-            *"Desktop Audio"*)         audio_args=(-a default_output -ac aac) ;;
-            *"Desktop + Mic"*)         audio_args=(-a "default_output|default_input" -ac aac) ;;
-            *"Webcam + Audio"*)        audio_args=(-a "default_output|default_input" -ac aac) ;;
-          esac
-
-          want_webcam=false
-          case "$CHOSEN" in
-            *"Webcam"*) want_webcam=true ;;
-          esac
-
-          mkdir -p "$HOME/Videos"
-          FILE="$HOME/Videos/screenrecording-$(date +'%Y-%m-%d_%H-%M-%S').mp4"
-          notify-send "Screen Recording" "Select area to record…" -t 3000
-
-          gpu-screen-recorder -w portal -k auto -s 0x0 -f 60 -fm cfr -fallback-cpu-encoding yes \
-            -o "$FILE" "''${audio_args[@]}" &
-          pid=$!
-
-          echo "$pid" > "$PID_FILE"
-
-          while kill -0 "$pid" 2>/dev/null && [[ ! -f "$FILE" ]]; do
-            sleep 0.2
-          done
-
-          if kill -0 "$pid" 2>/dev/null; then
-            echo "$FILE" > "${recordingFile}"
-            pkill -RTMIN+8 waybar 2>/dev/null || true
-            # Start webcam overlay AFTER portal selection, so it doesn't get killed by the dialog
-            [[ "$want_webcam" == "true" ]] && start_webcam_overlay
-            notify-send "Screen Recording" "Recording started" -t 2000
-          else
-            rm -f "$PID_FILE" "${recordingFile}"
-          fi
-          ;;
-      esac
-    '';
-  };
 in
 {
   imports = [ ./hyprlock.nix ] ++ (if isLaptop then [ ./laptop.nix ] else [ ]);
@@ -366,7 +134,7 @@ in
     settings = {
       "$mod" = "SUPER";
       "$terminal" = "kitty";
-      "$menu" = "rofi -show drun";
+      "$menu" = "qs -c mdo ipc call launcher open";
 
       monitor =
         if isLaptop then
@@ -472,9 +240,7 @@ in
       };
 
       exec-once = [
-        "waybar"
-        "swaync"
-        "nm-applet --indicator"
+        "qs -c mdo"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "hypridle"
@@ -486,7 +252,7 @@ in
       bind = [
         "$mod, Return, exec, $terminal"
         "$mod, D, exec, $menu"
-        "$mod, I, exec, show-hypr-keybindings"
+        "$mod, I, exec, qs -c mdo ipc call keybinds open"
         "$mod, Q, killactive,"
         "$mod, V, togglefloating,"
         "$mod, SPACE, togglefloating,"
@@ -495,7 +261,7 @@ in
         "$mod, E, exec, dolphin"
         "$mod, P, exec, zen-beta"
         "$mod, C, exec, code"
-        "$mod, B, exec, power-menu"
+        "$mod, B, exec, qs -c mdo ipc call power open"
         "$mod, M, exec, kitty -e jellyfin-tui"
 
         # Move focus
@@ -543,24 +309,24 @@ in
         # Screenshot — region to clipboard
         "$mod, S, exec, grimblast copy area"
         # Screenshot/recording menu
-        "$mod SHIFT, S, exec, screenshot-menu"
+        "$mod SHIFT, S, exec, qs -c mdo ipc call screenshot open"
         # Screenshot — full screen to clipboard
         ", Print, exec, grimblast copy screen"
 
         # Clipboard history
-        "$mod SHIFT, V, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy"
+        "$mod SHIFT, V, exec, qs -c mdo ipc call clipboard open"
 
         # Emoji picker
-        "$mod SHIFT, SPACE, exec, emoji-picker"
+        "$mod SHIFT, SPACE, exec, qs -c mdo ipc call emoji open"
 
         # Screen recording toggle
         "$mod SHIFT, R, exec, toggle-recording"
 
         # Power menu
-        "$mod SHIFT, Escape, exec, power-menu"
+        "$mod SHIFT, Escape, exec, qs -c mdo ipc call power open"
 
         # Toggle notification center
-        "$mod, N, exec, swaync-client -t -sw"
+        "$mod, N, exec, qs -c mdo ipc call notifications center"
       ];
 
       bindm = [
@@ -587,13 +353,7 @@ in
     wl-clipboard
     cliphist
     hypridle
-    swaynotificationcenter
-    networkmanagerapplet
-    showHyprKeybindings
     stopRecording
     toggleRecording
-    screenshotMenu
-    powerMenu
-    emojiPicker
   ];
 }
