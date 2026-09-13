@@ -21,6 +21,12 @@ ModalWindow {
     property var _results: []
     property int _sel: 0
 
+    // Live view of the desktop-entry index. DesktopEntries populates
+    // asynchronously after a cold login; this binding re-runs the filter
+    // the moment indexing completes so the list is never stuck empty.
+    property var _allEntries: DesktopEntries.applications.values
+    on_AllEntriesChanged: root._refresh()
+
     onOpened: {
         searchInput.text = "";
         root._query = "";
@@ -183,6 +189,10 @@ ModalWindow {
                     id: row
 
                     required property var modelData
+                    // Required alongside modelData: declaring any required
+                    // property disables implicit context injection, so the
+                    // Repeater's `index` must be declared too.
+                    required property int index
 
                     width: parent.width
                     height: 44
@@ -190,9 +200,13 @@ ModalWindow {
 
                     readonly property bool active: root._sel === index
 
+                    // Clear selection state: accent wash + 1px accent frame.
+                    border.width: row.active ? 1 : 0
+                    border.color: Theme.accent
+
                     color: {
                         if (row.active)
-                            return Theme.washStrong;
+                            return Theme.accentWash;
                         if (mouse.containsMouse)
                             return Theme.wash;
                         return "transparent";
@@ -231,7 +245,7 @@ ModalWindow {
 
                             anchors.fill: parent
                             visible: appIcon.ready
-                            source: Theme.iconSource(row.modelData.icon)
+                            source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
                         }
                     }
 

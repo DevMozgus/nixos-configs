@@ -1,3 +1,4 @@
+//@ pragma IconTheme breeze
 // mdo — Material Deep Ocean shell root.
 //
 // One Bar per screen + the IPC hub and global windows. Reach it from the

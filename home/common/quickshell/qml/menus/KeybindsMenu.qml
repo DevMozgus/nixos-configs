@@ -1,7 +1,10 @@
-// KeybindsMenu — PHASE2 Hyprland keybind reference modal.
+// KeybindsMenu — PHASE2 Hyprland keybind cheat sheet modal.
 //
-// Reads `hyprctl binds -j` on open and renders chord + description rows,
-// searchable across every field. Chord decoding is defensive: unknown
+// Reads `hyprctl binds -j` on open and renders a keycap cheat sheet:
+// chords as KeyCap chips, grouped into modifier families (Super,
+// Super+Shift, Super+Alt, Ctrl+Alt, media keys, …) under SectionHeaders,
+// two columns per group. Type-to-filter across chord + description;
+// Escape closes (via ModalWindow). Chord decoding is defensive: unknown
 // modmask bits are ignored, entries without key/keycode are skipped.
 
 import QtQuick
@@ -14,17 +17,49 @@ import qs.components
 ModalWindow {
     id: root
 
-    cardWidth: 520
+    cardWidth: 640
 
     // ── Data ────────────────────────────────────────────────────────────
     property var _all: []
+    property bool _loaded: false
     property string _query: ""
 
     readonly property var _filtered: root._all.filter(row =>
         root._query === "" || row.search.includes(root._query))
 
+    // Modifier families in display order; anything else is appended,
+    // sorted. "" = binds without modifiers (media keys, mouse binds).
+    readonly property var _familyOrder: [
+        "Super", "Super+Shift", "Super+Alt", "Super+Ctrl",
+        "Super+Shift+Alt", "Super+Shift+Ctrl", "Super+Alt+Ctrl",
+        "Ctrl+Alt", "Ctrl+Shift", "Ctrl", "Alt", "Shift", ""
+    ]
+
+    // Live regrouping of the filtered rows by modifier family.
+    readonly property var _groups: {
+        const byKey = {};
+        for (let i = 0; i < root._filtered.length; i++) {
+            const row = root._filtered[i];
+            if (byKey[row.family] === undefined)
+                byKey[row.family] = { label: row.familyLabel, rows: [] };
+            byKey[row.family].rows.push(row);
+        }
+        const groups = [];
+        for (const sig of root._familyOrder) {
+            if (byKey[sig] !== undefined) {
+                groups.push(byKey[sig]);
+                delete byKey[sig];
+            }
+        }
+        const rest = Object.keys(byKey).sort();
+        for (const key of rest)
+            groups.push(byKey[key]);
+        return groups;
+    }
+
     onOpened: {
         root._all = [];
+        root._loaded = false;
         root._query = "";
         searchInput.text = "";
         bindsProc.running = true;
@@ -79,13 +114,42 @@ ModalWindow {
                 : (b.keycode ? "code:" + b.keycode : "");
             const desc = b.description ? b.description
                 : (b.dispatcher || "") + (b.arg ? " " + b.arg : "");
+            const chord = mods.join("+") + (mods.length > 0 && key !== "" ? "+" : "") + key;
             return {
-                chord: mods.join("+") + (mods.length > 0 && key !== "" ? "+" : "") + key,
+                chord: chord,
                 desc: desc,
-                search: [key, b.keycode, b.dispatcher, b.arg, b.description]
+                family: mods.join("+"),
+                familyLabel: mods.length > 0 ? mods.join(" + ") : "Media & Misc",
+                parts: mods.map(m => {
+                    return { label: m, mod: true };
+                }).concat(key === "" ? [] : [{ label: key, mod: false }]),
+                search: [chord, key, b.keycode, b.dispatcher, b.arg, b.description]
                     .filter(f => f !== undefined && f !== null).join(" ").toLowerCase()
             };
-        }).filter(row => row.chord !== "");
+        }).filter(row => row.chord !== "" && row.parts.length > 0);
+
+        root._loaded = true;
+    }
+
+    // ── Title ───────────────────────────────────────────────────────────
+    Item {
+        width: parent.width
+        height: 16
+
+        SectionHeader {
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Keyboard Shortcuts"
+        }
+
+        Text {
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            text: "hyprctl binds"
+            font.family: Theme.fonts.mono
+            font.pixelSize: Theme.fonts.size.xs
+            color: Theme.comment
+        }
     }
 
     // ── Search ──────────────────────────────────────────────────────────
@@ -126,110 +190,211 @@ ModalWindow {
         }
     }
 
-    Rectangle {
-        width: parent.width
-        height: 1
-        color: Theme.hairline
-    }
-
-    // ── Bind rows ───────────────────────────────────────────────────────
+    // ── Grouped bind sheet ──────────────────────────────────────────────
     ScrollableList {
         id: bindsScroll
 
         width: parent.width
-        maxHeight: 420
+        maxHeight: 440
 
         Column {
             width: parent.width
-            spacing: 2
+            spacing: Theme.spacing.lg
 
             Repeater {
-                model: root._filtered
+                model: root._groups
 
-                delegate: Rectangle {
-                    id: row
+                delegate: Column {
+                    id: group
 
                     required property var modelData
 
                     width: parent.width
-                    height: 34
-                    radius: Theme.radius.sm
-                    color: mouse.containsMouse ? Theme.wash : "transparent"
+                    spacing: Theme.spacing.sm
 
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: Theme.duration.fast
+                    // Family header: SectionHeader + bind count.
+                    Item {
+                        width: parent.width
+                        height: 22
+
+                        SectionHeader {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: group.modelData.label
+                        }
+
+                        Text {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: group.modelData.rows.length + (group.modelData.rows.length === 1 ? " bind" : " binds")
+                            font.family: Theme.fonts.mono
+                            font.pixelSize: Theme.fonts.size.xs
+                            color: Theme.fgDark
                         }
                     }
 
-                    Text {
-                        id: chordText
+                    Rectangle {
+                        width: parent.width
+                        height: 1
+                        color: Theme.withAlpha(Theme.hairline, 0.6)
+                    }
 
-                        anchors.left: parent.left
-                        anchors.leftMargin: Theme.spacing.sm
-                        anchors.verticalCenter: parent.verticalCenter
+                    // Two-column density.
+                    Grid {
+                        id: grid
 
-                        width: 170
-                        text: row.modelData.chord
-                        elide: Text.ElideRight
-                        font.family: Theme.fonts.mono
-                        font.pixelSize: Theme.fonts.size.sm
-                        color: mouse.containsMouse ? Theme.fgBright : Theme.fg
+                        width: parent.width
+                        columns: 2
+                        columnSpacing: Theme.spacing.sm
+                        rowSpacing: 2
 
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: Theme.duration.fast
+                        Repeater {
+                            model: group.modelData.rows
+
+                            delegate: Rectangle {
+                                id: cell
+
+                                required property var modelData
+
+                                width: Math.floor((grid.width - grid.columnSpacing) / 2)
+                                height: 28
+                                radius: Theme.radius.sm
+                                clip: true
+                                color: mouse.containsMouse ? Theme.wash : "transparent"
+
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: Theme.duration.fast
+                                    }
+                                }
+
+                                Row {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: Theme.spacing.sm
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: Theme.spacing.sm
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    spacing: Theme.spacing.sm
+
+                                    // Chord: modifier caps + "+" separators + key cap.
+                                    Row {
+                                        id: capRow
+
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: 3
+
+                                        Repeater {
+                                            model: cell.modelData.parts
+
+                                            delegate: Row {
+                                                id: part
+
+                                                required property var modelData
+                                                required property int index
+
+                                                spacing: 3
+
+                                                Text {
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    visible: part.index > 0
+                                                    text: "+"
+                                                    font.family: Theme.fonts.mono
+                                                    font.pixelSize: Theme.fonts.size.xs
+                                                    color: Theme.comment
+                                                }
+
+                                                KeyCap {
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    label: part.modelData.label
+                                                    mod: part.modelData.mod
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Text {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: Math.max(0, parent.width - capRow.width - parent.spacing)
+                                        text: cell.modelData.desc
+                                        elide: Text.ElideRight
+                                        font.family: Theme.fonts.sans
+                                        font.pixelSize: Theme.fonts.size.sm
+                                        color: Theme.fg
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: mouse
+
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                }
                             }
                         }
-                    }
-
-                    Text {
-                        anchors.left: chordText.right
-                        anchors.leftMargin: Theme.spacing.md
-                        anchors.right: parent.right
-                        anchors.rightMargin: Theme.spacing.sm
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        text: row.modelData.desc
-                        elide: Text.ElideRight
-                        font.family: Theme.fonts.sans
-                        font.pixelSize: Theme.fonts.size.md
-                        color: Theme.fgDark
-                    }
-
-                    MouseArea {
-                        id: mouse
-
-                        anchors.fill: parent
-                        hoverEnabled: true
                     }
                 }
             }
 
-            Text {
-                visible: root._filtered.length === 0
-                text: "No keybinds match"
-                font.family: Theme.fonts.sans
-                font.pixelSize: Theme.fonts.size.sm
-                color: Theme.fgDark
+            // Empty / loading state.
+            Column {
+                visible: root._groups.length === 0
+                width: parent.width
+                spacing: Theme.spacing.xs
+
+                Item {
+                    width: 1
+                    height: 48
+                }
+
+                Text {
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
+                    text: root._loaded ? "No keybinds match" : "Loading keybinds…"
+                    font.family: Theme.fonts.sans
+                    font.pixelSize: Theme.fonts.size.md
+                    color: Theme.fg
+                }
+
+                Text {
+                    visible: root._loaded
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "Try a shorter query — e.g. \"launcher\""
+                    font.family: Theme.fonts.sans
+                    font.pixelSize: Theme.fonts.size.sm
+                    color: Theme.fgDark
+                }
             }
         }
     }
 
+    // ── Footer: hint + count ────────────────────────────────────────────
     Rectangle {
         width: parent.width
         height: 1
         color: Theme.hairline
     }
 
-    // ── Footer count ────────────────────────────────────────────────────
-    Text {
+    Item {
         width: parent.width
-        horizontalAlignment: Text.AlignHCenter
+        height: 14
 
-        text: root._filtered.length + " / " + root._all.length + " binds"
-        font.family: Theme.fonts.mono
-        font.pixelSize: Theme.fonts.size.xs
-        color: Theme.fgDark
+        Text {
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            text: "Type to filter · Esc to close"
+            font.family: Theme.fonts.sans
+            font.pixelSize: Theme.fonts.size.xs
+            color: Theme.fgDark
+        }
+
+        Text {
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            text: root._filtered.length + " / " + root._all.length + " binds"
+            font.family: Theme.fonts.mono
+            font.pixelSize: Theme.fonts.size.xs
+            color: Theme.fgDark
+        }
     }
 }

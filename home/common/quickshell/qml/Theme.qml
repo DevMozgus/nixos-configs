@@ -146,6 +146,8 @@ Singleton {
         readonly property string moon: "\uF186"
         readonly property string power: "\uF011"
         readonly property string drive: "\uF0A0"
+        readonly property string layoutDwindle: "\uF009"
+        readonly property string layoutMaster: "\uF0DB"
         readonly property string lock: "\uF023"
         readonly property string logout: "\uF2F5"
         readonly property string reboot: "\uF2F1"

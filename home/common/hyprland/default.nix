@@ -249,89 +249,89 @@ in
         "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent"
       ];
 
-      bind = [
-        "$mod, Return, exec, $terminal"
-        "$mod, D, exec, $menu"
-        "$mod, I, exec, qs -c mdo ipc call keybinds open"
-        "$mod, Q, killactive,"
-        "$mod, V, togglefloating,"
-        "$mod, SPACE, togglefloating,"
-        "$mod, F, fullscreen,"
+      bindd = [
+        "$mod, Return, Open a terminal, exec, $terminal"
+        "$mod, D, Open app launcher, exec, $menu"
+        "$mod, I, Open keybinds menu, exec, qs -c mdo ipc call keybinds open"
+        "$mod, Q, Close window, killactive,"
+        "$mod, V, Toggle floating window, togglefloating,"
+        "$mod, SPACE, Toggle floating window, togglefloating,"
+        "$mod, F, Toggle fullscreen, fullscreen,"
         # "$mod, S, layoutmsg, togglesplit"
-        "$mod, E, exec, dolphin"
-        "$mod, P, exec, zen-beta"
-        "$mod, C, exec, code"
-        "$mod, B, exec, qs -c mdo ipc call power open"
-        "$mod, M, exec, kitty -e jellyfin-tui"
+        "$mod, E, Open file manager, exec, dolphin"
+        "$mod, P, Open web browser, exec, zen-beta"
+        "$mod, C, Open code editor, exec, code"
+        "$mod, B, Open power menu, exec, qs -c mdo ipc call power open"
+        "$mod, M, Open media player, exec, kitty -e jellyfin-tui"
 
         # Move focus
-        "$mod, left, movefocus, l"
-        "$mod, right, movefocus, r"
-        "$mod, up, movefocus, u"
-        "$mod, down, movefocus, d"
-        "$mod, J, cyclenext,"
-        "$mod, K, cyclenext, prev"
+        "$mod, left, Focus window left, movefocus, l"
+        "$mod, right, Focus window right, movefocus, r"
+        "$mod, up, Focus window up, movefocus, u"
+        "$mod, down, Focus window down, movefocus, d"
+        "$mod, J, Focus next window, cyclenext,"
+        "$mod, K, Focus previous window, cyclenext, prev"
 
         # Resize window
-        "$mod, H, resizeactive, -100 0"
-        "$mod, L, resizeactive, 100 0"
-        "$mod SHIFT, H, resizeactive, 0 -100"
-        "$mod SHIFT, L, resizeactive, 0 100"
+        "$mod, H, Resize window narrower, resizeactive, -100 0"
+        "$mod, L, Resize window wider, resizeactive, 100 0"
+        "$mod SHIFT, H, Resize window shorter, resizeactive, 0 -100"
+        "$mod SHIFT, L, Resize window taller, resizeactive, 0 100"
 
         # Move window in stack
-        "$mod SHIFT, J, swapnext,"
-        "$mod SHIFT, K, swapnext, prev"
+        "$mod SHIFT, J, Swap with next window, swapnext,"
+        "$mod SHIFT, K, Swap with previous window, swapnext, prev"
 
         # Workspaces
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
-        "$mod, 6, workspace, 6"
-        "$mod, 7, workspace, 7"
-        "$mod, 8, workspace, 8"
-        "$mod, 9, workspace, 9"
-        "$mod, 0, workspace, 10"
+        "$mod, 1, Switch to workspace 1, workspace, 1"
+        "$mod, 2, Switch to workspace 2, workspace, 2"
+        "$mod, 3, Switch to workspace 3, workspace, 3"
+        "$mod, 4, Switch to workspace 4, workspace, 4"
+        "$mod, 5, Switch to workspace 5, workspace, 5"
+        "$mod, 6, Switch to workspace 6, workspace, 6"
+        "$mod, 7, Switch to workspace 7, workspace, 7"
+        "$mod, 8, Switch to workspace 8, workspace, 8"
+        "$mod, 9, Switch to workspace 9, workspace, 9"
+        "$mod, 0, Switch to workspace 10, workspace, 10"
 
         # Move to workspace
-        "$mod SHIFT, 1, movetoworkspace, 1"
-        "$mod SHIFT, 2, movetoworkspace, 2"
-        "$mod SHIFT, 3, movetoworkspace, 3"
-        "$mod SHIFT, 4, movetoworkspace, 4"
-        "$mod SHIFT, 5, movetoworkspace, 5"
-        "$mod SHIFT, 6, movetoworkspace, 6"
-        "$mod SHIFT, 7, movetoworkspace, 7"
-        "$mod SHIFT, 8, movetoworkspace, 8"
-        "$mod SHIFT, 9, movetoworkspace, 9"
-        "$mod SHIFT, 0, movetoworkspace, 10"
+        "$mod SHIFT, 1, Move window to workspace 1, movetoworkspace, 1"
+        "$mod SHIFT, 2, Move window to workspace 2, movetoworkspace, 2"
+        "$mod SHIFT, 3, Move window to workspace 3, movetoworkspace, 3"
+        "$mod SHIFT, 4, Move window to workspace 4, movetoworkspace, 4"
+        "$mod SHIFT, 5, Move window to workspace 5, movetoworkspace, 5"
+        "$mod SHIFT, 6, Move window to workspace 6, movetoworkspace, 6"
+        "$mod SHIFT, 7, Move window to workspace 7, movetoworkspace, 7"
+        "$mod SHIFT, 8, Move window to workspace 8, movetoworkspace, 8"
+        "$mod SHIFT, 9, Move window to workspace 9, movetoworkspace, 9"
+        "$mod SHIFT, 0, Move window to workspace 10, movetoworkspace, 10"
 
         # Screenshot — region to clipboard
-        "$mod, S, exec, grimblast copy area"
+        "$mod, S, Screenshot region to clipboard, exec, grimblast copy area"
         # Screenshot/recording menu
-        "$mod SHIFT, S, exec, qs -c mdo ipc call screenshot open"
+        "$mod SHIFT, S, Open screenshot menu, exec, qs -c mdo ipc call screenshot open"
         # Screenshot — full screen to clipboard
-        ", Print, exec, grimblast copy screen"
+        ", Print, Screenshot screen to clipboard, exec, grimblast copy screen"
 
         # Clipboard history
-        "$mod SHIFT, V, exec, qs -c mdo ipc call clipboard open"
+        "$mod SHIFT, V, Open clipboard history, exec, qs -c mdo ipc call clipboard open"
 
         # Emoji picker
-        "$mod SHIFT, SPACE, exec, qs -c mdo ipc call emoji open"
+        "$mod SHIFT, SPACE, Open emoji picker, exec, qs -c mdo ipc call emoji open"
 
         # Screen recording toggle
-        "$mod SHIFT, R, exec, toggle-recording"
+        "$mod SHIFT, R, Toggle screen recording, exec, toggle-recording"
 
         # Power menu
-        "$mod SHIFT, Escape, exec, qs -c mdo ipc call power open"
+        "$mod SHIFT, Escape, Open power menu, exec, qs -c mdo ipc call power open"
 
         # Toggle notification center
-        "$mod, N, exec, qs -c mdo ipc call notifications center"
+        "$mod, N, Toggle notification center, exec, qs -c mdo ipc call notifications center"
       ];
 
-      bindm = [
-        "$mod, mouse:272, movewindow"
-        "$mod, mouse:273, resizewindow"
+      bindmd = [
+        "$mod, mouse:272, Move window with mouse, movewindow"
+        "$mod, mouse:273, Resize window with mouse, resizewindow"
       ];
     };
 

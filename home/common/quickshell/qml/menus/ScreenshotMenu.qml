@@ -15,7 +15,7 @@ import qs.components
 ModalWindow {
     id: root
 
-    cardWidth: 320
+    cardWidth: 340
 
     // Recording state — mirrors /tmp/screenrecord-pid (toggle-recording).
     property bool _recording: false
@@ -62,7 +62,6 @@ ModalWindow {
     MenuRow {
         width: parent.width
         label: "Screenshot region → clipboard"
-        readout: "grimblast copy area"
 
         onActivated: root._run(["grimblast", "copy", "area"])
     }
@@ -70,7 +69,6 @@ ModalWindow {
     MenuRow {
         width: parent.width
         label: "Screenshot screen → clipboard"
-        readout: "grimblast copy screen"
 
         onActivated: root._run(["grimblast", "copy", "screen"])
     }
@@ -78,7 +76,6 @@ ModalWindow {
     MenuRow {
         width: parent.width
         label: "Screenshot region → edit (satty)"
-        readout: "grimblast save area"
 
         onActivated: root._run(["bash", "-c", "grimblast save area - | satty --filename -"])
     }
@@ -86,7 +83,6 @@ ModalWindow {
     MenuRow {
         width: parent.width
         label: "Screenshot screen → edit (satty)"
-        readout: "grimblast save screen"
 
         onActivated: root._run(["bash", "-c", "grimblast save screen - | satty --filename -"])
     }
@@ -108,7 +104,6 @@ ModalWindow {
         icon: Theme.icons.record
         danger: true
         label: "Stop recording"
-        readout: "stop-recording"
 
         onActivated: root._run(["stop-recording"])
     }
@@ -117,7 +112,6 @@ ModalWindow {
         width: parent.width
         icon: Theme.icons.record
         label: "Record screen (no audio)"
-        readout: "toggle-recording"
 
         onActivated: root._run(["toggle-recording"])
     }
@@ -153,7 +147,6 @@ ModalWindow {
         width: parent.width
         icon: Theme.icons.sun
         label: "Color picker"
-        readout: "hyprpicker -a"
 
         onActivated: root._run(["hyprpicker", "-a"])
     }

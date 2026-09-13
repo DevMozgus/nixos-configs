@@ -4,6 +4,7 @@
 // accent circle; adjacent-month days are dimmed; chevrons navigate.
 
 import QtQuick
+import Quickshell
 
 import qs
 import qs.components
@@ -12,6 +13,10 @@ Popover {
     id: root
 
     popWidth: 252
+
+    // Center the calendar under the center-bar clock widget
+    // (default gravity right-aligns, which looks off for a centered widget).
+    anchorGravity: Edges.Bottom
 
     property var today: new Date()
     property int viewYear: today.getFullYear()

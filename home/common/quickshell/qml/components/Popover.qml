@@ -21,6 +21,13 @@ PopupWindow {
     property int popWidth: 280
     property int popPadding: Theme.spacing.md
 
+    // Which way the popup hangs off the owner. Default keeps the popup's
+    // right edge under the widget's right edge (left-cluster widgets).
+    // Center-bar widgets (clock) override with `Edges.Bottom` to center.
+    // `int` (not `Edges`) — the Edges enum type cannot be registered as a
+    // QML property type; int is assignable to the anchor's QFlags gravity.
+    property int anchorGravity: Edges.Bottom | Edges.Right
+
     // The bar widget this popover is anchored to (set via toggleFor).
     property Item owner: null
 
@@ -51,7 +58,7 @@ PopupWindow {
     anchor {
         item: root.owner
         edges: Edges.Bottom
-        gravity: Edges.Bottom | Edges.Right
+        gravity: root.anchorGravity
         adjustment: PopupAdjustment.Flip
         margins.top: 6
     }

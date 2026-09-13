@@ -1,6 +1,6 @@
 // Bar — full-width classic top bar.
 //
-//   [left]   Workspaces · Recording indicator
+//   [left]   Workspaces · Layout · Recording indicator
 //   [center] Clock
 //   [right]  Battery Backlight (laptop only) · Audio Network Bluetooth
 //            Notifications Tray Power
@@ -70,6 +70,10 @@ PanelWindow {
         spacing: Theme.spacing.xs
 
         Workspaces {
+            hub: root
+        }
+
+        Layout {
             hub: root
         }
 
