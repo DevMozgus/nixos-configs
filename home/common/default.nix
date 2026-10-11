@@ -87,6 +87,7 @@
 
       # Office
       libreoffice
+      orca-slicer
     ];
   };
 
