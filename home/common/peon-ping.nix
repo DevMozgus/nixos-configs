@@ -68,8 +68,12 @@ in
   home.file.".claude/hooks/peon-ping/peon.sh".source = "${peonPkg}/bin/peon";
 
   # OpenCode TypeScript plugin
-  home.file.".config/opencode/plugins/peon-ping.ts".source =
-    "${peonPkg}/share/peon-ping/adapters/opencode/peon-ping.ts";
+  # Local union adapter (V1 `server` + V2 `setup`) — upstream at rev de4ada79
+  # only exports the OpenCode 2.x `setup` API, which the 1.x plugin loader
+  # rejects ("must default export an object with server()"). Revert to
+  # "${peonPkg}/share/peon-ping/adapters/opencode/peon-ping.ts" once upstream
+  # ships a union export.
+  home.file.".config/opencode/plugins/peon-ping.ts".source = ./peon-ping-plugin.ts;
 
   # Zsh integration
   programs.zsh.initContent = ''

@@ -28,6 +28,7 @@
     ./peon-ping.nix
     ./javascript.nix
     ./mpv.nix
+    ./obs-studio.nix
     ./mcp.nix
     ./zed.nix
   ];
@@ -77,9 +78,6 @@
       # Communication
       signal-desktop
       telegram-desktop
-
-      # Recording / streaming
-      obs-studio
 
       # System monitoring
       btop

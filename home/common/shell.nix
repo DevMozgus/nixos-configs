@@ -90,10 +90,10 @@ $character";
   };
 
   programs.zsh.shellAliases = {
-    i-desktop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop";
-    i-laptop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop";
-    u-desktop = "nix flake update && sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop";
-    u-laptop = "nix flake update && sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop";
+    i-desktop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop --cores 2";
+    i-laptop = "sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop --cores 2";
+    u-desktop = "nix flake update && sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#desktop --cores 2";
+    u-laptop = "nix flake update && sudo nixos-rebuild switch --flake /home/nicola/nixos-configs#laptop --cores 2";
   };
 
   programs.autojump.enable = true;

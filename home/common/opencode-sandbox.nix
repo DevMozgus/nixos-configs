@@ -5,11 +5,16 @@
 # Temporarily disable with OPENCODE_DISABLE_SANDBOX=1.
 { pkgs, ... }:
 {
-  # sandbox-runtime execs bubblewrap for filesystem + network isolation
-  home.packages = [ pkgs.bubblewrap ];
+  # sandbox-runtime execs bubblewrap for filesystem + network isolation,
+  # and needs socat for its internal HTTP CONNECT proxy (init fails without it)
+  home.packages = [ pkgs.bubblewrap pkgs.socat ];
 
   # Register the plugin (list-concatenates with settings.plugin in ./opencode.nix)
-  programs.opencode.settings.plugin = [ "opencode-sandbox" ];
+  # Pinned to 0.6.0: 0.5.2 extra-exports isSandboxWrappedCommand(), which opencode
+  # 1.x's legacy plugin loader mistakes for a second plugin entry and calls with
+  # (input, options) — throwing "command.trim is not a function" on every start.
+  # 0.6.0 ships only plugin-function exports and loads cleanly.
+  programs.opencode.settings.plugin = [ "opencode-sandbox@0.6.0" ];
 
   # Global sandbox policy. Path precedence: allowRead > denyRead;
   # denyWrite > allowWrite. "." = project working directory.
